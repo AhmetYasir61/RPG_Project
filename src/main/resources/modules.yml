@@ -1,0 +1,23 @@
+# Modul kayit defteri. Her modul burada acilip kapatilabilir; sira ONEMLI DEGIL,
+# ModuleManager @Module(depends=...) bilgisine gore topolojik siralar.
+# Hot-disable: /core modules disable <id>  |  Hot-enable: /core modules enable <id>
+
+modules:
+  profile:      { enabled: true }
+  economy:      { enabled: true,  vault-provider: true }
+  permissions:  { enabled: true,  default-group: "oyuncu" }
+  content:      { enabled: true,  resource-pack: { generate: true, serve: true, port: 8085, required: true } }
+  mob:          { enabled: true }
+  rpg:          { enabled: true }
+  menu:         { enabled: true }
+  quest:        { enabled: true }
+  region:       { enabled: true }
+  chat:         { enabled: true }
+  essentials:   { enabled: true }
+  hologram:     { enabled: true }
+  npc:          { enabled: true }
+  placeholder:  { enabled: true,  papi-bridge: true }
+
+# Guvenlik agi: bir modul enable sirasinda patlarsa, bagimlilari otomatik devre disi
+# kalir ve sunucu ayakta kalir (fail-soft). false yaparsan sunucu acilisi durur.
+fail-soft: true

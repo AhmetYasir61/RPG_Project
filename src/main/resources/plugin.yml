@@ -1,0 +1,24 @@
+name: ${serverName}Core
+version: '${version}'
+main: ${corePackage}.bootstrap.CorePlugin
+api-version: '${apiVersion}'
+folia-supported: true
+author: ${serverName} Network
+description: Tek JAR, cok modullu sunucu cekirdegi.
+
+# Komutlarin tamami Brigadier uzerinden runtime'da kaydedilir (command framework).
+# Burada yalnizca bootstrap komutu tanimli; digerleri modul yasam dongusunde gelir.
+commands:
+  core:
+    description: Cekirdek yonetim komutu (modul, reload, debug).
+    usage: /core <modules|reload|version>
+    permission: core.admin
+
+permissions:
+  core.admin:
+    description: Tum cekirdek yonetim yetkileri.
+    default: op
+
+softdepend:
+  - PlaceholderAPI
+  - Vault
