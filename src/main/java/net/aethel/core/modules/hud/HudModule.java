@@ -6,6 +6,7 @@ import net.aethel.core.config.ConfigFile;
 import net.aethel.core.config.ConfigMigration;
 import net.aethel.core.module.Module;
 import net.aethel.core.module.ModuleInfo;
+import net.aethel.core.util.SpaceEncoder;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;

@@ -204,3 +204,7 @@ dungeon:
   instances-header: "<gray>— <yellow>Open Instances</yellow> —</gray>"
   instance-entry: "<dark_gray>›</dark_gray> <white><id></white> <gray><dungeon> · <state> · <players> players</gray>"
   entrance-placed: "<green>Dungeon entrance placed:</green> <white><dungeon></white>"
+
+dialog:
+  continue-hint: "SHIFT to continue"
+  choose-hint: "Scroll to choose · SHIFT to confirm"

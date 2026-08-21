@@ -622,3 +622,80 @@ dungeon:
   collapse: true         # kapaliysa cekirdek kirmak cokme baslatmaz
   one-way-exit: true     # cikisin tek yonlulugu
 ```
+
+## 23. Diyalog kutusu (MMORPG stili)
+
+Referans: **PROJECT Spellforged** demosundaki acilis diyalogu. Videonun goruntusunu
+inceleyemedigim icin bu tur MMORPG sunucularinin standardina gore kuruldu; sapma
+varsa olculer ve yerlesim `DialogGlyphs` icinden tek noktadan degistirilebilir.
+
+### 23.1 Gorunum
+```
+        ┌──────────────────────────────────────────┐
+        │  ┌────┐   Yasli Koylu                    │
+        │  │port│   Sonunda birileri geldi... Sira,│
+        │  │re  │   bu topraklar seni bekliyordu.  │
+        │  └────┘                                   │
+        │           ▶ Mahzen nerede?                │
+        │             Bana ne verirsin?             │
+        │             Ilgilenmiyorum.               │
+        └──────────────────────────────────────────┘
+```
+
+### 23.2 Neden title/subtitle uzerinden ciziliyor
+Tasiyici secenekleri ve neden elendikleri:
+
+| Tasiyici | Sorun |
+|---|---|
+| Action bar | Tek satir; cok satirli kutu sigmaz |
+| Boss bar | Ust kenara sabit, portre alani yok |
+| Chat | Kaydirilir, kalicilik yok, oyuncunun sohbetini bogar |
+| **Title/subtitle** | Ekranin ortasinda, **cok satirli**, her tick yenilenebilir |
+
+Kutu, kalis suresi kisa verilip **her adimda yeniden gonderiliyor**: boylece metin
+akarken titremeden yenilenir ve diyalog bitince kendiliginden kaybolur.
+
+### 23.3 Hizalama: negatif bosluk
+Kutu, portre, imlec ve metin ayri font karakterleri olarak ust uste bindirilir.
+HUD ile ayni `SpaceEncoder` kullanilir (bu yuzden `util` paketine tasindi).
+Her parca cizilir, genisligi kadar geri gelinir, sonraki parca ayni piksel uzerine biner.
+
+### 23.4 Metin sarmalama piksel bazli
+Vanilla fontta karakterler esit genislikte **degildir**: `i` 2 piksel, `W` 6 piksel.
+Karakter sayarak sarmalamak dar harflerle dolu satirlari erken, genis harflerle dolu
+satirlari gec keser ve metin kutudan tasar. `TextMeasure` gercek piksel genisligini
+olcer. Satirlar diyalog **baslarken bir kez** sarmalanir; her tick yeniden olcmek
+akan metinde satir sonlarinin oynamasina yol acardi.
+
+Kirpma da gorunur karakter uzerinden yapilir: MiniMessage etiketlerini sayarak
+kirpmak, akan metnin ortasinda etiketi yarida keser ve ekranda ham `<gr` gorunur.
+
+### 23.5 Girdi: chat ve envanter YOK
+| Tus | Islev |
+|---|---|
+| **Fare tekerlegi** | Secenekler arasi gezinme (hotbar kaydirma yakalanir ve iptal edilir) |
+| **SHIFT** | Akan metni atla · tamamlanmissa onayla / devam et |
+| **Sag tik** | SHIFT ile ayni (fareyle oynayan icin) |
+
+Tekerlek secildi cunku her istemcide var, ekstra tus ogrenmeyi gerektirmiyor ve
+chat acmadan calisiyor. Diyalog sirasinda envanter acilmaz, esya dusurulmez ve el
+degistirilmez — akis kesilmesin diye.
+
+Hotbar daireseldir: 8'den 0'a gecis "ileri", 0'dan 8'e gecis "geri" demektir.
+Duz cikarma bunu ters okur ve secim ters yone atlar; `slotDelta` bunu duzeltir.
+
+### 23.6 Yazma sesi
+Her karakterde ses calmak kulakta tirmalayan bir gurultuye donusur; ses **6 tick'te
+bir** calinir. Secim degistirmede ayri, onaylamada ayri ses vardir.
+
+### 23.7 Geri dusme
+`dialog.box` ozelligi kapaliysa ya da resource pack yuklenmemisse sistem **CHAT**
+moduna duser: metin sohbete yazilir, secenekler tiklanabilir satir olur. Diyalog
+icerigi ayni kalir, yalnizca tasiyici degisir — pack olmayan bir sunucuda da calisir.
+
+### 23.8 Gerekli texture'lar
+`contents/aethel/textures/gui/` altina: `dialog_frame.png` (320×80),
+`dialog_frame_top.png`, `dialog_portrait_slot.png` (48×48), `dialog_cursor.png` (8×8),
+`dialog_continue.png` (8×8). Portreler `contents/aethel/textures/portrait/` altina,
+48×48. Tanimlar `contents/aethel/fonts/dialog.yml` icinde; pack uretimi bunlari
+U+E200'den itibaren karaktere baglar.

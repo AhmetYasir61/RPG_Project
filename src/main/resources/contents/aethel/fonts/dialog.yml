@@ -1,0 +1,53 @@
+# ============================================================================
+#  DIYALOG KUTUSU FONT PARCALARI
+#  Bu parcalar ayri bir font altinda toplanir: aethel:dialog
+#  Texture'lari contents/aethel/textures/ altina koy.
+#
+#  ascent = karakterin taban cizgisine gore YUKARI kaymasi (piksel).
+#  Kutu ekranin altina otursun diye ascent yuksek verilir; height ise
+#  texture'in ekrandaki yuksekligidir.
+#
+#  ONEMLI: BOX_WIDTH (DialogGlyphs icinde 320) ile kutu texture'inin
+#  genisligi ayni olmali, yoksa hizalama kayar.
+# ============================================================================
+
+dialog_frame:
+  texture: "gui/dialog_frame.png"     # 320x80 onerilir
+  height: 80
+  ascent: -20                          # ekranin altina dogru iter
+
+dialog_frame_top:
+  texture: "gui/dialog_frame_top.png"
+  height: 16
+  ascent: -20
+
+dialog_portrait_slot:
+  texture: "gui/dialog_portrait_slot.png"   # 48x48 cerceve
+  height: 48
+  ascent: -28
+
+dialog_choice_cursor:
+  texture: "gui/dialog_cursor.png"     # 8x8 secim oku
+  height: 8
+  ascent: 7
+
+dialog_continue:
+  texture: "gui/dialog_continue.png"   # 8x8 devam oku
+  height: 8
+  ascent: 7
+
+# --- NPC portreleri: U+E200'den baslar, sirayla tahsis edilir ---
+portrait_koylu:
+  texture: "portrait/koylu.png"        # 48x48
+  height: 48
+  ascent: -28
+
+portrait_bekci:
+  texture: "portrait/bekci.png"
+  height: 48
+  ascent: -28
+
+portrait_buyucu:
+  texture: "portrait/buyucu.png"
+  height: 48
+  ascent: -28

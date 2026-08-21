@@ -1,0 +1,37 @@
+# Diyalog dugumleri. speaker ve portrait cerceveli kutunun ust satirinda gorunur.
+# Metin harf harf akar; oyuncu SHIFT ya da sag tik ile atlar/onaylar,
+# secenekleri HOTBAR KAYDIRARAK secer. Chat hicbir asamada kullanilmaz.
+
+koylu_karsilama:
+  speaker: "Yasli Koylu"
+  portrait: "portrait_koylu"
+  chars-per-tick: 2
+  lines:
+    - "Sonunda birileri geldi... Sira, bu topraklar seni bekliyordu."
+    - "Mahzenin kapisi yeniden acildi ve icerideki sey uyandi."
+  choices:
+    - text: "Mahzen nerede?"
+      target: "aethel:koylu_mahzen"
+    - text: "Bana ne verirsin?"
+      target: "aethel:koylu_odul"
+    - text: "Ilgilenmiyorum."
+      outcomes:
+        - "[message] <dark_gray>Koylu basini sallar ve arkasini doner.</dark_gray>"
+
+koylu_mahzen:
+  speaker: "Yasli Koylu"
+  portrait: "portrait_koylu"
+  lines:
+    - "Ormanin kuzeyinde, devrilmis kulenin altinda."
+    - "Ama tek basina gitme. Icerideki cekirdek kirilirsa mahzen coker."
+  outcomes:
+    - "[quest] aethel:mahzen_kesfi"
+
+koylu_odul:
+  speaker: "Yasli Koylu"
+  portrait: "portrait_koylu"
+  lines:
+    - "Elimde ne varsa senin. Bir parsomen ve biraz altin."
+  outcomes:
+    - "[item] aethel:kesif_parsomeni"
+    - "[message] <green>Yasli koylu sana bir parsomen uzatir.</green>"

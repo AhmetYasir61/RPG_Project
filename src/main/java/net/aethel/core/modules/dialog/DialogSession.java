@@ -2,64 +2,97 @@ package net.aethel.core.modules.dialog;
 
 import net.aethel.core.api.DialogService.DialogNode;
 
+import java.util.List;
+
 /**
- * Devam eden bir diyalog. Metin harf harf ilerler; oyuncunun okuma temposunu
- * bozmamak icin her tick'te sabit sayida karakter eklenir.
+ * Devam eden bir diyalog. Metin harf harf ilerler, satirlar kutuya sigacak sekilde
+ * onceden sarmalanir ve secim imleci burada tutulur.
  */
 final class DialogSession {
 
     private final DialogNode node;
+    private final String speaker;
+    private final int portraitIndex;
+    private final List<String> wrapped;
+
     private int lineIndex;
-    private int charIndex;
+    private int visibleChars;
+    private int selectedChoice;
     private boolean awaitingChoice;
 
-    DialogSession(DialogNode node) {
+    DialogSession(DialogNode node, String speaker, int portraitIndex, List<String> wrapped) {
         this.node = node;
+        this.speaker = speaker;
+        this.portraitIndex = portraitIndex;
+        this.wrapped = wrapped;
     }
 
     DialogNode node() { return node; }
+    String speaker() { return speaker; }
+    int portraitIndex() { return portraitIndex; }
+    int selectedChoice() { return selectedChoice; }
     boolean awaitingChoice() { return awaitingChoice; }
 
-    /** Su an gosterilecek kismi metin. */
-    String currentText() {
-        if (lineIndex >= node.lines().size()) return "";
-        String line = node.lines().get(lineIndex);
-        return line.substring(0, Math.min(charIndex, line.length()));
+    /**
+     * Kutuda gorunecek satirlar. Tamamlanan satirlar tam, o an akan satir kismi
+     * gosterilir; sonraki satirlar hic cizilmez ki metin asagi dogru "acilsin".
+     */
+    List<String> visibleLines() {
+        List<String> lines = new java.util.ArrayList<>(lineIndex + 1);
+        for (int i = 0; i < lineIndex && i < wrapped.size(); i++) {
+            lines.add(wrapped.get(i));
+        }
+        if (lineIndex < wrapped.size()) {
+            lines.add(TextMeasure.truncateVisible(wrapped.get(lineIndex), visibleChars));
+        }
+        return lines;
     }
 
-    /** Bir adim ilerletir; satir bittiyse siradaki satira gecer. */
-    void advance() {
-        if (lineIndex >= node.lines().size()) return;
-        String line = node.lines().get(lineIndex);
-        if (charIndex < line.length()) {
-            charIndex += Math.max(1, node.charsPerTick());
+    /** Bir adim ilerletir; satir bitince siradakine gecer. */
+    void advance(int charsPerStep) {
+        if (lineIndex >= wrapped.size()) {
+            awaitingChoice = true;
+            return;
+        }
+        String line = wrapped.get(lineIndex);
+        if (visibleChars < TextMeasure.visibleLength(line)) {
+            visibleChars += Math.max(1, charsPerStep);
             return;
         }
         lineIndex++;
-        charIndex = 0;
-        if (lineIndex >= node.lines().size()) awaitingChoice = true;
+        visibleChars = 0;
+        if (lineIndex >= wrapped.size()) awaitingChoice = true;
     }
 
-    /** Akan metni atlar: satiri tamamlar, zaten tamamsa siradakine gecer. */
+    /** Akan metni atlar: once satiri tamamlar, zaten tamsa tum metni acar. */
     void skip() {
-        if (lineIndex >= node.lines().size()) return;
-        String line = node.lines().get(lineIndex);
-        if (charIndex < line.length()) {
-            charIndex = line.length();
+        if (lineIndex < wrapped.size()
+                && visibleChars < TextMeasure.visibleLength(wrapped.get(lineIndex))) {
+            visibleChars = TextMeasure.visibleLength(wrapped.get(lineIndex));
             return;
         }
-        lineIndex++;
-        charIndex = 0;
-        if (lineIndex >= node.lines().size()) awaitingChoice = true;
+        lineIndex = wrapped.size();
+        visibleChars = 0;
+        awaitingChoice = true;
     }
 
-    boolean finished() {
-        return lineIndex >= node.lines().size();
+    /** Metnin tamami gorunur oldu mu; "devam" ipucu ve secenekler buna bagli. */
+    boolean textComplete() {
+        return lineIndex >= wrapped.size();
     }
 
-    /** Satir tamamlandi mi; "devam et" ipucunu gostermek icin. */
-    boolean lineComplete() {
-        if (lineIndex >= node.lines().size()) return true;
-        return charIndex >= node.lines().get(lineIndex).length();
+    /** Secim imlecini dairesel olarak kaydirir. */
+    void moveSelection(int delta) {
+        int count = node.choices().size();
+        if (count == 0) return;
+        selectedChoice = ((selectedChoice + delta) % count + count) % count;
+    }
+
+    /** Kutuya cizilecek kare. */
+    DialogRenderer.Frame frame() {
+        return new DialogRenderer.Frame(speaker, portraitIndex, visibleLines(),
+                node.choices().stream()
+                        .map(net.aethel.core.api.DialogService.Choice::text).toList(),
+                selectedChoice, textComplete());
     }
 }

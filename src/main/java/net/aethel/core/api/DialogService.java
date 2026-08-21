@@ -11,9 +11,13 @@ import java.util.Optional;
  */
 public interface DialogService {
 
-    /** Bir diyalog dugumu. */
-    record DialogNode(String id, List<String> lines, List<Choice> choices,
-                      List<String> conditions, List<String> outcomes, int charsPerTick) {}
+    /**
+     * Bir diyalog dugumu. speaker ve portrait, cerceveli kutuda ust satirda gorunur;
+     * portrait resource pack'teki portre karakterinin indeksidir.
+     */
+    record DialogNode(String id, String speaker, String portrait, List<String> lines,
+                      List<Choice> choices, List<String> conditions,
+                      List<String> outcomes, int charsPerTick) {}
 
     /** Oyuncunun secebilecegi bir secenek. */
     record Choice(String text, String targetNode, List<String> conditions,

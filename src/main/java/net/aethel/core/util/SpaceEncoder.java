@@ -1,10 +1,10 @@
-package net.aethel.core.modules.hud;
+package net.aethel.core.util;
 
 /**
- * Piksel kaydirmasini negatif/pozitif bosluk karakterlerine cevirir. Font uretici
- * bu karakterleri U+F800'den itibaren tanimlar; ikisi ayni tabloyu paylasir.
+ * Piksel kaydirmasini negatif/pozitif bosluk karakterlerine cevirir. HUD ve diyalog
+ * kutusu bu araci paylasir; font uretici ayni tabloyu U+F800'den itibaren tanimlar.
  */
-final class SpaceEncoder {
+public final class SpaceEncoder {
 
     /** FontGenerator ile ayni sira: once negatifler, sonra pozitifler. */
     private static final int[] NEGATIVE = {-1, -2, -3, -4, -5, -6, -7, -8, -16, -32, -64, -128};
@@ -19,7 +19,7 @@ final class SpaceEncoder {
      * 128'lik adimlarla baslamak, -300 gibi bir kaydirmayi 3 karakterde cozer;
      * tek tek -1 kullansaydik 300 karakterlik bir metin cikardi.
      */
-    static String shift(int pixels) {
+    public static String shift(int pixels) {
         if (pixels == 0) return "";
         StringBuilder builder = new StringBuilder();
         int remaining = Math.abs(pixels);
@@ -38,7 +38,7 @@ final class SpaceEncoder {
     }
 
     /** Iki parcayi ust uste bindirir: once ciz, sonra genisligi kadar geri gel. */
-    static String overlay(String glyph, int glyphWidth) {
+    public static String overlay(String glyph, int glyphWidth) {
         return glyph + shift(-glyphWidth);
     }
 }

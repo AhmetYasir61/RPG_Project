@@ -204,3 +204,7 @@ dungeon:
   instances-header: "<gray>— <yellow>Acik Ornekler</yellow> —</gray>"
   instance-entry: "<dark_gray>›</dark_gray> <white><id></white> <gray><dungeon> · <state> · <players> oyuncu</gray>"
   entrance-placed: "<green>Dungeon girisi yerlestirildi:</green> <white><dungeon></white>"
+
+dialog:
+  continue-hint: "SHIFT ile devam"
+  choose-hint: "Tekerlek ile sec · SHIFT ile onayla"
