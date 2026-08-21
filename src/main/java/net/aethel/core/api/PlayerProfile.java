@@ -84,6 +84,12 @@ public final class PlayerProfile {
         attributes.put(key, value);
     }
 
+    /** Niteligi siler. attribute(key, null) cagrisi asiri yukleme belirsizligi uretir. */
+    public void removeAttribute(String key) {
+        attributes.remove(key);
+        markDirty();
+    }
+
     public void markDirty() { this.dirty = true; }
 
     public void markClean() { this.dirty = false; }
