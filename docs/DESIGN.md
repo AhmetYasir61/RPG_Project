@@ -220,3 +220,93 @@ Akis: generator pack'i uretir -> zip -> SHA-1 -> dahili HTTP sunucusu
 
 SHA-1 her uretimde degistigi icin istemci onbellegi kendiliginden tazelenir; pack
 degismediginde ayni hash doner ve oyuncu tekrar indirmez.
+
+## 14. Resource pack uretim hatti: `contents/` + `blueprints/` -> `generated.zip`
+
+ItemsAdder'daki gibi klasor tabanli, ama tek fark: **hicbir sey elle JSON yazmaz.**
+Sunucu acilirken (ve `/adminmenu > Pack > Yeniden Uret` ile) klasorler taranir,
+tum vanilla JSON'lari uretilir, zip'lenir, SHA-1 alinir ve servis edilir.
+
+### 14.1 Klasor duzeni
+
+```
+plugins/AethelCore/
+├─ contents/                     <- ICERIK TANIMLARI (YAML) + ham varliklar
+│  └─ <namespace>/               <- orn. aethel, dungeon_pack, sezon1
+│     ├─ items/*.yml             item tanimlari
+│     ├─ blocks/*.yml            custom blok tanimlari (note block state)
+│     ├─ mobs/*.yml              mob tanimlari
+│     ├─ hud/*.yml               HUD layout'lari
+│     ├─ fonts/*.yml             emoji / ikon / negatif bosluk tanimlari
+│     ├─ gui/*.yml               menu arka plan tanimlari
+│     └─ textures/               ham .png (Aseprite ciktisi)
+│        ├─ item/kilic_alev.png
+│        ├─ gui/panel_arkaplan.png
+│        └─ font/ikon_zorluk.png
+│
+├─ blueprints/                   <- MODEL KAYNAKLARI
+│  └─ <namespace>/
+│     ├─ *.bbmodel               Blockbench kaynak dosyasi (duzenlenebilir kalir)
+│     └─ *.json                  elle yazilmis / disari verilmis model (aynen kopyalanir)
+│
+├─ generated/
+│  ├─ pack/                      <- uretilen acik pack agaci (ayiklama/debug icin)
+│  ├─ generated.zip              <- oyuncuya gonderilen pack
+│  └─ generated.sha1             <- son hash, degisiklik tespiti icin
+│
+└─ cache/pack-index.json         <- kaynak dosya -> uretilen dosya + hash haritasi
+```
+
+`generated/` klasoru tamamen turetilmistir: silinebilir, bir sonraki acilista
+yeniden uretilir. Kaynak yalnizca `contents/` ve `blueprints/` altindadir; yedeklenmesi
+gereken de sadece bunlardir.
+
+### 14.2 Uretim adimlari
+
+```
+1. TARA        contents/**/*.yml  +  contents/**/textures/**.png
+               blueprints/**/*.bbmodel  +  blueprints/**/*.json
+2. DOGRULA     - ayni id iki kez tanimlanmis mi
+               - texture dosyasi var mi, boyutu 2'nin kuvveti mi
+               - note block state havuzu tukendi mi (1149 kombinasyon)
+               - bbmodel surumu destekleniyor mu
+3. TAHSIS ET   her item -> item_model kimligi (CMD fallback numarasi ile birlikte)
+               her blok -> (instrument, note, powered) uclusu   [KALICI, cache'de tutulur]
+               her font parcasi -> Unicode ozel kullanim alani karakteri (U+E000+)
+4. CEVIR       .bbmodel  -> assets/<ns>/models/**/*.json   (+ gerekiyorsa animasyon verisi)
+               .png      -> assets/<ns>/textures/**/*.png  (aynen kopya)
+               fonts     -> assets/<ns>/font/*.json        (negatif bosluk dahil)
+               items     -> assets/<ns>/items/*.json       (item_model tanimi)
+               blocks    -> assets/minecraft/blockstates/note_block.json  (birlestirilmis)
+               atlas     -> assets/minecraft/atlases/blocks.json
+5. PAKETLE     pack.mcmeta + pack.png yaz -> generated/pack/ -> generated.zip
+6. HASH        SHA-1 hesapla -> generated.sha1
+7. SERVIS ET   dahili HTTP: http://<public-host>:<port>/generated.zip
+```
+
+### 14.3 Kimlik tahsisi neden cache'de kalici tutuluyor
+Bir custom bloga atanan `(instrument, note, powered)` uclusu ya da bir item'a atanan
+model kimligi **degisemez**. Degisirse dunyada duran bloklar baska bir bloga donusur,
+sandiktaki item'lar baska bir gorunume kayar. Bu yuzden tahsis edilen her kimlik
+`cache/pack-index.json` icinde saklanir ve yeniden uretimde aynen korunur; yalnizca
+yeni eklenen icerikler bos slotlardan tahsis alir. Silinen icerigin slotu ise
+"mezarlik"ta tutulur, hemen yeniden kullanilmaz — eski dunya parcalari yanlis
+esleme yapmasin diye.
+
+### 14.4 .bbmodel -> vanilla JSON cevirisi
+Blockbench dosyasi bizim icin **kaynak**tir, cikti degil. Cevirici sunlari yapar:
+- `elements` -> vanilla `elements` (from/to, rotation, uv, faces)
+- `textures` -> `assets/<ns>/textures/...` altina yazilir, `#0`, `#1` referanslari baglanir
+- `display` -> vanilla `display` (thirdperson, gui, head vb.)
+- desteklenmeyen ozellikler (mesh, ozel animasyon) uyari verir, uretim durmaz
+
+`.bbmodel` dosyasi silinmez ve panelde tekrar acilabilir; boylece bir modeli
+duzenlemek icin kimsenin uretilen JSON'a dokunmasi gerekmez.
+
+### 14.5 Artimli uretim
+`cache/pack-index.json` her kaynak dosyanin hash'ini tutar. Yeniden uretimde yalnizca
+degisen dosyalar islenir; 500 item'lik bir pakette tam uretim saniyeler surerken
+tek bir texture degisikligi milisaniyelere iner. `--force` ile tam uretim zorlanir.
+
+Bu is **ana thread'de yapilmaz**: tarama, cevirme, zip ve SHA-1 sanal thread'de
+calisir, bittiginde pack ana thread'de servis edilmeye baslanir.
