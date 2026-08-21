@@ -69,6 +69,22 @@ public final class ModuleManager {
         }
         long ok = modules.values().stream().filter(c -> c.state().isRunning()).count();
         log.info("Aktif modul: " + ok + "/" + modules.size());
+
+        // Sifir aktif modul, "sunucu acildi ama hicbir sey calismiyor" demektir;
+        // bu durumun bilgi satirinda kaybolmasi teshisi saatlerce geciktirir.
+        if (ok == 0 && !modules.isEmpty()) {
+            log.severe("Hicbir modul acilamadi. Yukaridaki hatalari kontrol et.");
+            return;
+        }
+        List<String> failed = modules.values().stream()
+                .filter(c -> c.state() == ModuleState.FAILED)
+                .map(ModuleContainer::id).toList();
+        if (!failed.isEmpty()) log.warning("Basarisiz modul: " + failed);
+
+        List<String> skipped = modules.values().stream()
+                .filter(c -> c.state() == ModuleState.SKIPPED)
+                .map(ModuleContainer::id).toList();
+        if (!skipped.isEmpty()) log.info("Atlanan modul: " + skipped);
     }
 
     /** Ters topolojik sirada kapatir; bagimlilar once gider. */

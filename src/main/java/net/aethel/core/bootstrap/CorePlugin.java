@@ -33,6 +33,7 @@ public final class CorePlugin extends JavaPlugin {
     private Database database;
     private PacketBridge packets;
     private final CoreSettings settings = new CoreSettings();
+    private boolean bootFailed;
 
     @Override
     public void onLoad() {
@@ -74,10 +75,20 @@ public final class CorePlugin extends JavaPlugin {
 
         this.modules = new ModuleManager(context);
         ConfigFile moduleConfig = configService.open("modules.yml", 1, null, ConfigMigration.NONE);
-        modules.register(moduleConfig.yaml().getConfigurationSection("modules"),
-                moduleConfig.yaml().getBoolean("fail-soft", true),
-                ModuleCatalog.all(packets));
-        modules.loadAll();
+
+        // Modul grafigi kurulamazsa (orn. zorunlu bagimlilik cevrimi) sessizce devam
+        // etmek en kotu sonuctur: sunucu acilir ama hicbir sey calismaz. Acikca
+        // isaretleyip onEnable'da net bir mesajla duruyoruz.
+        try {
+            modules.register(moduleConfig.yaml().getConfigurationSection("modules"),
+                    moduleConfig.yaml().getBoolean("fail-soft", true),
+                    ModuleCatalog.all(packets));
+            modules.loadAll();
+        } catch (RuntimeException error) {
+            this.bootFailed = true;
+            getLogger().severe("Modul grafigi kurulamadi: " + error.getMessage());
+            getLogger().severe("Cekirdek devre disi. Duzeltip sunucuyu yeniden baslat.");
+        }
 
         commands.register("core", new CoreCommand(context, modules));
         registerBrigadier(commands);
@@ -85,6 +96,12 @@ public final class CorePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (bootFailed) {
+            getLogger().severe("Cekirdek baslatilmadi (modul grafigi hatasi). "
+                    + "Hicbir modul acilmayacak.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         packets.enable();
         modules.enableAll();
         context.events().post(new CoreReadyEvent(context));

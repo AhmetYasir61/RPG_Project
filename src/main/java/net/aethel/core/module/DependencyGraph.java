@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Modul bagimliliklarini topolojik siralar. Cevrim tespit edilirse boot durur;
- * sessizce yanlis sirada yuklemek, tespiti saatler suren hatalar uretir.
+ * Modul bagimliliklarini topolojik siralar. Zorunlu bagimlilikta cevrim bulunursa
+ * boot durur; yumusak bagimlilikta cevrim yalnizca sira ipucunun atlanmasina yol acar.
  */
 final class DependencyGraph {
 
@@ -23,33 +23,46 @@ final class DependencyGraph {
         Set<String> visiting = new HashSet<>();
 
         for (String id : input.keySet()) {
-            visit(id, input, done, visiting, new ArrayList<>(), sorted);
+            visit(id, input, done, visiting, new ArrayList<>(), sorted, true);
         }
         return sorted;
     }
 
+    /**
+     * hardEdge, bu dugume ZORUNLU bir bagimlilik uzerinden gelinip gelinmedigini soyler.
+     *
+     * Ayrim onemli: iki modul birbirini yumusak bagimlilik olarak listeleyebilir
+     * (dialog NPC'yi, NPC diyalogu tanir) ve bu tamamen gecerlidir — ikisi de digeri
+     * olmadan calisir, yalnizca varsa once yuklenmesini tercih ederler. Boyle bir
+     * cevrimde sirayi bir yerden kesmek yeterlidir; boot'u durdurmak yanlis olur.
+     * Zorunlu bagimlilikta cevrim ise gercek bir tasarim hatasidir ve sessizce
+     * gecilirse modul, bagimliligi hazir olmadan acilir.
+     */
     private static void visit(String id,
                               Map<String, ModuleContainer> all,
                               Set<String> done,
                               Set<String> visiting,
                               List<String> path,
-                              List<ModuleContainer> out) {
+                              List<ModuleContainer> out,
+                              boolean hardEdge) {
         if (done.contains(id)) return;
         ModuleContainer container = all.get(id);
         if (container == null) return;   // bilinmeyen bagimlilik: enable asamasinda raporlanir
 
-        if (!visiting.add(id)) {
+        if (visiting.contains(id)) {
+            if (!hardEdge) return;       // yumusak cevrim: sirayi burada kes, devam et
             List<String> cycle = new ArrayList<>(path);
             cycle.add(id);
             throw new IllegalStateException("Modul bagimlilik cevrimi: " + String.join(" -> ", cycle));
         }
+        visiting.add(id);
         path.add(id);
 
         for (String dep : container.info().depends()) {
-            visit(dep, all, done, visiting, path, out);
+            visit(dep, all, done, visiting, path, out, true);
         }
         for (String soft : container.info().softDepends()) {
-            visit(soft, all, done, visiting, path, out);
+            visit(soft, all, done, visiting, path, out, false);
         }
 
         path.remove(path.size() - 1);

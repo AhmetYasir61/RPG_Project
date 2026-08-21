@@ -71,6 +71,36 @@ gizliyordu. Artik `ModuleUnavailableException` var:
 
 `/core modules` ciktisinda ikisi ayri gorunur.
 
+## 5. "Modul bagimlilik cevrimi: dialog -> npc -> dialog"
+
+**Belirti:** Boot durdu, `Aktif modul: 0/25`, ardindan "Cekirdek hazir." yazdi ve
+sunucu hicbir sey yapmadan calismaya devam etti. `/adminmenu` cevapsiz kaldi.
+
+**Kok sebep:** `DependencyGraph` yumusak bagimliligi (`softDepends`) zorunlu gibi
+ele aliyordu. `dialog` NPC'yi, `npc` diyalogu yumusak bagimlilik olarak listeler —
+bu tamamen gecerlidir: ikisi de digeri olmadan calisir, yalnizca varsa once
+yuklenmesini tercih eder. Boyle bir cevrimde sirayi bir yerden kesmek yeterlidir.
+
+**Cozum:** `visit()` artik kenarin turunu tasiyor:
+- **Zorunlu** bagimlilikta cevrim -> hata (gercek tasarim hatasi; sessizce gecilirse
+  modul bagimliligi hazir olmadan acilir)
+- **Yumusak** bagimlilikta cevrim -> sira burada kesilir, boot devam eder
+
+Regresyon testi eklendi: `DependencyGraphTest` (4 test) — yumusak cevrim kabul
+edilir, zorunlu cevrim hata verir, siralama dogru, bilinmeyen bagimlilik atlanir.
+
+## 6. Sessiz basarisizlik: "0 aktif modul" ama sunucu calisiyor
+
+Yukaridaki hatanin en kotu yani, hatanin kendisi degil **nasil bittigiydi**:
+`register()` patlayinca `loadAll()` hic calismadi, `enableAll()` bos liste buldu ve
+cekirdek "hazir" dedi. Sunucu acik, plugin yuklu, hicbir sey calismiyor.
+
+**Cozum:**
+- `register()` hatasi yakalanir, `bootFailed` isaretlenir ve `onEnable` net bir
+  mesajla plugini devre disi birakir — yanilticiyi "hazir" mesaji artik yok.
+- `enableAll()` sonunda **sifir aktif modul** SEVERE olarak loglanir.
+- Basarisiz (`FAILED`) ve atlanan (`SKIPPED`) moduller ayri satirlarda ozetlenir.
+
 ## Beklenen acilis ciktisi (duzeltmelerden sonra)
 
 ```
@@ -79,7 +109,7 @@ gizliyordu. Artik `ModuleUnavailableException` var:
 [AethelCore] Veritabani hazir: SQLITE
 [AethelCore] Modul yukleme sirasi: [profile, auth, permissions, economy, ...]
 [AethelCore] Kayitli kok komut: N
-[AethelCore] Aktif modul: 21/21
+[AethelCore] Aktif modul: 25/25
 [AethelCore] Cekirdek hazir.
 ```
 
