@@ -19,3 +19,27 @@ core:
   module-action-failed: "<red>Action failed:</red> <white><id></white> <gray>(see console)</gray>"
   reloaded: "<green>Configuration and languages reloaded.</green>"
   version: "<gray>AethelCore version:</gray> <white><version></white>"
+
+auth:
+  required: "<red>You must log in first.</red>"
+  timeout: "<red>Login timed out. Please reconnect.</red>"
+  session-restored: "<green>Session restored, welcome back.</green>"
+  gui-login: "<yellow>Enter your PIN to continue.</yellow>"
+  gui-register: "<yellow>Register by choosing a PIN.</yellow>"
+  gui-title-login: "<dark_gray>Enter your PIN"
+  gui-title-register: "<dark_gray>Choose a PIN"
+  gui-title-confirm: "<dark_gray>Repeat your PIN"
+  web-login: "<yellow>Log in here: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  web-register: "<yellow>Register here: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  mismatch: "<red>PINs did not match, try again.</red>"
+  login-success: "<green>Logged in. Have fun.</green>"
+  login-failed: "<red>Wrong PIN.</red>"
+  register-success: "<green>Registration complete.</green>"
+  register-failed: "<red>Registration failed. The PIN may not meet the rules.</red>"
+
+menu:
+  invalid-number: "<red>Not a valid number:</red> <white><value></white>"
+
+pack:
+  declined: "<red>You must accept the resource pack to play here.</red>"
+  failed: "<red>Resource pack download failed. Check your connection and retry.</red>"

@@ -19,3 +19,27 @@ core:
   module-action-failed: "<red>Islem basarisiz:</red> <white><id></white> <gray>(konsol loguna bak)</gray>"
   reloaded: "<green>Yapilandirma ve diller yeniden yuklendi.</green>"
   version: "<gray>AethelCore surumu:</gray> <white><version></white>"
+
+auth:
+  required: "<red>Once giris yapmalisin.</red>"
+  timeout: "<red>Giris suresi doldu. Tekrar baglan.</red>"
+  session-restored: "<green>Oturumun devam ediyor, tekrar hos geldin.</green>"
+  gui-login: "<yellow>Devam etmek icin PIN'ini gir.</yellow>"
+  gui-register: "<yellow>Bir PIN belirleyerek kayit ol.</yellow>"
+  gui-title-login: "<dark_gray>PIN'ini gir"
+  gui-title-register: "<dark_gray>PIN belirle"
+  gui-title-confirm: "<dark_gray>PIN'i tekrar gir"
+  web-login: "<yellow>Giris yapmak icin: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  web-register: "<yellow>Kayit olmak icin: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  mismatch: "<red>PIN'ler eslesmedi, tekrar dene.</red>"
+  login-success: "<green>Giris basarili. Iyi oyunlar.</green>"
+  login-failed: "<red>PIN hatali.</red>"
+  register-success: "<green>Kayit tamamlandi.</green>"
+  register-failed: "<red>Kayit basarisiz. PIN kurallara uymuyor olabilir.</red>"
+
+menu:
+  invalid-number: "<red>Gecerli bir sayi degil:</red> <white><value></white>"
+
+pack:
+  declined: "<red>Sunucuya girmek icin kaynak paketini kabul etmelisin.</red>"
+  failed: "<red>Kaynak paketi indirilemedi. Baglantini kontrol edip tekrar dene.</red>"

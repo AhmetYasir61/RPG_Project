@@ -1,7 +1,10 @@
 package net.aethel.core.bootstrap;
 
 import net.aethel.core.module.Module;
+import net.aethel.core.modules.auth.AuthModule;
 import net.aethel.core.modules.hologram.HologramModule;
+import net.aethel.core.modules.menu.MenuModule;
+import net.aethel.core.modules.profile.ProfileModule;
 import net.aethel.core.modules.travel.waypoint.WaypointModule;
 import net.aethel.core.packet.PacketBridge;
 
@@ -16,6 +19,9 @@ final class ModuleCatalog {
     /** Modul ornekleri; sira onemsizdir, ModuleManager bagimliliga gore siralar. */
     static Module[] all(PacketBridge bridge) {
         return new Module[] {
+                new ProfileModule(),
+                new AuthModule(),
+                new MenuModule(),
                 new HologramModule(bridge),
                 new WaypointModule(bridge)
         };

@@ -419,3 +419,45 @@ Her iki panel de ayni `PermissionService`'i cagirir; is mantigi tek yerdedir.
 
 Yeni moduller: **`jobs`**, **`pcoins`** (backend koprusu). `economy` altin icin
 Vault provider olarak kendini kaydeder.
+
+## 20. Giris sistemi (auth) ve veritabani yedegi
+
+### 20.1 Iki akis, tek mantik
+`admin.mode` degeri giris akisini da belirler:
+
+- **GUI modu — AuthMe benzeri:** oyuncu girer, **anvil** ekrani acilir, PIN'ini yazar.
+  Kayitta PIN iki kez sorulur (yanlis yazilmis bir PIN oyuncuyu hesabindan tamamen
+  kilitler). Chat hicbir asamada kullanilmaz.
+- **WEB modu:** oyuncuya tiklanabilir, **tek kullanimlik** bir baglanti gonderilir.
+  Tarayicida kayit/giris tamamlanir, jeton tuketilir ve oyuncu oyunda otomatik
+  dogrulanir — yani "web'e yonlendir, isini bitir, oyuna don" akisi.
+
+Dogrulanmamis oyuncu: hareket edemez (bakinabilir), konusamaz, komut kullanamaz
+(yalnizca giris komutlari), blok kiramaz/koyamaz, envanter acamaz ve **hasar almaz** —
+giris ekranindayken olup esyasini kaybetmesin diye.
+
+### 20.2 Sir saklama
+PIN/parola **duz saklanmaz ve geri donusturulemez**. PBKDF2-HMAC-SHA256, kayit basina
+rastgele tuz, 210.000 iterasyon (OWASP'in SHA-256 icin guncel alt siniri).
+Duz SHA-256 kullanmiyoruz: GPU ile saniyede milyarlarca deneme yapilabilir ve 4 haneli
+bir PIN aninda kirilir. Karsilastirma sabit surelidir (zamanlama saldirisi kapali).
+
+Ek onlemler: N basarisiz denemeden sonra kick, giris suresi asiminda kick, ayni IP'den
+kisa sure icinde donen oyuncu icin oturum hatirlama, yetkili sifirlamalari denetim
+tablosuna yazilir (kayit asla sessizce silinmez).
+
+### 20.3 Veritabani: uzak varsa uzak, yoksa yerel
+Tum sistem tek bir `Database` katmanindan gecer:
+
+```
+storage.type: MYSQL   -> uzak MySQL/MariaDB (HikariCP havuzu, onerilen)
+storage.type: SQLITE  -> plugin klasorundeki yerel data.db
+```
+
+Uzak veritabani **yapilandirilmissa ve erisilebiliyorsa** oradan calisir; erisilemezse
+cekirdek yerel SQLite'a duser ve bunu acikca loglar. Boylece sunucu, veritabani
+sorunu yuzunden hic acilmamak yerine calismaya devam eder.
+
+SQLite havuzu 1 baglanti ile sinirlidir (tek yazar destegi; buyutmek SQLITE_BUSY
+uretir). Sema farklari `SqlDialect` icinde tek yerde toplanir; modul migration'lari
+`{id} {uuid} {text}` yer tutucularini kullanarak iki motorda da ayni SQL ile calisir.

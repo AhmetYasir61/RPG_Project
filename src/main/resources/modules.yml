@@ -4,6 +4,7 @@
 
 modules:
   profile:      { enabled: true }
+  auth:         { enabled: true,  mode: PIN }
   economy:      { enabled: true,  vault-provider: true }
   pcoins:       { enabled: false, endpoint: "" }
   jobs:         { enabled: true,  max-active-jobs: 2 }
