@@ -27,6 +27,7 @@ final class WebRoutes {
     private final Map<String, WebSession> sessions;
     private final AuditLog audit;
     private final EvidenceStore evidence;
+    private final PanelApi panelApi;
 
     WebRoutes(CoreContext ctx, WebSettings settings, Map<String, WebSession> sessions,
               AuditLog audit, EvidenceStore evidence) {
@@ -35,6 +36,7 @@ final class WebRoutes {
         this.sessions = sessions;
         this.audit = audit;
         this.evidence = evidence;
+        this.panelApi = new PanelApi(ctx, audit);
     }
 
     void register(Javalin server) {
@@ -45,6 +47,20 @@ final class WebRoutes {
         server.post("/login", context -> submitCredentials(context, false));
         server.post("/register", context -> submitCredentials(context, true));
         server.get("/panel", this::panel);
+        server.get("/assets/styles.css", context -> asset(context, "styles.css", "text/css"));
+        server.get("/assets/panel.js", context ->
+                asset(context, "panel.js", "application/javascript"));
+
+        // Semadan uretilen bolum uclari. Tek bir ucta tum moduller duzenlenir;
+        // yeni bir alan icin buraya degil PanelSchema'ya satir eklenir.
+        server.get("/api/schema", context -> withAdmin(context, session ->
+                context.contentType("application/json").result(panelApi.schemaJson())));
+        server.get("/api/section/{id}", context -> withAdmin(context, session ->
+                sectionRead(context)));
+        server.post("/api/section/{id}/save", context -> withAdmin(context, session ->
+                sectionWrite(context, session, false)));
+        server.post("/api/section/{id}/delete", context -> withAdmin(context, session ->
+                sectionWrite(context, session, true)));
 
         server.get("/api/me", context -> withSession(context, session -> {
             JsonObject json = new JsonObject();
@@ -69,6 +85,63 @@ final class WebRoutes {
         server.post("/api/player/{uuid}/seize/{slot}", this::seizeItem);
         server.get("/api/audit", context -> withAdmin(context, session ->
                 context.json(auditJson().toString())));
+    }
+
+    /**
+     * JAR icindeki panel varliklari. Panel disari hicbir CDN'e cikmaz: sunucunun
+     * kendi portundan servis edilir, boylece internete kapali bir makinede de calisir.
+     */
+    private void asset(Context context, String name, String type) {
+        try (var stream = getClass().getClassLoader().getResourceAsStream("web/" + name)) {
+            if (stream == null) {
+                context.status(404).result("missing");
+                return;
+            }
+            context.contentType(type).result(new String(stream.readAllBytes(),
+                    java.nio.charset.StandardCharsets.UTF_8));
+        } catch (java.io.IOException exception) {
+            context.status(500).result("asset-error");
+        }
+    }
+
+    /** Bolumun kayitlarini dondurur; bilinmeyen bolum kimligi 404'tur. */
+    private void sectionRead(Context context) {
+        PanelSchema.Section section = PanelSchema.section(context.pathParam("id"));
+        if (section == null) {
+            context.status(404).result("unknown-section");
+            return;
+        }
+        context.contentType("application/json")
+                .result(new com.google.gson.Gson().toJson(panelApi.records(section)));
+    }
+
+    /**
+     * Bolum kaydini yazar ya da siler. Her yazma denetim kaydina dusulur: panelden
+     * yapilan bir ayar degisikligi de en az envanter mudahalesi kadar izlenebilir olmali.
+     */
+    private void sectionWrite(Context context, WebSession session, boolean delete) {
+        PanelSchema.Section section = PanelSchema.section(context.pathParam("id"));
+        if (section == null) {
+            context.status(404).result("unknown-section");
+            return;
+        }
+        Map<String, Object> record = PanelApi.parse(context.body());
+        try {
+            if (delete) panelApi.delete(section, record);
+            else panelApi.save(section, record);
+        } catch (IllegalStateException readOnly) {
+            context.status(403).result("read-only");
+            return;
+        } catch (Exception exception) {
+            ctx.logger().warning("Panel yazma hatasi (" + section.id() + "): "
+                    + exception.getMessage());
+            context.status(500).result(String.valueOf(exception.getMessage()));
+            return;
+        }
+        audit.record(session.player(), session.playerName(), null,
+                delete ? "PANEL_DELETE" : "PANEL_SAVE",
+                section.id() + ":" + record.get("id"));
+        context.contentType("application/json").result("{\"ok\":true}");
     }
 
     /**

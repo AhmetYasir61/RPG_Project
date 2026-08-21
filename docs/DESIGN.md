@@ -785,3 +785,49 @@ ozel metin gostermeyi saglar hem de cevrimici oyuncu adlarinin disariya sizmasin
 onler.
 
 Ozellikler: `motd.enabled`, `motd.hover`, `motd.fake-count`. Komut: `/motd yenile`.
+
+## 27. Web paneli — Nocturne tasarim sistemi ve sema tabanli arayuz
+
+Panelin gorunumu artik Java icine gomulu degil: `src/main/resources/web/styles.css`
+Nocturne tasarim sisteminin token dosyasidir ve panel bunu `/assets/styles.css`
+adresinden kendi portundan sunar. Panelde tek bir ham renk ya da olcu degeri yoktur;
+her deger `var(--color-*)`, `var(--space-*)`, `var(--radius-*)`, `var(--shadow-*)`
+uzerinden gelir. Tema degistirmek icin yalnizca dosyanin basindaki `:root` blogu
+duzenlenir — HTML'e ya da Java'ya dokunulmaz.
+
+Tipografi tek aileye baglidir (Inter, `system-ui` yedegiyle). Yazi tipi Google
+Fonts'tan cekilir ama zorunlu degildir: internete kapali bir makinede yedek aile
+devreye girer, duzen bozulmaz.
+
+**Sema tabanli arayuz.** `PanelSchema` bolumleri ve alanlari tanimlar; `PanelApi`
+bunlari JSON olarak sunar; `web/panel.js` arayuzu bu JSON'dan cizer. Yeni bir modul
+alani eklemek icin YALNIZCA `PanelSchema`'ya bir satir eklenir — HTML, CSS ve
+JavaScript'e dokunulmaz. Bolum turleri:
+
+| Tur | Kaynak | Yazma |
+|---|---|---|
+| `FILE` | `contents/<ns>/...` altindaki cok kayitli YAML | kayit ekle/duzenle/sil |
+| `CONFIG` | `dosya.yml#prefix` (tek kayit) | duzenle, ardindan config yeniden yuklenir |
+| `FEATURES` | `FeatureRegistry` | anlik ac/kapa |
+| `MODULES` | `modules.yml` | dosyaya yazilir, sonraki acilista gecerli |
+| `AUDIT`, `EVIDENCE` | veritabani | salt okunur |
+
+`contents/%s/items` gibi yollardaki `%s` namespace yeridir: okurken `contents/`
+altindaki tum namespace'ler taranir, yazarken kaydin tasidigi `__ns` alani kullanilir.
+Boylece panel birden fazla icerik paketini tek listede gosterir ama dogru dosyaya
+geri yazar.
+
+**Neden modul acma/kapama anlik degil?** Calisan bir sunucuda bir modulu ortasinda
+sokup takmak acik listener'lari ve zamanlayicilari yarim birakir. Panel `modules.yml`
+dosyasina yazar, degisiklik bir sonraki acilista gecerli olur. Ozellikler
+(`features.yml`) ise anlik uygulanir; `FeatureRegistry` listener'lari zaten
+sahiplenerek kaydeder ve kapatildiginda `HandlerList`'ten gercekten cikarir.
+
+**Denetim.** Panelden yapilan her yazma `PANEL_SAVE` / `PANEL_DELETE` olarak denetim
+kaydina duser. Bir ayar degisikligi de en az envanter mudahalesi kadar izlenebilir
+olmalidir. Salt okunur bolumler (denetim kaydi, kanit deposu) yazma isteklerini
+403 ile reddeder — istemcinin ne gonderdiginden bagimsiz olarak, sunucu tarafinda.
+
+**PCoins API anahtari** panelde gorunmez: sema yalnizca `api-key-file` alanini
+tasir, anahtarin kendisi ayri dosyada kalir ve hicbir zaman config'e ya da
+panele yazilmaz.
