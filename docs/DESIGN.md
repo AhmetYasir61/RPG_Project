@@ -310,3 +310,112 @@ tek bir texture degisikligi milisaniyelere iner. `--force` ile tam uretim zorlan
 
 Bu is **ana thread'de yapilmaz**: tarama, cevirme, zip ve SHA-1 sanal thread'de
 calisir, bittiginde pack ana thread'de servis edilmeye baslanir.
+
+## 15. Ekonomi: cift para birimi + PCoins backend
+
+Iki ayri para vardir ve **birbirine karismaz**:
+
+| Para | Nerede kazanilir | Nerede harcanir | Kaynak |
+|---|---|---|---|
+| **Altin** (oyun ici) | mob, gorev, meslek, ticaret | NPC dukkan, oyuncu pazari, tamir | sunucu veritabani |
+| **PCoins** (marka parasi) | **satin alinir** (site/launcher) | market: buff paketi, kozmetik, slot | merkezi PCoins backend |
+
+Altin icin **Vault provider** olarak kendimizi kaydederiz; Vault kuruluysa diger
+pluginler `EconomyService`'imizi gorur, kurulu degilse hicbir sey degismez.
+PCoins **Vault'a baglanmaz** — kasten: Vault tek para birimi varsayar ve ucuncu
+parti bir plugin marka paramizi yanlislikla harcayabilir.
+
+### 15.1 PCoins backend baglantisi
+```yaml
+pcoins:
+  enabled: true
+  endpoint: "https://api.pokewing.net/v1"
+  api-key-file: "pcoins-key.txt"   # anahtar config icinde DEGIL, ayri dosyada
+  sync-interval-seconds: 60
+  offline-mode: QUEUE              # QUEUE | REJECT
+```
+
+Akis (site/launcher'dan oyun icine):
+```
+Site: oyuncu PCoins satin alir
+  -> backend bakiyeyi yazar, bir "islem" kaydi olusturur
+  -> sunucu her 60 sn (ve oyuncu girisinde) bekleyen islemleri ceker
+  -> islem id'si ile idempotent uygulanir (ayni islem iki kez islenmez)
+  -> oyuncuya bildirim + HUD guncellemesi
+```
+
+Harcama tersine calisir: sunucu **once backend'e rezervasyon** yapar, backend
+onaylayinca item/buff verilir. Neden bu sira: once item verip sonra dusmeye calismak,
+backend erisilemezse bedava item uretir. Rezervasyon zaman asimina ugrarsa
+otomatik geri alinir.
+
+`offline-mode: QUEUE` -> backend erisilemezken kazanimlar kuyruga alinir, harcama
+reddedilir. `REJECT` -> her iki yon de reddedilir. Varsayilan QUEUE.
+
+**Guvenlik:** API anahtari config icinde tutulmaz (config paylasilir, ekran goruntusu
+alinir), ayri bir dosyadadir ve loglara hicbir zaman yazilmaz. Tum istekler HMAC
+imzalidir; sunucu ile backend arasindaki saat farki 5 dakikayi asarsa istek reddedilir.
+
+## 16. Jobs (meslek) sistemi
+Klasik Jobs mantigi, MMORPG'ye uyarlanmis: her meslek kendi seviyesi, kendi XP egrisi
+ve kendi yetenek dalini tasir.
+
+```yaml
+jobs:
+  madenci:
+    display: "<gray>Madenci</gray>"
+    max-level: 100
+    actions:
+      BREAK:
+        DIAMOND_ORE: { xp: 12.0, money: 4.5 }
+        IRON_ORE:    { xp: 3.0,  money: 1.2 }
+    perks:
+      10: "cift-dusme-sansi:5"
+      25: "kazma-hizi:1"
+```
+Ayni anda tutulabilecek meslek sayisi sinirlidir (varsayilan 2); meslek birakmak
+soguma suresine tabidir. Amaci: oyuncularin her seyi ayni anda yapmasini engellemek,
+ekonomide uzmanlasma ve ticaret olusturmak.
+
+## 17. Skill tree (yetenek agaci)
+Iki katman:
+- **Sinif agaci** — RPG modulu (savasci/buyucu/okcu vb.), yetenek puani ile acilir.
+- **Meslek agaci** — Jobs modulu, meslek seviyesi ile acilir.
+
+Dugum tipleri: `PASSIVE` (kalici stat), `ACTIVE` (kullanilabilir skill — **particle**),
+`MODIFIER` (baska bir yetenegi degistirir). Agac YAML'de tanimlanir, panelden
+duzenlenir; her dugumun on kosulu ve puan maliyeti vardir. Sifirlama bir item ya da
+PCoins ile yapilir.
+
+## 18. Profil komutlari ve yetkili denetimi
+
+| Komut | Kim | GUI modu | WEB modu |
+|---|---|---|---|
+| `/profil` | herkes | oyun ici GUI profil | tarayicida kendi profili |
+| `/profiles <oyuncu>` | `aethel.profile.inspect` yetkisi | oyun ici GUI, **salt okunur** | tarayicida tam denetim |
+
+**GUI modunda envanter mudahalesi YOKTUR** — salt okunur gorunum. Sebep: oyun ici
+bir GUI'de yanlis tiklama ile oyuncunun esyasini silmek geri alinamaz ve denetim izi
+birakmaz.
+
+**WEB modunda** yetkili sunlari yapabilir: envanter ve zirhi gorme, tek item silme,
+item'a el koyma (kanit deposu), bakiye duzeltme, ceza gecmisi. Her islem
+**denetim kaydina** yazilir: kim, ne zaman, hangi oyuncuda, ne yapti, hangi item.
+El konulan esya silinmez, "kanit" tablosuna tasinir ve geri verilebilir.
+
+## 19. Yetki ve rank: kendi LuckPerms'imiz
+Ayri plugin yok; `permissions` modulu cekirdegin parcasi.
+
+Ozellikler: grup + kalitim (inheritance), oyuncu bazli izin, gecici izin/rank
+(sureli), dunya bazli izin, prefix/suffix ve agirlik (weight), izin cakismalarinda
+en spesifik kazanir.
+
+Yonetim yine tek kapidan:
+- **WEB modu:** tarayicida grup agaci, surukle-birak kalitim, izin arama, toplu islem.
+- **GUI modu:** menu + anvil. Izin ekleme anvil ile yazilir (chat kullanilmaz),
+  gruplar menude listelenir, kalitim menu ici secimle kurulur.
+
+Her iki panel de ayni `PermissionService`'i cagirir; is mantigi tek yerdedir.
+
+Yeni moduller: **`jobs`**, **`pcoins`** (backend koprusu). `economy` altin icin
+Vault provider olarak kendini kaydeder.

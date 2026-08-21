@@ -5,6 +5,8 @@
 modules:
   profile:      { enabled: true }
   economy:      { enabled: true,  vault-provider: true }
+  pcoins:       { enabled: false, endpoint: "" }
+  jobs:         { enabled: true,  max-active-jobs: 2 }
   permissions:  { enabled: true,  default-group: "oyuncu" }
   content:      { enabled: true,  resource-pack: { generate: true, serve: true, port: 8085, required: true } }
   mob:          { enabled: true }
@@ -16,6 +18,7 @@ modules:
   party:        { enabled: true }
   travel:       { enabled: true,  free-teleport: false }
   hologram:     { enabled: true }
+  waypoint:     { enabled: true }
   npc:          { enabled: true }
   placeholder:  { enabled: true,  papi-bridge: true }
   assets:       { enabled: true }

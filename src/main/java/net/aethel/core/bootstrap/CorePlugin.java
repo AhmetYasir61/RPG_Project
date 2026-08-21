@@ -9,6 +9,7 @@ import net.aethel.core.config.ConfigService;
 import net.aethel.core.event.EventBus;
 import net.aethel.core.i18n.LangService;
 import net.aethel.core.module.ModuleManager;
+import net.aethel.core.packet.PacketBridge;
 import net.aethel.core.service.ServiceRegistry;
 import net.aethel.core.storage.Database;
 import net.aethel.core.storage.DatabaseSettings;
@@ -29,6 +30,7 @@ public final class CorePlugin extends JavaPlugin {
     private ModuleManager modules;
     private CoreScheduler scheduler;
     private Database database;
+    private PacketBridge packets;
     private final CoreSettings settings = new CoreSettings();
 
     @Override
@@ -37,6 +39,11 @@ public final class CorePlugin extends JavaPlugin {
 
         ConfigService configService = new ConfigService(getDataFolder());
         ConfigFile main = configService.open("config.yml", CONFIG_SCHEMA, settings, ConfigMigration.NONE);
+
+        // PacketEvents onEnable'dan ONCE yuklenmeli; aksi halde sunucu ag katmani
+        // kurulduktan sonra enjekte etmeye calisir ve ilk giren oyunculari kacirir.
+        this.packets = new PacketBridge(getLogger());
+        packets.load(this);
 
         this.scheduler = new CoreScheduler(this);
         ServiceRegistry services = new ServiceRegistry();
@@ -61,7 +68,7 @@ public final class CorePlugin extends JavaPlugin {
         ConfigFile moduleConfig = configService.open("modules.yml", 1, null, ConfigMigration.NONE);
         modules.register(moduleConfig.yaml().getConfigurationSection("modules"),
                 moduleConfig.yaml().getBoolean("fail-soft", true),
-                ModuleCatalog.all());
+                ModuleCatalog.all(packets));
         modules.loadAll();
 
         commands.register("core", new CoreCommand(context, modules));
@@ -70,6 +77,7 @@ public final class CorePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        packets.enable();
         modules.enableAll();
         context.events().post(new CoreReadyEvent(context));
         getLogger().info("Cekirdek hazir.");
@@ -78,6 +86,7 @@ public final class CorePlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         if (modules != null) modules.disableAll();
+        if (packets != null) packets.disable();
         if (scheduler != null) scheduler.shutdown();
         if (database != null) database.close();
         getLogger().info("Cekirdek kapatildi.");
