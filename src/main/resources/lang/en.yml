@@ -65,3 +65,15 @@ loot:
   opened: "<green>Chest opened:</green> <white><count> items</white> <dark_gray>(rarity x<rarity>)</dark_gray>"
   cooldown: "<red>This chest has not refilled yet.</red> <gray><seconds>s</gray>"
   threat: "<gray>Area threat:</gray> <white><threat></white>"
+
+panel:
+  title: "<dark_gray>Admin Panel"
+  command-description: "Opens the admin panel"
+  current-mode: "<gray>Active panel mode:</gray> <white><mode></white>"
+  web-link: "<yellow>Open panel: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  web-unavailable: "<red>The web panel is currently unavailable.</red>"
+  selected: "<gray>Selected:</gray> <white><value></white>"
+  saved: "<green>Saved.</green>"
+  item-given: "<green>Item given:</green> <white><item></white>"
+  enter-percent: "<dark_gray>Difficulty percent"
+  pack-regenerating: "<yellow>Regenerating resource pack...</yellow>"

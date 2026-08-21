@@ -9,6 +9,7 @@ import net.aethel.core.modules.loot.LootModule;
 import net.aethel.core.modules.region.RegionModule;
 import net.aethel.core.modules.skill.SkillModule;
 import net.aethel.core.modules.menu.MenuModule;
+import net.aethel.core.modules.panel.AdminPanelModule;
 import net.aethel.core.modules.pcoins.PCoinModule;
 import net.aethel.core.modules.permissions.PermissionModule;
 import net.aethel.core.modules.profile.ProfileModule;
@@ -36,6 +37,7 @@ final class ModuleCatalog {
                 new RegionModule(),
                 new LootModule(),
                 new SkillModule(),
+                new AdminPanelModule(),
                 new HologramModule(bridge),
                 new WaypointModule(bridge)
         };

@@ -18,6 +18,25 @@ permissions:
   core.admin:
     description: Tum cekirdek yonetim yetkileri.
     default: op
+  aethel.admin.panel:
+    description: Yonetim panelini acma yetkisi (/adminmenu).
+    default: op
+  aethel.admin.*:
+    description: Tum panel bolumleri.
+    default: op
+    children:
+      aethel.admin.panel: true
+      aethel.admin.items: true
+      aethel.admin.skills: true
+      aethel.admin.mobs: true
+      aethel.admin.regions: true
+      aethel.admin.loot: true
+      aethel.admin.permissions: true
+      aethel.admin.economy: true
+      aethel.admin.pack: true
+  aethel.profile.inspect:
+    description: Baska oyuncularin profilini gorme yetkisi.
+    default: op
 
 softdepend:
   - PlaceholderAPI

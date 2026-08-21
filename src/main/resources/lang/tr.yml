@@ -65,3 +65,15 @@ loot:
   opened: "<green>Sandik acildi:</green> <white><count> parca</white> <dark_gray>(nadirlik x<rarity>)</dark_gray>"
   cooldown: "<red>Bu sandik henuz yenilenmedi.</red> <gray><seconds> sn</gray>"
   threat: "<gray>Bolge tehdidi:</gray> <white><threat></white>"
+
+panel:
+  title: "<dark_gray>Yonetim Paneli"
+  command-description: "Yonetim panelini acar"
+  current-mode: "<gray>Aktif panel modu:</gray> <white><mode></white>"
+  web-link: "<yellow>Paneli ac: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  web-unavailable: "<red>Web paneli su anda kullanilamiyor.</red>"
+  selected: "<gray>Secildi:</gray> <white><value></white>"
+  saved: "<green>Kaydedildi.</green>"
+  item-given: "<green>Item verildi:</green> <white><item></white>"
+  enter-percent: "<dark_gray>Zorluk yuzdesi"
+  pack-regenerating: "<yellow>Kaynak paketi yeniden uretiliyor...</yellow>"
