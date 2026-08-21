@@ -43,3 +43,15 @@ menu:
 pack:
   declined: "<red>You must accept the resource pack to play here.</red>"
   failed: "<red>Resource pack download failed. Check your connection and retry.</red>"
+
+economy:
+  balance: "<gray>Balance:</gray> <gold><amount></gold>"
+  insufficient: "<red>Not enough gold.</red>"
+  paid: "<green>Paid <amount>.</green>"
+  received: "<green>Received <amount>.</green>"
+
+pcoins:
+  received: "<light_purple><amount> <currency> added to your account.</light_purple>"
+  balance: "<gray>PCoin balance:</gray> <light_purple><amount></light_purple>"
+  offline: "<red>The store is unavailable right now, try again shortly.</red>"
+  insufficient: "<red>Not enough PCoins.</red>"

@@ -43,3 +43,15 @@ menu:
 pack:
   declined: "<red>Sunucuya girmek icin kaynak paketini kabul etmelisin.</red>"
   failed: "<red>Kaynak paketi indirilemedi. Baglantini kontrol edip tekrar dene.</red>"
+
+economy:
+  balance: "<gray>Bakiyen:</gray> <gold><amount></gold>"
+  insufficient: "<red>Yeterli altinin yok.</red>"
+  paid: "<green><amount> odendi.</green>"
+  received: "<green><amount> aldin.</green>"
+
+pcoins:
+  received: "<light_purple><amount> <currency> hesabina eklendi.</light_purple>"
+  balance: "<gray>PCoin bakiyen:</gray> <light_purple><amount></light_purple>"
+  offline: "<red>Magaza su anda kullanilamiyor, birazdan tekrar dene.</red>"
+  insufficient: "<red>Yeterli PCoin'in yok.</red>"
