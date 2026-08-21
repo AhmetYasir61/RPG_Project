@@ -40,6 +40,11 @@ public final class PartyModule implements Module, PartyService {
         this.ctx = ctx;
         ctx.services().register(PartyService.class, this, "party");
         ctx.commands().register("party", new PartyCommand(ctx, this));
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("party.tracking", true, "Uye takibi (saydam kafa waypoint isareti)");
+        features.declare("party.shared-xp", true, "Ortak XP paylasimi");
+        features.declare("party.shared-loot", true, "Ortak loot");
     }
 
     @Override
@@ -142,6 +147,9 @@ public final class PartyModule implements Module, PartyService {
      */
     @Override
     public void trackMembers(Player player, boolean enabled) {
+        // Ozellik kapaliysa takip hic kurulmaz: oyuncu boyle bir mekanigin
+        // varligindan haberdar bile olmaz.
+        if (!ctx.feature("party.tracking")) return;
         var waypoints = ctx.services().optional(WaypointService.class);
         if (waypoints.isEmpty()) return;
 

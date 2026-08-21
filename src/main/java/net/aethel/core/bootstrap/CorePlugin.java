@@ -7,6 +7,7 @@ import net.aethel.core.config.ConfigFile;
 import net.aethel.core.config.ConfigMigration;
 import net.aethel.core.config.ConfigService;
 import net.aethel.core.event.EventBus;
+import net.aethel.core.feature.FeatureRegistry;
 import net.aethel.core.i18n.LangService;
 import net.aethel.core.module.ModuleManager;
 import net.aethel.core.packet.PacketBridge;
@@ -61,8 +62,15 @@ public final class CorePlugin extends JavaPlugin {
         SchemaManager schema = new SchemaManager(database, getLogger());
         CommandRegistrar commands = new CommandRegistrar(lang, getLogger());
 
+        // Ozellik kaydi cekirdegin parcasi: her modul acilista kendi anahtarlarini
+        // bildirir ve features.yml kendiliginden dolar.
+        ConfigFile featureConfig = configService.open("features.yml", 1, null, ConfigMigration.NONE);
+        FeatureRegistry features = new FeatureRegistry(this, featureConfig, events, getLogger());
+        services.register(net.aethel.core.api.FeatureService.class, features, "core");
+        commands.features(features);
+
         this.context = new CoreContext(this, getLogger(), services, events, configService,
-                lang, commands, scheduler, database, schema);
+                lang, commands, scheduler, database, schema, features);
 
         this.modules = new ModuleManager(context);
         ConfigFile moduleConfig = configService.open("modules.yml", 1, null, ConfigMigration.NONE);
@@ -106,6 +114,7 @@ public final class CorePlugin extends JavaPlugin {
     private void saveDefaultResources() {
         saveResource("config.yml", false);
         saveResource("modules.yml", false);
+        saveResource("features.yml", false);
         saveResource("lang/tr.yml", false);
         saveResource("lang/en.yml", false);
         // Ornek icerik: yalnizca ilk acilista yazilir, sonra kullanicinin malidir.

@@ -33,6 +33,10 @@ public final class EconomyModule implements Module, EconomyService {
         this.database = ctx.database();
         ctx.config().open("modules/economy.yml", 1, settings, ConfigMigration.NONE);
         ctx.services().register(EconomyService.class, this, "economy");
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("economy.transfer", true, "Oyuncular arasi para transferi");
+        features.declare("economy.transaction-log", true, "Islem gecmisi kaydi");
     }
 
     @Override
@@ -114,6 +118,7 @@ public final class EconomyModule implements Module, EconomyService {
      */
     @Override
     public CompletableFuture<Boolean> transfer(UUID from, UUID to, double amount) {
+        if (!ctx.feature("economy.transfer")) return CompletableFuture.completedFuture(false);
         return withdraw(from, amount, "transfer:" + to).thenCompose(ok -> {
             if (!ok) return CompletableFuture.completedFuture(false);
             return deposit(to, amount, "transfer:" + from).thenApply(ignored -> true);
@@ -150,7 +155,7 @@ public final class EconomyModule implements Module, EconomyService {
                 stmt.setDouble(3, balanceAfter);
             }
         });
-        if (!settings.keepTransactionLog) return;
+        if (!settings.keepTransactionLog || !ctx.feature("economy.transaction-log")) return;
         database.update("INSERT INTO core_transaction (uuid, amount, balance_after, reason, created_at)"
                 + " VALUES (?, ?, ?, ?, ?)", stmt -> {
             stmt.setString(1, uuid.toString());

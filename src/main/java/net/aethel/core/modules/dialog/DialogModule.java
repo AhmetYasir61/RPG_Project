@@ -37,6 +37,9 @@ public final class DialogModule implements Module, DialogService {
     public void onLoad(CoreContext ctx) {
         this.ctx = ctx;
         ctx.services().register(DialogService.class, this, "dialog");
+        ctx.services().get(net.aethel.core.api.FeatureService.class).declare(
+                "dialog.typewriter", true,
+                "Harf harf akan metin (kapaliysa metin tek seferde gosterilir)");
     }
 
     @Override
@@ -149,7 +152,9 @@ public final class DialogModule implements Module, DialogService {
             DialogSession session = entry.getValue();
 
             if (!session.finished()) {
-                session.advance();
+                // Typewriter kapaliysa satir tek adimda tamamlanir; diyalog akisi
+                // bozulmaz, yalnizca bekleme kalkar.
+                if (ctx.feature("dialog.typewriter")) session.advance(); else session.skip();
                 player.sendActionBar(mini.deserialize(session.currentText()));
                 return false;
             }

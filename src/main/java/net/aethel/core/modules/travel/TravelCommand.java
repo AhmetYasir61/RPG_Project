@@ -40,7 +40,7 @@ public final class TravelCommand {
     }
 
     /** Parsomen ile isinlanma baslatir. */
-    @Command("git")
+    @Command(value = "git", feature = "travel.scroll")
     public void travelTo(CommandSender sender, @Arg("nokta") String waypointId) {
         Player player = (Player) sender;
         TravelService.CastResult result = travel.beginScrollTeleport(player, waypointId);
@@ -55,7 +55,7 @@ public final class TravelCommand {
     }
 
     /** Hearthstone kullanimi; parsomen gerektirmez ama uzun soguma vardir. */
-    @Command("ocak")
+    @Command(value = "ocak", feature = "travel.hearthstone")
     public void hearthstone(CommandSender sender) {
         Player player = (Player) sender;
         TravelService.CastResult result = travel.useHearthstone(player);
@@ -73,7 +73,7 @@ public final class TravelCommand {
     }
 
     /** Hearthstone bag noktasini bulunulan yere tasir. */
-    @Command("bagla")
+    @Command(value = "bagla", feature = "travel.hearthstone")
     public void bind(CommandSender sender) {
         Player player = (Player) sender;
         ctx.lang().send(player, travel.bindHearthstone(player)

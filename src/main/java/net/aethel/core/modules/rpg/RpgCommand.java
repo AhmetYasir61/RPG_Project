@@ -41,7 +41,7 @@ public final class RpgCommand {
     }
 
     /** Bir stata puan harcar: /rpg puan guc */
-    @Command("puan")
+    @Command(value = "puan", feature = "rpg.stat-points")
     public void spend(CommandSender sender, @Arg("stat") String statName) {
         Player player = (Player) sender;
         StatType type = parse(statName);
@@ -55,13 +55,13 @@ public final class RpgCommand {
     }
 
     /** Yetenek agacindaki bir dugumu acar. */
-    @Command("ac")
+    @Command(value = "ac", feature = "rpg.skill-tree")
     public void unlock(CommandSender sender, @Arg("dugum") String nodeId) {
         rpg.unlockNode((Player) sender, nodeId);
     }
 
     /** Acilabilir dugumleri listeler. */
-    @Command("agac")
+    @Command(value = "agac", feature = "rpg.skill-tree")
     public void tree(CommandSender sender) {
         Player player = (Player) sender;
         var unlocked = rpg.unlockedNodes(player.getUniqueId());

@@ -172,3 +172,11 @@ profile:
   gui-readonly: "<dark_gray>Bu gorunum salt okunurdur. Envanter mudahalesi yalnizca web panelinden yapilir.</dark_gray>"
   web-inspect: "<gray>Web panelinde acildi:</gray> <white><player></white>"
   web-link: "<yellow>Profilin: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+
+core:
+  features-header: "<gray>— <yellow>Ozellikler</yellow> —</gray>"
+  feature-on: "<green>◆</green> <white><key></white> <dark_gray>— <description></dark_gray>"
+  feature-off: "<red>◇</red> <dark_gray><key> — <description></dark_gray>"
+  feature-enabled: "<green>Ozellik acildi:</green> <white><key></white>"
+  feature-disabled: "<yellow>Ozellik kapatildi:</yellow> <white><key></white> <gray>(oyunda artik yok)</gray>"
+  feature-unknown: "<red>Bilinmeyen ozellik:</red> <white><key></white>"

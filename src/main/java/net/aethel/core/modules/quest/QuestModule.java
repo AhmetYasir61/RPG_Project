@@ -40,12 +40,16 @@ public final class QuestModule implements Module, QuestService {
         this.ctx = ctx;
         ctx.services().register(QuestService.class, this, "quest");
         ctx.commands().register("quest", new QuestCommand(ctx, this));
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("quest.enabled", true, "Gorev sistemi");
+        features.declare("quest.chains", true, "Zincirleme gorevler");
     }
 
     @Override
     public void onEnable(CoreContext ctx) {
         reload();
-        ctx.listener(new QuestListener(this));
+        ctx.listener("quest.enabled", new QuestListener(this));
     }
 
     @Override
@@ -205,7 +209,9 @@ public final class QuestModule implements Module, QuestService {
         ctx.lang().send(player, "quest.completed",
                 LangService.of("quest", quest.displayName()));
 
-        if (quest.nextQuest() != null) start(player, quest.nextQuest());
+        if (quest.nextQuest() != null && ctx.feature("quest.chains")) {
+            start(player, quest.nextQuest());
+        }
     }
 
     /** Odul DSL'i: [item], [money], [xp], [command]. */

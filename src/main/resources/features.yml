@@ -1,0 +1,130 @@
+# ============================================================================
+#  OZELLIK ANAHTARLARI
+#  false = ozellik oyunda HIC YOKMUS gibi davranir:
+#          · komutu tab-complete'te gorunmez, "bilinmeyen komut" doner
+#          · listener'i Bukkit'e hic kaydedilmez (bos is bile yapmaz)
+#          · menude/HUD'da yer kaplamaz, panelde bolumu cikmaz
+#  true  = ozellik her zaman var olmus gibi calisir
+#
+#  Calisma zamaninda degistirilebilir:  /core ozellik <anahtar> <true|false>
+#  ya da  /adminmenu > Ozellikler
+#  Degistirdiginde sunucuyu yeniden baslatmana gerek yok.
+#
+#  NOT: Burada olmayan bir anahtar VARSAYILAN OLARAK ACIKTIR. Moduller acilista
+#  kendi anahtarlarini bu dosyaya kendileri ekler; sildigin bir satir geri gelir
+#  ama SENIN yazdigin deger asla ezilmez.
+# ============================================================================
+schema-version: 1
+
+features:
+
+  # --- Seyahat: MMORPG mesafe hissi ---
+  travel:
+    # Kesif parsomeni ile isinlanma. Kapatilirsa /waypoint git komutu yok olur.
+    scroll: true
+    # Ocak tasi (hearthstone): tek bag noktasi, uzun soguma.
+    hearthstone: true
+    # Waypoint'e isinlanmak icin oraya once yuruyerek varmis olma zorunlulugu.
+    discovery-required: true
+    # Savasta isinlanma kilidi.
+    combat-lock: true
+
+  # --- Parti ---
+  party:
+    # Uye takibi: saydam kafa waypoint isareti.
+    tracking: true
+    # Ortak XP paylasimi.
+    shared-xp: true
+    # Ortak loot.
+    shared-loot: true
+
+  # --- Loot ---
+  loot:
+    # Bolgedeki tehdit yogunluguna gore nadirlik artisi.
+    threat-scaling: true
+    # Sandik acma sogumasi.
+    chest-cooldown: true
+
+  # --- RPG ---
+  rpg:
+    # Yetenek agaci. Kapatilirsa /rpg agac ve /rpg ac komutlari yok olur.
+    skill-tree: true
+    # Stat puani dagitimi.
+    stat-points: true
+    # Mana havuzu ve yenilenmesi.
+    mana: true
+    # Statlarin hasar ve can havuzuna etkisi.
+    stat-combat: true
+
+  # --- Meslekler ---
+  jobs:
+    enabled: true
+    # Ayni anda tutulabilecek meslek sinirini uygula.
+    limit: true
+    # Meslek birakma sogumasi.
+    leave-cooldown: true
+
+  # --- Ekonomi ---
+  economy:
+    # Oyuncular arasi para transferi.
+    transfer: true
+    # Islem gecmisi kaydi.
+    transaction-log: true
+
+  # --- PCoins (marka parasi) ---
+  pcoins:
+    enabled: false
+    # Sitede yapilan satin almalarin oyun ici uygulanmasi.
+    claim-purchases: true
+    # Oyun ici magazadan harcama.
+    spending: true
+
+  # --- Sohbet ---
+  chat:
+    # Ozel format (prefix/suffix/renk).
+    format: true
+    # Adi gecen oyuncuya ses bildirimi.
+    mentions: true
+    # Kelime filtresi.
+    filter: true
+
+  # --- Arayuz ---
+  hud:
+    enabled: true
+    # Can/mana cubuklari.
+    bars: true
+    # Hedef bilgisi.
+    target-info: true
+
+  # --- Gorevler ve diyalog ---
+  quest:
+    enabled: true
+    # Zincirleme gorevler (biten gorev siradakini acar).
+    chains: true
+  dialog:
+    # Harf harf akan (typewriter) metin. Kapaliysa metin tek seferde gosterilir.
+    typewriter: true
+
+  # --- Bolgeler ---
+  region:
+    # Insaat korumasi.
+    build-protection: true
+    # PvP korumasi.
+    pvp-protection: true
+    # Zorluk carpanlari (can/hasar/odul).
+    difficulty-scaling: true
+
+  # --- Icerik ---
+  content:
+    # Kaynak paketi uretimi.
+    pack-generation: true
+    # Paketi zorunlu gonderme (kabul etmeyen kicklenir).
+    force-pack: true
+
+  # --- Kimlik dogrulama ---
+  auth:
+    enabled: true
+    # Dogrulanmamis oyuncunun hareketini engelle.
+    freeze: true
+    # Ayni IP'den donen oyuncuyu otomatik dogrula.
+    ip-session: true

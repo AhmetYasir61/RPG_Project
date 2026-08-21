@@ -461,3 +461,57 @@ sorunu yuzunden hic acilmamak yerine calismaya devam eder.
 SQLite havuzu 1 baglanti ile sinirlidir (tek yazar destegi; buyutmek SQLITE_BUSY
 uretir). Sema farklari `SqlDialect` icinde tek yerde toplanir; modul migration'lari
 `{id} {uuid} {text}` yer tutucularini kullanarak iki motorda da ayni SQL ile calisir.
+
+## 21. Ozellik anahtarlari (feature toggle)
+
+Modul acip kapatmanin bir seviye altinda, **ozellik** bazli acma/kapama vardir.
+Kural net: **`false` olan ozellik oyunda hic yokmus gibi davranir.**
+
+### 21.1 "Kapali" ne demek
+Bir bayragi kontrol edip mesaj basmak yeterli DEGILDIR; bu, mekanigin varligini
+oyuncuya sizdirir. Kapali bir ozellik icin:
+
+| Katman | Kapaliyken |
+|---|---|
+| Komut | Brigadier agacinda **yok**: tab-complete'te cikmaz, "bilinmeyen komut" doner |
+| Listener | Bukkit'e **hic kaydedilmez** — olay islenmez, bos is bile yapilmaz |
+| Zamanlanmis gorev | Kurulmaz (HUD kapaliysa her 4 tick'te bos donmez, hic donmez) |
+| Menu / panel | Ilgili girdi cizilmez |
+| Servis davranisi | Ilgili metot notr sonuc doner (orn. mana kapaliysa `consumeMana` daima true) |
+
+**Yetki reddi ile ozellik kapaliligi arasindaki fark:** yetki reddi "bunu yapamazsin"
+der ve mekanigin var oldugunu soyler; ozellik kapaliligi "boyle bir sey yok" der.
+MMORPG'de bu fark onemlidir — kapatilmis bir mekanigin izini birakmak, oyunculari
+olmayan bir sistemi aramaya iter.
+
+### 21.2 Kullanim
+```yaml
+# features.yml
+features:
+  travel:
+    scroll: true
+    hearthstone: false     # /waypoint ocak komutu artik YOK
+  rpg:
+    skill-tree: true
+    mana: false            # yetenekler bedelsiz calisir, mana gorevi hic kurulmaz
+```
+
+Calisma zamaninda:
+```
+/core ozellikler                      # tum anahtarlar, durum ve aciklama
+/core ozellik travel.scroll false     # aninda kapanir, restart gerekmez
+/adminmenu > Ozellikler               # menuden tiklayarak
+```
+
+### 21.3 Kendi kendini dolduran dosya
+Moduller `onLoad` icinde kendi anahtarlarini `declare(key, default, aciklama)` ile
+bildirir; `features.yml` kendiliginden dolar. **Dosyada zaten bir deger varsa ona
+dokunulmaz** — sunucu sahibinin kapattigi bir ozellik guncelleme sonrasi kendiliginden
+acilmaz. Dosyada olmayan bir anahtar varsayilan olarak aciktir.
+
+### 21.4 Neden listener'i gercekten dusuruyoruz
+Kapali ozellik icin listener'i birakip metodun basinda `if (!enabled) return;` yazmak
+kolay yoldur ama her olayda bir metot cagrisi ve bir kontrol maliyeti birakir.
+100 oyunculu bir sunucuda `PlayerMoveEvent` saniyede binlerce kez tetiklenir; kapali
+bir ozellik icin bu maliyeti odemek anlamsizdir. `FeatureRegistry` listener'lari sahiplenip
+`HandlerList`'ten cikarir, ozellik acilinca yeniden baglar.

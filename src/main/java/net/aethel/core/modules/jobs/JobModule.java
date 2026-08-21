@@ -42,12 +42,17 @@ public final class JobModule implements Module, JobService {
         this.config = ctx.config().open("jobs.yml", 1, null, ConfigMigration.NONE);
         ctx.services().register(JobService.class, this, "jobs");
         ctx.commands().register("jobs", new JobCommand(ctx, this));
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("jobs.enabled", true, "Meslek sistemi");
+        features.declare("jobs.limit", true, "Ayni anda tutulabilecek meslek siniri");
+        features.declare("jobs.leave-cooldown", true, "Meslek birakma sogumasi");
     }
 
     @Override
     public void onEnable(CoreContext ctx) {
         loadJobs();
-        ctx.listener(new JobListener(this, ctx.plugin()));
+        ctx.listener("jobs.enabled", new JobListener(this, ctx.plugin()));
     }
 
     @Override
@@ -154,8 +159,12 @@ public final class JobModule implements Module, JobService {
         if (!jobs.containsKey(jobId)) return JoinResult.UNKNOWN_JOB;
         Map<String, Integer> current = jobsOf(player.getUniqueId());
         if (current.containsKey(jobId)) return JoinResult.ALREADY_JOINED;
-        if (current.size() >= settings.maxActiveJobs) return JoinResult.LIMIT_REACHED;
-        if (leaveCooldown(player.getUniqueId()) > 0) return JoinResult.ON_COOLDOWN;
+        if (ctx.feature("jobs.limit") && current.size() >= settings.maxActiveJobs) {
+            return JoinResult.LIMIT_REACHED;
+        }
+        if (ctx.feature("jobs.leave-cooldown") && leaveCooldown(player.getUniqueId()) > 0) {
+            return JoinResult.ON_COOLDOWN;
+        }
 
         profile(player.getUniqueId()).ifPresent(p -> p.attribute(JOB_PREFIX + jobId, 0.0));
         return JoinResult.OK;

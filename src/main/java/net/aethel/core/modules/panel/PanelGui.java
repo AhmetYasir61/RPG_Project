@@ -67,6 +67,7 @@ final class PanelGui {
             case "regions" -> fillRegions(menu, player);
             case "difficulties" -> fillDifficulties(menu, player);
             case "pack" -> fillPack(menu, player);
+            case "features" -> fillFeatures(menu, player);
             default -> menu.set(22, icon(Material.BARRIER,
                     "<red>Bu bolum henuz bos</red>",
                     List.of("<gray>Ilgili modul kapali olabilir.</gray>")));
@@ -130,6 +131,29 @@ final class PanelGui {
                                         difficulty.hardcore()));
                                 ctx.lang().send(click.player(), "panel.saved");
                             }))));
+            menu.paginate(entries, CONTENT_SLOTS, 45, 53);
+        });
+    }
+
+    /**
+     * Ozellik listesi. Tiklama aninda ozellik acilir/kapanir ve etki HEMEN gecerlidir:
+     * listener'lar baglanir/dusurulur, komut agaci tazelenir.
+     */
+    private void fillFeatures(Menu menu, Player player) {
+        ctx.services().optional(net.aethel.core.api.FeatureService.class).ifPresent(features -> {
+            List<Menu.MenuEntry> entries = new ArrayList<>();
+            features.snapshot().forEach((key, value) -> entries.add(new Menu.MenuEntry(
+                    icon(value ? Material.LIME_DYE : Material.GRAY_DYE,
+                            (value ? "<green>" : "<dark_gray>") + key
+                                    + (value ? "</green>" : "</dark_gray>"),
+                            List.of("<gray>" + features.description(key) + "</gray>", "",
+                                    value ? "<green>◆ Acik</green>" : "<red>◇ Kapali</red>",
+                                    "<yellow>Tikla: degistir</yellow>")),
+                    click -> {
+                        features.set(key, !features.enabled(key));
+                        ctx.lang().send(click.player(), "panel.saved");
+                        openSection(click.player(), "features");
+                    })));
             menu.paginate(entries, CONTENT_SLOTS, 45, 53);
         });
     }

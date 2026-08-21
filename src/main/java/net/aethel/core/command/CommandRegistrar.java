@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import net.aethel.core.api.FeatureService;
 import net.aethel.core.i18n.LangService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,12 +30,18 @@ public final class CommandRegistrar {
 
     private final LangService lang;
     private final Logger log;
+    private FeatureService features;
     private final Map<String, Object> pending = new LinkedHashMap<>();
     private final Map<String, String> owners = new LinkedHashMap<>();
 
     public CommandRegistrar(LangService lang, Logger log) {
         this.lang = lang;
         this.log = log;
+    }
+
+    /** Ozellik servisi cekirdek kurulurken baglanir; komut kapisi buradan gecer. */
+    public void features(FeatureService features) {
+        this.features = features;
     }
 
     /**
@@ -69,7 +76,8 @@ public final class CommandRegistrar {
 
     private LiteralArgumentBuilder<CommandSourceStack> build(Command root, Object handler) {
         LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal(root.value());
-        node.requires(source -> hasPermission(source, permissionOf(root, root.value(), null)));
+        node.requires(source -> available(root)
+                && hasPermission(source, permissionOf(root, root.value(), null)));
 
         List<Method> subs = new ArrayList<>();
         Method rootMethod = null;
@@ -83,7 +91,8 @@ public final class CommandRegistrar {
         for (Method method : subs) {
             Command sub = method.getAnnotation(Command.class);
             LiteralArgumentBuilder<CommandSourceStack> child = Commands.literal(sub.value());
-            child.requires(source -> hasPermission(source, permissionOf(sub, root.value(), sub.value())));
+            child.requires(source -> available(root) && available(sub)
+                    && hasPermission(source, permissionOf(sub, root.value(), sub.value())));
             attach(child, method, handler, sub);
             node.then(child);
         }
@@ -137,6 +146,15 @@ public final class CommandRegistrar {
     private String permissionOf(Command meta, String root, String sub) {
         if (!meta.permission().isEmpty()) return meta.permission();
         return sub == null ? "core.command." + root : "core.command." + root + "." + sub;
+    }
+
+    /**
+     * Ozellik kapaliysa dugum agacta hic gorunmez. Yetki reddi ile ozellik kapaliligi
+     * arasindaki fark onemli: yetki reddi "yapamazsin", ozellik kapaliligi "boyle bir
+     * sey yok" demektir ve oyuncuya var olmayan bir mekanigi hic sizdirmaz.
+     */
+    private boolean available(Command meta) {
+        return features == null || meta.feature().isEmpty() || features.enabled(meta.feature());
     }
 
     private boolean hasPermission(CommandSourceStack source, String permission) {

@@ -36,7 +36,7 @@ final class LootListener implements Listener {
             var player = event.getPlayer();
             String key = chest.id() + ":" + player.getUniqueId();
             long now = System.currentTimeMillis();
-            Long until = cooldowns.get(key);
+            Long until = ctx.feature("loot.chest-cooldown") ? cooldowns.get(key) : null;
 
             if (until != null && until > now) {
                 ctx.lang().send(player, "loot.cooldown",

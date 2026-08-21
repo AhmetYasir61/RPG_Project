@@ -59,7 +59,7 @@ public final class PartyCommand {
     }
 
     /** Uye takibini (saydam kafa isaretleri) acar/kapatir. */
-    @Command("takip")
+    @Command(value = "takip", feature = "party.tracking")
     public void track(CommandSender sender) {
         Player player = (Player) sender;
         boolean enabled = !party.isTracking(player.getUniqueId());

@@ -172,3 +172,11 @@ profile:
   gui-readonly: "<dark_gray>This view is read-only. Inventory edits happen only in the web panel.</dark_gray>"
   web-inspect: "<gray>Opened in the web panel:</gray> <white><player></white>"
   web-link: "<yellow>Your profile: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+
+core:
+  features-header: "<gray>— <yellow>Features</yellow> —</gray>"
+  feature-on: "<green>◆</green> <white><key></white> <dark_gray>— <description></dark_gray>"
+  feature-off: "<red>◇</red> <dark_gray><key> — <description></dark_gray>"
+  feature-enabled: "<green>Feature enabled:</green> <white><key></white>"
+  feature-disabled: "<yellow>Feature disabled:</yellow> <white><key></white> <gray>(now absent from the game)</gray>"
+  feature-unknown: "<red>Unknown feature:</red> <white><key></white>"

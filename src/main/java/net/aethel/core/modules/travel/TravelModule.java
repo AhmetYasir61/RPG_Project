@@ -46,12 +46,19 @@ public final class TravelModule implements Module, TravelService {
         this.config = ctx.config().open("waypoints.yml", 1, null, ConfigMigration.NONE);
         ctx.services().register(TravelService.class, this, "travel");
         ctx.commands().register("travel", new TravelCommand(ctx, this));
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("travel.scroll", true, "Kesif parsomeni ile isinlanma");
+        features.declare("travel.hearthstone", true, "Ocak tasi (tek bag noktasi)");
+        features.declare("travel.discovery-required", true,
+                "Waypoint'e once yuruyerek varmis olma zorunlulugu");
+        features.declare("travel.combat-lock", true, "Savasta isinlanma kilidi");
     }
 
     @Override
     public void onEnable(CoreContext ctx) {
         loadWaypoints();
-        ctx.listener(new TravelListener(this, ctx, settings));
+        ctx.listener("travel.combat-lock", new TravelListener(this, ctx, settings));
         // Okuma ilerlemesi ve kesif taramasi ayni turda yapilir.
         ctx.scheduler().repeating("travel", 10L, 10L, this::tick);
     }
@@ -127,7 +134,7 @@ public final class TravelModule implements Module, TravelService {
         if (inCombat(player.getUniqueId())) return CastResult.IN_COMBAT;
         if (!hasScroll(player)) return CastResult.NO_SCROLL;
 
-        if (target.requiresDiscovery()) {
+        if (target.requiresDiscovery() && ctx.feature("travel.discovery-required")) {
             List<String> known = discovered(player.getUniqueId()).join();
             if (!known.contains(waypointId)) return CastResult.NOT_DISCOVERED;
         }
@@ -222,6 +229,7 @@ public final class TravelModule implements Module, TravelService {
     }
 
     boolean inCombat(UUID player) {
+        if (!ctx.feature("travel.combat-lock")) return false;
         Long until = combatLock.get(player);
         return until != null && until > System.currentTimeMillis();
     }

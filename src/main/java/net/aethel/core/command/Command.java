@@ -26,4 +26,11 @@ public @interface Command {
 
     /** true ise komutu yalnizca oyuncular kullanabilir (konsol reddedilir). */
     boolean playerOnly() default false;
+
+    /**
+     * Bu komutu bir ozellik anahtarina baglar. Ozellik kapaliyken komut agacta
+     * GORUNMEZ: tab-complete'te cikmaz ve "bilinmeyen komut" doner — yani oyuncu
+     * icin komut hic var olmamis gibi olur. Bos birakilirsa komut daima aciktir.
+     */
+    String feature() default "";
 }

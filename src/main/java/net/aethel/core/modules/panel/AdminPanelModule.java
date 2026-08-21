@@ -81,6 +81,7 @@ public final class AdminPanelModule implements Module, AdminPanelService {
         registerSection("economy", "Ekonomi", "GOLD_INGOT", "aethel.admin.economy");
         registerSection("players", "Oyuncular", "PLAYER_HEAD", "aethel.profile.inspect");
         registerSection("pack", "Kaynak Paketi", "BOOK", "aethel.admin.pack");
+        registerSection("features", "Ozellikler", "LEVER", "aethel.admin.features");
     }
 
     @Override

@@ -24,6 +24,7 @@ final class RegionListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
+        if (!ctx.feature("region.build-protection")) return;
         if (!regions.testFlag(event.getBlock().getLocation(), "build", event.getPlayer())) {
             event.setCancelled(true);
             ctx.lang().send(event.getPlayer(), "region.no-build");
@@ -32,6 +33,7 @@ final class RegionListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlace(BlockPlaceEvent event) {
+        if (!ctx.feature("region.build-protection")) return;
         if (!regions.testFlag(event.getBlock().getLocation(), "build", event.getPlayer())) {
             event.setCancelled(true);
             ctx.lang().send(event.getPlayer(), "region.no-build");
@@ -41,6 +43,7 @@ final class RegionListener implements Listener {
     /** PvP kontrolu SALDIRGANIN degil, KURBANIN konumuna gore yapilir. */
     @EventHandler(ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent event) {
+        if (!ctx.feature("region.pvp-protection")) return;
         if (!(event.getEntity() instanceof Player victim)) return;
         if (!(event.getDamager() instanceof Player attacker)) return;
         if (!regions.testFlag(victim.getLocation(), "pvp", attacker)) {

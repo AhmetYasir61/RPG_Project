@@ -40,13 +40,18 @@ public final class AuthModule implements Module, AuthService {
         ctx.config().open("modules/auth.yml", 1, settings, ConfigMigration.NONE);
         this.repository = new AuthRepository(ctx.database());
         ctx.services().register(AuthService.class, this, "auth");
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("auth.enabled", true, "Giris / kayit zorunlulugu");
+        features.declare("auth.freeze", true, "Dogrulanmamis oyuncunun hareketini engelle");
+        features.declare("auth.ip-session", true, "Ayni IP'den donen oyuncuyu otomatik dogrula");
     }
 
     @Override
     public void onEnable(CoreContext ctx) {
         ctx.schema().migrate("auth", AuthSchema.MIGRATIONS);
         this.listener = new AuthListener(ctx, this, settings);
-        ctx.listener(listener);
+        ctx.listener("auth.enabled", listener);
 
         // Suresi dolan jetonlar temizlenir; sizan bir baglanti sonsuza kadar gecerli olmaz.
         ctx.scheduler().repeating("auth", 20L * 30, 20L * 30, () -> {
@@ -73,7 +78,8 @@ public final class AuthModule implements Module, AuthService {
             }
             AuthRepository.Record record = found.get();
             String ip = player.getAddress() == null ? "" : player.getAddress().getHostString();
-            boolean sessionValid = record.lastLogin() != null
+            boolean sessionValid = ctx.feature("auth.ip-session")
+                    && record.lastLogin() != null
                     && ip.equals(record.lastIp())
                     && System.currentTimeMillis() - record.lastLogin() < settings.sessionMinutes * 60_000L;
             states.put(uuid, sessionValid ? State.AUTHENTICATED : State.AWAITING_LOGIN);

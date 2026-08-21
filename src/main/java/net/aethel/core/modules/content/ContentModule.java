@@ -52,6 +52,11 @@ public final class ContentModule implements Module, ItemService {
         this.delivery = new PackDelivery(ctx);
 
         ctx.services().register(ItemService.class, this, "content");
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("content.pack-generation", true, "Kaynak paketi uretimi");
+        features.declare("content.force-pack", true,
+                "Paketi zorunlu gonderme (kabul etmeyen kicklenir)");
     }
 
     @Override
@@ -59,7 +64,7 @@ public final class ContentModule implements Module, ItemService {
         reload();
         ctx.listener(delivery);
 
-        if (settings.generate && settings.generateOnStart) {
+        if (settings.generate && settings.generateOnStart && ctx.feature("content.pack-generation")) {
             regenerate();
         } else {
             publishExisting();
@@ -106,7 +111,7 @@ public final class ContentModule implements Module, ItemService {
                 && !server.start(settings.bind, settings.port, paths.generatedZip())) {
             return;
         }
-        delivery.configure(publicUrl(), hash, settings.force);
+        delivery.configure(publicUrl(), hash, settings.force && ctx.feature("content.force-pack"));
         ctx.plugin().getServer().getOnlinePlayers().forEach(delivery::send);
     }
 

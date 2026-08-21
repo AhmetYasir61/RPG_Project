@@ -39,6 +39,11 @@ public final class LootModule implements Module, LootService {
         this.ctx = ctx;
         this.config = ctx.config().open("loot.yml", 1, null, ConfigMigration.NONE);
         ctx.services().register(LootService.class, this, "loot");
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("loot.threat-scaling", true,
+                "Bolgedeki tehdit yogunluguna gore nadirlik artisi");
+        features.declare("loot.chest-cooldown", true, "Sandik acma sogumasi");
     }
 
     @Override
@@ -130,6 +135,8 @@ public final class LootModule implements Module, LootService {
 
     @Override
     public double rarityMultiplier(Location location) {
+        // Kapaliysa nadirlik sabittir: sandik her zaman ayni dagilimla acilir.
+        if (!ctx.feature("loot.threat-scaling")) return 1.0D;
         var difficulty = ctx.services().optional(RegionService.class)
                 .map(regions -> regions.difficultyAt(location))
                 .orElseGet(net.aethel.core.api.Difficulty::normal);

@@ -36,12 +36,17 @@ public final class ChatModule implements Module, Listener {
     public void onLoad(CoreContext ctx) {
         this.ctx = ctx;
         this.config = ctx.config().open("chat.yml", 1, null, ConfigMigration.NONE);
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("chat.format", true, "Ozel sohbet formati (prefix / suffix / renk)");
+        features.declare("chat.mentions", true, "Adi gecen oyuncuya ses bildirimi");
+        features.declare("chat.filter", true, "Kelime filtresi");
     }
 
     @Override
     public void onEnable(CoreContext ctx) {
         loadSettings();
-        ctx.listener(this);
+        ctx.listener("chat.format", this);
     }
 
     @Override
@@ -69,7 +74,7 @@ public final class ChatModule implements Module, Listener {
         Player player = event.getPlayer();
         String raw = PlainTextComponentSerializer.plainText().serialize(event.message());
 
-        if (isBlocked(raw)) {
+        if (ctx.feature("chat.filter") && isBlocked(raw)) {
             event.setCancelled(true);
             ctx.lang().send(player, "chat.blocked");
             return;
@@ -92,7 +97,7 @@ public final class ChatModule implements Module, Listener {
 
         Component component = mini.deserialize(withPlaceholders);
         event.renderer((source, sourceDisplayName, sourceMessage, viewer) -> component);
-        notifyMentions(player, raw);
+        if (ctx.feature("chat.mentions")) notifyMentions(player, raw);
     }
 
     /** Adi gecen oyunculara ses calinir; MMORPG'de dikkat cekmenin ucuz yolu. */

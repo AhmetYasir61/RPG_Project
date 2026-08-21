@@ -32,6 +32,12 @@ public final class RegionModule implements Module, RegionService {
         this.ctx = ctx;
         this.storage = new RegionStorage(ctx);
         ctx.services().register(RegionService.class, this, "region");
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("region.build-protection", true, "Insaat korumasi");
+        features.declare("region.pvp-protection", true, "PvP korumasi");
+        features.declare("region.difficulty-scaling", true,
+                "Zorluk carpanlari (can / hasar / odul)");
     }
 
     @Override
@@ -42,7 +48,7 @@ public final class RegionModule implements Module, RegionService {
             saveDifficulty(Difficulty.normal());
             saveDifficulty(new Difficulty("zor", "<red>Zor</red>", 78, "", false));
         }
-        ctx.listener(new RegionListener(this, ctx));
+        ctx.listener(new RegionListener(this, ctx));   // ic kontroller ozellik bazli
         ctx.logger().info("Bolge: " + regions.size() + ", zorluk: " + difficulties.size());
     }
 
@@ -83,6 +89,8 @@ public final class RegionModule implements Module, RegionService {
 
     @Override
     public Difficulty difficultyAt(Location location) {
+        // Kapaliysa her yer "normal": mob gucu ve odul carpanlari devreye girmez.
+        if (!ctx.feature("region.difficulty-scaling")) return Difficulty.normal();
         return highestAt(location)
                 .map(Region::difficultyId)
                 .map(difficulties::get)

@@ -44,15 +44,24 @@ public final class RpgModule implements Module, RpgService {
         this.tree = new SkillTree(ctx.logger());
         ctx.services().register(RpgService.class, this, "rpg");
         ctx.commands().register("rpg", new RpgCommand(ctx, this));
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("rpg.skill-tree", true, "Yetenek agaci");
+        features.declare("rpg.stat-points", true, "Stat puani dagitimi");
+        features.declare("rpg.mana", true, "Mana havuzu ve yenilenmesi");
+        features.declare("rpg.stat-combat", true, "Statlarin hasar ve can havuzuna etkisi");
     }
 
     @Override
     public void onEnable(CoreContext ctx) {
         tree.load(new File(ctx.config().dataFolder(), "skilltree.yml"));
-        ctx.listener(new RpgListener(this, ctx, settings));
+        ctx.listener("rpg.stat-combat", new RpgListener(this, ctx, settings));
 
         // Mana yenilenmesi saniyede bir; daha sik yenilemek gorsel fark yaratmaz.
-        ctx.scheduler().repeating("rpg", 20L, 20L, this::regenerateMana);
+        // Ozellik kapaliysa gorev hic kurulmaz, bos tick harcanmaz.
+        if (ctx.feature("rpg.mana")) {
+            ctx.scheduler().repeating("rpg", 20L, 20L, this::regenerateMana);
+        }
         registerPlaceholders();
     }
 
@@ -144,6 +153,7 @@ public final class RpgModule implements Module, RpgService {
 
     @Override
     public boolean spendPoint(Player player, StatType type) {
+        if (!ctx.feature("rpg.stat-points")) return false;
         return profile(player.getUniqueId()).map(profile -> {
             int points = profile.attributeInt(POINTS_KEY, 0);
             if (points < 1) return false;
@@ -156,6 +166,7 @@ public final class RpgModule implements Module, RpgService {
 
     @Override
     public boolean unlockNode(Player player, String nodeId) {
+        if (!ctx.feature("rpg.skill-tree")) return false;
         UUID uuid = player.getUniqueId();
         Set<String> unlocked = unlockedNodes(uuid);
         SkillTree.UnlockCheck check = tree.canUnlock(nodeId, level(uuid),
@@ -214,6 +225,8 @@ public final class RpgModule implements Module, RpgService {
 
     @Override
     public boolean consumeMana(UUID player, double amount) {
+        // Mana kapaliysa yetenekler bedelsiz calisir; ayri bir kod yolu gerekmez.
+        if (!ctx.feature("rpg.mana")) return true;
         double current = mana(player);
         if (current < amount) return false;
         mana.put(player, current - amount);

@@ -37,12 +37,20 @@ public final class HudModule implements Module {
     public void onLoad(CoreContext ctx) {
         this.ctx = ctx;
         this.config = ctx.config().open("hud.yml", 1, null, ConfigMigration.NONE);
+
+        var features = ctx.services().get(net.aethel.core.api.FeatureService.class);
+        features.declare("hud.enabled", true, "Ekran ustu arayuz");
+        features.declare("hud.bars", true, "Can ve mana cubuklari");
+        features.declare("hud.target-info", true, "Hedef bilgisi");
     }
 
     @Override
     public void onEnable(CoreContext ctx) {
         loadLayouts();
-        ctx.scheduler().repeating("hud", UPDATE_TICKS, UPDATE_TICKS, this::tick);
+        // Kapaliyken gorev hic kurulmaz: her 4 tick'te bos donmek yerine hic donmez.
+        if (ctx.feature("hud.enabled")) {
+            ctx.scheduler().repeating("hud", UPDATE_TICKS, UPDATE_TICKS, this::tick);
+        }
     }
 
     @Override
