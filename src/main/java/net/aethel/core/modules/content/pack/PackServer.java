@@ -41,7 +41,9 @@ public final class PackServer {
                 exchange.close();
             });
             server.start();
-            log.info("Kaynak paketi sunuluyor: http://" + bind + ":" + port + "/generated.zip");
+            // Bu satir DINLENEN adresi bildirir; oyuncuya gonderilen adres
+            // resource-pack.public-host'tan gelir ve ayri loglanir.
+            log.info("Kaynak paketi sunucusu dinlemede: " + bind + ":" + port);
             return true;
         } catch (IOException e) {
             log.log(Level.SEVERE, "Kaynak paketi sunucusu baslatilamadi (port " + port + ")", e);

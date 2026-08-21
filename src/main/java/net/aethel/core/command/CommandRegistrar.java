@@ -71,7 +71,9 @@ public final class CommandRegistrar {
                 log.log(Level.SEVERE, "Komut kaydedilemedi: " + name, e);
             }
         });
-        log.info("Kayitli kok komut: " + pending.size());
+        // Sayi degil isim logluyoruz: eksik bir komutu tespit etmek icin hangilerinin
+        // kaydedildigini gormek sarttir, sayi tek basina teshis ettirmez.
+        log.info("Kayitli kok komut (" + pending.size() + "): " + pending.keySet());
     }
 
     private LiteralArgumentBuilder<CommandSourceStack> build(Command root, Object handler) {

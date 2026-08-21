@@ -101,6 +101,55 @@ cekirdek "hazir" dedi. Sunucu acik, plugin yuklu, hicbir sey calismiyor.
 - `enableAll()` sonunda **sifir aktif modul** SEVERE olarak loglanir.
 - Basarisiz (`FAILED`) ve atlanan (`SKIPPED`) moduller ayri satirlarda ozetlenir.
 
+## 7. Web paneli: "Static resource directory 'META-INF/resources/webjars' does not exist"
+
+**Belirti:** `web` modulu onEnable'da patliyor, Javalin baslamis ama modul FAILED.
+
+**Kok sebep:** `config.staticFiles.enableWebjars()` cagriliyordu ama jar icinde
+`META-INF/resources/webjars` klasoru yok — Javalin bunu baslangicta dogruluyor ve
+bulamayinca hata firlatiyor.
+
+**Cozum:** Cagri kaldirildi. Panelin CSS'i `WebPages` icinde gomulu; harici bir
+varlik kutuphanesine zaten ihtiyac yok.
+
+## 8. Paket adresi olarak 0.0.0.0 gonderilmesi
+
+**Belirti:** `Kaynak paketi sunuluyor: http://0.0.0.0:8085/generated.zip`
+
+**Kok sebep (iki ayri sey karisiyordu):**
+- **bind** adresi `0.0.0.0` = "tum arayuzlerde dinle" — sunucunun kendi ayari.
+- **public-host** = oyuncunun baglanacagi adres.
+
+Log satiri bind adresini "sunuluyor" diye yaziyordu; ayrica `public-host` bos
+birakildiginda gercekten de 0.0.0.0 gonderilebiliyordu. 0.0.0.0'a istemci
+baglanamaz; **zorunlu pack** acikken bu, oyuncunun sunucuya hic girememesi demektir.
+
+**Cozum:**
+- Dinlenen adres ve gonderilen adres ayri ayri loglanir.
+- `public-host` bos ya da `0.0.0.0` ise 127.0.0.1'e dusulur ve **uyari** verilir:
+  bu adres yalnizca ayni makinedeki oyuncular icin calisir.
+- Uzaktan baglanti icin `resource-pack.public-host` degerine sunucunun genel IP'si
+  ya da alan adi yazilmalidir.
+
+## 9. Ornek icerik dosyalarinin diske hic yazilmamasi
+
+**Belirti:** `Diyalog dugumu: 0` ve `Font parcasi: 5` (dialog.yml'deki 8 parca yok).
+Dosyalar jar'in icinde vardi ama `plugins/AethelCore/` altina cikmamisti.
+
+**Kok sebep:** `saveDefaultResources()` dosyalari **elle listeliyordu**. Yeni bir
+ornek dosya eklenip listeye yazilmasi unutuldugunda dosya diske hic yazilmiyor,
+ilgili modul de "0 tanim yuklendi" deyip sessizce geciyordu.
+
+**Cozum:** Liste kaldirildi. Jar taraniyor ve `lang/` ile `contents/` altindaki tum
+`.yml`/`.json` dosyalari cikariliyor. Mevcut dosyalar **asla ezilmiyor**.
+Cikarilan dosya sayisi loglaniyor.
+
+## 10. Teshis: komut sayisi yerine komut isimleri
+
+`Kayitli kok komut: 8` satiri, hangi komutun eksik oldugunu soylemiyordu.
+Artik isimler de yaziliyor:
+`Kayitli kok komut (9): [core, profil, adminmenu, parti, waypoint, rpg, meslek, gorev, dungeon]`
+
 ## Beklenen acilis ciktisi (duzeltmelerden sonra)
 
 ```

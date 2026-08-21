@@ -67,7 +67,9 @@ public final class WebModule implements Module {
         server = Javalin.create(config -> {
             config.showJavalinBanner = false;
             config.http.maxRequestSize = settings.maxUploadMegabytes * 1024L * 1024L;
-            config.staticFiles.enableWebjars();
+            // enableWebjars() KULLANILMIYOR: jar icinde META-INF/resources/webjars
+            // klasoru olmadigi icin Javalin baslarken patliyor. Panelin CSS'i zaten
+            // WebPages icinde gomulu, harici varlik gerekmiyor.
         });
 
         WebRoutes routes = new WebRoutes(ctx, settings, sessions, audit, evidence);

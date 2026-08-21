@@ -127,21 +127,47 @@ public final class CorePlugin extends JavaPlugin {
                 event -> commands.flush(event.registrar()));
     }
 
-    /** Jar icindeki varsayilan config, dil ve icerik dosyalarini veri klasorune acar. */
+    /**
+     * Jar icindeki varsayilan dosyalari veri klasorune acar. Dosyalar ELLE
+     * LISTELENMEZ: jar taranir ve config/lang/contents altindaki her sey cikarilir.
+     *
+     * Elle liste tutmak sessiz bir hata kaynagiydi — yeni bir ornek icerik dosyasi
+     * eklenip listeye yazilmayi unutuldugunda dosya diske hic yazilmiyor, modul de
+     * "0 tanim yuklendi" deyip gectigi icin sorun fark edilmiyordu.
+     */
     private void saveDefaultResources() {
         saveResource("config.yml", false);
         saveResource("modules.yml", false);
         saveResource("features.yml", false);
-        saveResource("lang/tr.yml", false);
-        saveResource("lang/en.yml", false);
-        // Ornek icerik: yalnizca ilk acilista yazilir, sonra kullanicinin malidir.
-        saveResource("contents/aethel/items/silahlar.yml", false);
-        saveResource("contents/aethel/fonts/hud.yml", false);
-        saveResource("contents/aethel/menus/ana_menu.yml", false);
-        saveResource("contents/aethel/skills/ornek.yml", false);
-        saveResource("contents/aethel/mobs/ornek.yml", false);
-        saveResource("contents/aethel/fonts/dialog.yml", false);
-        saveResource("contents/aethel/dialogs/giris.yml", false);
+        extractBundled("lang/");
+        extractBundled("contents/");
+    }
+
+    /** Jar icindeki verilen on ekli tum dosyalari, yoksa, veri klasorune kopyalar. */
+    private void extractBundled(String prefix) {
+        java.io.File source = getFile();
+        int extracted = 0;
+        try (java.util.jar.JarFile jar = new java.util.jar.JarFile(source)) {
+            var entries = jar.entries();
+            while (entries.hasMoreElements()) {
+                java.util.jar.JarEntry entry = entries.nextElement();
+                if (entry.isDirectory() || !entry.getName().startsWith(prefix)) continue;
+                if (!entry.getName().endsWith(".yml") && !entry.getName().endsWith(".json")) continue;
+
+                java.io.File target = new java.io.File(getDataFolder(), entry.getName());
+                if (target.exists()) continue;   // kullanicinin dosyasi asla ezilmez
+                target.getParentFile().mkdirs();
+                try (var input = jar.getInputStream(entry)) {
+                    java.nio.file.Files.copy(input, target.toPath());
+                    extracted++;
+                }
+            }
+        } catch (java.io.IOException e) {
+            getLogger().log(java.util.logging.Level.WARNING,
+                    "Varsayilan dosyalar cikarilamadi: " + prefix, e);
+            return;
+        }
+        if (extracted > 0) getLogger().info("Varsayilan dosya yazildi (" + prefix + "): " + extracted);
     }
 
     public CoreContext context() {

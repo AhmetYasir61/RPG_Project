@@ -115,14 +115,28 @@ public final class ContentModule implements Module, ItemService {
         ctx.plugin().getServer().getOnlinePlayers().forEach(delivery::send);
     }
 
-    /** public-host bos birakilirsa sunucunun kendi adresi kullanilir. */
+    /**
+     * Oyuncuya gonderilecek adres. bind adresi (0.0.0.0) BURADA KULLANILAMAZ:
+     * 0.0.0.0 "tum arayuzlerde dinle" demektir, istemcinin baglanabilecegi bir
+     * adres degildir. Oyuncu boyle bir paketi indiremez ve zorunlu pack yuzunden
+     * sunucuya hic giremez.
+     */
     private String publicUrl() {
         String host = settings.publicHost;
+
         if (host == null || host.isBlank()) {
             host = ctx.plugin().getServer().getIp();
-            if (host == null || host.isBlank()) host = "127.0.0.1";
         }
-        return "http://" + host + ":" + settings.port + "/generated.zip";
+        if (host == null || host.isBlank() || host.equals("0.0.0.0")) {
+            host = "127.0.0.1";
+            ctx.logger().warning("resource-pack.public-host bos. Paket adresi "
+                    + "127.0.0.1 olarak gonderiliyor; bu YALNIZCA ayni makinedeki "
+                    + "oyuncular icin calisir. Uzaktan baglanan oyuncular icin "
+                    + "sunucunun genel IP'sini ya da alan adini yaz.");
+        }
+        String url = "http://" + host + ":" + settings.port + "/generated.zip";
+        ctx.logger().info("Oyunculara gonderilen paket adresi: " + url);
+        return url;
     }
 
     @Override
