@@ -38,6 +38,19 @@ public final class ConfigService {
         return config;
     }
 
+    /**
+     * Zaten acik bir dosyaya ikinci bir holder baglar. Ayni dosyayi open() ile
+     * tekrar acmak onceki holder baglantisini duşurur; moduller cekirdek config'inin
+     * bir bolumunu okumak istediginde bu metot kullanilir.
+     */
+    public void bind(String name, Object holder) {
+        ConfigFile config = get(name);
+        ConfigMapper.writeDefaults(holder, config.yaml());
+        config.save();
+        ConfigMapper.apply(holder, config.yaml());
+        holders.put(name + "#" + holder.getClass().getSimpleName(), holder);
+    }
+
     public ConfigFile get(String name) {
         ConfigFile file = files.get(name);
         if (file == null) throw new IllegalStateException("Config acilmamis: " + name);
@@ -46,10 +59,11 @@ public final class ConfigService {
 
     /** Diskten tazeler ve bagli holder alanlarini yeniden doldurur. */
     public void reloadAll() {
-        files.forEach((name, config) -> {
-            config.reload();
-            Object holder = holders.get(name);
-            if (holder != null) ConfigMapper.apply(holder, config.yaml());
+        files.forEach((name, config) -> config.reload());
+        holders.forEach((key, holder) -> {
+            String fileName = key.contains("#") ? key.substring(0, key.indexOf('#')) : key;
+            ConfigFile config = files.get(fileName);
+            if (config != null) ConfigMapper.apply(holder, config.yaml());
         });
     }
 

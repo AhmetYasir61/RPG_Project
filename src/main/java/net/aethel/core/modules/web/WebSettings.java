@@ -3,29 +3,34 @@ package net.aethel.core.modules.web;
 import net.aethel.core.config.ConfigValue;
 
 /**
- * Web paneli ayarlari. Panel yalnizca admin.mode=WEB iken calisir; GUI modunda
- * port hic dinlenmez.
+ * Web paneli ayarlari. Hepsi config.yml -> admin.web.* altindadir: portun iki
+ * ayri dosyada tanimlanmasi, birinin degistirilip digerinin unutulmasina ve
+ * panelin "calisiyor ama baglanti yanlis porta gidiyor" durumuna yol aciyordu.
  */
 public final class WebSettings {
 
-    @ConfigValue("web.bind")
+    @ConfigValue("admin.web.bind")
     public String bind = "0.0.0.0";
 
-    @ConfigValue("web.port")
+    @ConfigValue("admin.web.port")
     public int port = 8080;
 
-    @ConfigValue("web.session-minutes")
+    /** Oyuncuya gonderilen adres. Ters vekil arkasindaysa elle yazilir. */
+    @ConfigValue("admin.web.public-url")
+    public String publicUrl = "";
+
+    @ConfigValue("admin.web.session-timeout-minutes")
     public int sessionMinutes = 30;
 
     /** Yuklenebilecek en buyuk varlik dosyasi (MB). */
-    @ConfigValue("web.max-upload-mb")
+    @ConfigValue("admin.web.max-upload-mb")
     public int maxUploadMegabytes = 16;
 
     /** Envanter duzenleme ve el koyma yetkisi. */
-    @ConfigValue("web.allow-inventory-edit")
+    @ConfigValue("admin.web.allow-inventory-edit")
     public boolean allowInventoryEdit = true;
 
     /** Her yetkili islemi denetim kaydina yazilir; kapatilmasi onerilmez. */
-    @ConfigValue("web.audit-log")
+    @ConfigValue("admin.web.audit-log")
     public boolean auditLog = true;
 }

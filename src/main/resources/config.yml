@@ -33,12 +33,18 @@ admin:
   mode: GUI                 # GUI | WEB
   permission: aethel.admin.panel
   web:
+    # DINLENEN adres ve port. 0.0.0.0 = tum arayuzler.
     bind: "0.0.0.0"
     port: 8080
+    # OYUNCUYA GONDERILEN adres. Port, yukaridaki port ile AYNI olmali
+    # (ters vekil arkasindaysan 80/443 kullanabilirsin).
+    # Cekirdek acilista uyusmazligi kontrol eder ve uyarir.
     public-url: "http://127.0.0.1:8080"
     session-timeout-minutes: 30
+    max-upload-mb: 16
     # WEB modunda yetkili envantere mudahale edebilir; her islem denetim kaydina yazilir.
     allow-inventory-edit: true
+    audit-log: true
 
 # Giris/kayit. GUI modunda anvil ile, WEB modunda tarayici yonlendirmesi ile.
 auth:

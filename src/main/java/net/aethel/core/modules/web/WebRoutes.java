@@ -111,7 +111,7 @@ final class WebRoutes {
             context.redirect("/panel");
             return;
         }
-        context.html(WebPages.credentials(session.get(), registration, null));
+        context.html(WebPages.credentials(session.get(), registration, null, secretLabel()));
     }
 
     /**
@@ -129,11 +129,13 @@ final class WebRoutes {
         String confirm = context.formParam("pin2");
 
         if (secret == null || secret.isBlank()) {
-            context.html(WebPages.credentials(session, registration, "PIN bos olamaz."));
+            context.html(WebPages.credentials(session, registration,
+                    secretLabel() + " bos olamaz.", secretLabel()));
             return;
         }
         if (registration && !secret.equals(confirm)) {
-            context.html(WebPages.credentials(session, registration, "PIN'ler eslesmedi."));
+            context.html(WebPages.credentials(session, registration,
+                    secretLabel() + " degerleri eslesmedi.", secretLabel()));
             return;
         }
         Optional<AuthService> auth = authService();
@@ -147,14 +149,20 @@ final class WebRoutes {
 
         if (!ok) {
             context.html(WebPages.credentials(session, registration,
-                    registration ? "Kayit basarisiz. PIN kurallara uymuyor olabilir."
-                            : "PIN hatali."));
+                    registration ? "Kayit basarisiz. " + secretLabel() + " kurallara uymuyor olabilir."
+                            : secretLabel() + " hatali.", secretLabel()));
             return;
         }
         // Oyun ici durum da acilir: oyuncu tarayicidan cikmadan oynamaya baslayabilir.
         authModule().ifPresent(module -> module.markAuthenticated(session.player()));
         session.authenticate(isAdmin(session.player()));
         context.redirect("/panel");
+    }
+
+    /** auth.mode PASSWORD ise "Parola", degilse "PIN". */
+    private String secretLabel() {
+        String mode = ctx.config().get("config.yml").yaml().getString("auth.mode", "PIN");
+        return "PASSWORD".equalsIgnoreCase(mode) ? "Parola" : "PIN";
     }
 
     private Optional<AuthService> authService() {

@@ -38,8 +38,7 @@ final class WebPages {
               .form label { font-size:12px; color:#8a8fa8; text-transform:uppercase;
                             letter-spacing:.06em; }
               .form input { background:#12131a; border:1px solid #2a2d3d; border-radius:6px;
-                            color:#e8e8ef; padding:10px 12px; font-size:16px;
-                            letter-spacing:.35em; }
+                            color:#e8e8ef; padding:10px 12px; font-size:16px; }
               .form input:focus { outline:none; border-color:#3b4fd8; }
               .form button { margin-top:10px; padding:10px 12px; font-size:14px; }
             </style>""";
@@ -71,14 +70,21 @@ final class WebPages {
      * oyuncuyu hesabindan tamamen kilitler ve karma geri donusturulemez.
      */
     static String credentials(WebSession session, boolean registration, String error) {
+        return credentials(session, registration, error, "PIN");
+    }
+
+    /** label, auth.mode degerine gore "PIN" ya da "Parola" olur. */
+    static String credentials(WebSession session, boolean registration, String error, String label) {
         String title = registration ? "Kayit Ol" : "Giris Yap";
         String action = registration ? "/register" : "/login";
         String errorBlock = error == null ? ""
                 : "<p class=\"warn\">" + escape(error) + "</p>";
-        String confirmField = !registration ? "" : """
-                <label for="pin2">PIN (tekrar)</label>
-                <input id="pin2" name="pin2" type="password" inputmode="numeric"
-                       autocomplete="new-password" required>""";
+        boolean numeric = "PIN".equalsIgnoreCase(label);
+        String mode = numeric ? "numeric" : "text";
+        String confirmField = !registration ? "" : ("""
+                <label for="pin2">%s (tekrar)</label>
+                <input id="pin2" name="pin2" type="password" inputmode="%s"
+                       autocomplete="new-password" required>""").formatted(escape(label), mode);
 
         return page("Aethel · " + title, """
                 <div class="wrap narrow">
@@ -87,8 +93,8 @@ final class WebPages {
                     <p class="muted">Hesap: <strong>%s</strong></p>
                     %s
                     <form method="post" action="%s" class="form">
-                      <label for="pin">PIN</label>
-                      <input id="pin" name="pin" type="password" inputmode="numeric"
+                      <label for="pin">%s</label>
+                      <input id="pin" name="pin" type="password" inputmode="%s"
                              autocomplete="%s" autofocus required>
                       %s
                       <button type="submit">%s</button>
@@ -96,7 +102,8 @@ final class WebPages {
                     <p class="muted small">Bu baglanti %d saniye sonra gecersiz olur.</p>
                   </div>
                 </div>""".formatted(escape(title), escape(session.playerName()), errorBlock,
-                action, registration ? "new-password" : "current-password",
+                action, escape(label), mode,
+                registration ? "new-password" : "current-password",
                 confirmField, escape(title), session.remainingSeconds()));
     }
 

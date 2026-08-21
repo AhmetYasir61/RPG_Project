@@ -260,6 +260,42 @@ olusmuyordu — bu yuzden "kayit sayfasi gelmedi".
 sayilmiyor. `AuthModule.consumeWebToken` oyuncuyu dogrulamiyor; dogrulama
 `markAuthenticated` ile PIN kontrolunden SONRA yapiliyor.
 
+## 17. Web paneli portu iki yerde tanimliydi (yalnizca biri kullaniliyordu)
+
+**Belirti:** `config.yml` icinde `admin.web.port: 8091` yazili ama panel 8080'i
+dinliyor. Hicbir hata yok; panel calisiyor, sadece yanlis portta.
+
+**Kok sebep:** Port iki ayri dosyada tanimliydi:
+- `modules/web.yml` -> `web.port` (GERCEKTEN kullanilan)
+- `config.yml` -> `admin.web.port` (belgelenen ama okunmayan)
+
+Kullanici dogal olarak `config.yml`'yi duzenliyor, hicbir sey degismiyor ve
+sebebi anlasilmiyor.
+
+**Cozum:** Tek kaynak. Tum web ayarlari `config.yml -> admin.web.*` altindan
+okunuyor; `modules/web.yml` kullanilmiyor. `ConfigService.bind()` eklendi:
+bir modul, cekirdek config'inin bir bolumunu kendi holder'ina baglayabiliyor
+(ayni dosyayi `open()` ile tekrar acmak onceki baglantiyi dusururdu).
+
+## 18. Acilista yapilandirma dogrulamasi
+
+Yukaridaki sinif hatalar sessizce calisir gorunup baglantiyi kirdigi icin
+`WebConfigCheck` eklendi. Acilista kontrol edilenler:
+
+| Kontrol | Sonuc |
+|---|---|
+| `public-url` portu ile dinlenen port farkli | **SEVERE**: "PORT UYUMSUZLUGU… baglanti calismayacak" |
+| `public-url` 80/443 (ters vekil) | sessiz gecer, normal kurulum |
+| `public-url` 127.0.0.1 / localhost | uyari: uzaktan acilamaz |
+| `public-url` 0.0.0.0 | **SEVERE**: dinleme adresi tarayiciya yazilamaz |
+| `resource-pack.public-host` ile panel host'u farkli | uyari: muhtemelen yazim hatasi (.118 / .119) |
+
+## 19. auth.mode PASSWORD iken form "PIN" diyordu
+
+Web formundaki etiketler sabit "PIN" yaziyordu. Artik `auth.mode` degerine gore
+"PIN" ya da "Parola" gosteriliyor; PIN modunda sayisal klavye aciliyor, parola
+modunda normal klavye.
+
 ## Beklenen acilis ciktisi (duzeltmelerden sonra)
 
 ```

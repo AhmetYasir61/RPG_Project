@@ -28,7 +28,8 @@ public final class WebModule implements Module {
     @Override
     public void onLoad(CoreContext ctx) {
         this.ctx = ctx;
-        ctx.config().open("modules/web.yml", 1, settings, ConfigMigration.NONE);
+        // Ayarlar cekirdek config.yml icindeki admin.web.* bolumunden gelir.
+        ctx.config().bind("config.yml", settings);
     }
 
     @Override
@@ -79,12 +80,17 @@ public final class WebModule implements Module {
 
         // bind adresi (0.0.0.0) "tum arayuzlerde dinle" demektir, tarayiciya
         // yazilabilecek bir adres degildir; erisim adresini ayri gosteriyoruz.
-        String publicUrl = ctx.config().get("config.yml").yaml()
-                .getString("admin.web.public-url", "");
+        var yaml = ctx.config().get("config.yml").yaml();
+        String publicUrl = settings.publicUrl;
+
         ctx.logger().info("Web paneli dinlemede: " + settings.bind + ":" + settings.port);
         ctx.logger().info("Panel adresi: " + (publicUrl.isBlank()
                 ? "http://127.0.0.1:" + settings.port + " (admin.web.public-url bos)"
                 : publicUrl));
+
+        WebConfigCheck.validate(publicUrl, settings.bind, settings.port, ctx.logger());
+        WebConfigCheck.compareHosts(yaml.getString("resource-pack.public-host", ""),
+                publicUrl, ctx.logger());
     }
 
     /**
