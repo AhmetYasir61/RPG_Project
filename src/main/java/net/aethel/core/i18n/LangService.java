@@ -27,13 +27,20 @@ public final class LangService {
     private final MiniMessage mini = MiniMessage.miniMessage();
     private final Map<String, YamlConfiguration> languages = new HashMap<>();
     private String defaultLanguage = "tr";
+    private boolean followClient = true;
 
     public LangService(File dataFolder, Logger log) {
         this.langFolder = new File(dataFolder, "lang");
         this.log = log;
     }
 
-    public void load(String defaultLanguage, String... available) {
+    /**
+     * followClient true ise oyuncunun istemci dili tercih edilir; false ise herkese
+     * varsayilan dil gonderilir. Tek dilli bir sunucuda istemci dilini takip etmek,
+     * yabanci istemcili oyunculara yarim cevrilmis bir arayuz gostermek demektir.
+     */
+    public void load(String defaultLanguage, boolean followClient, String... available) {
+        this.followClient = followClient;
         this.defaultLanguage = defaultLanguage;
         languages.clear();
         for (String code : available) {
@@ -47,6 +54,11 @@ public final class LangService {
             languages.put(code, yaml);
         }
         log.info("Yuklenen diller: " + languages.keySet());
+    }
+
+    /** Son kullanilan ayarlarla dilleri diskten tazeler (/core reload). */
+    public void reload() {
+        load(defaultLanguage, followClient, languages.keySet().toArray(String[]::new));
     }
 
     /**
@@ -74,6 +86,7 @@ public final class LangService {
 
     /** Oyuncunun istemci dilini kullanir; desteklenmiyorsa varsayilana duser. */
     public String languageOf(CommandSender sender) {
+        if (!followClient) return defaultLanguage;
         if (sender instanceof Player player) {
             String code = player.locale().getLanguage().toLowerCase(Locale.ROOT);
             if (languages.containsKey(code)) return code;

@@ -67,19 +67,48 @@ final class WebRoutes {
                 context.json(auditJson().toString())));
     }
 
-    /** Tek kullanimlik jetonu tuketir ve yerine sureli oturum cerezi birakir. */
+    /**
+     * Tek kullanimlik jetonu tuketir, OTURUM OLUSTURUR ve cerez birakir.
+     *
+     * Oturumu burada olusturmak sart: jetonu dogrulayip cerezi birakmak tek basina
+     * yetmez, cunku /panel cerezi oturum tablosunda arar. Tablo doldurulmazsa
+     * kullanici dogru baglantiyi kullansa bile "once oyun icinden giris yap" gorur.
+     */
     private void authenticate(Context context) {
         String token = context.pathParam("token");
-        boolean valid = ctx.services().optional(AuthService.class)
-                .map(auth -> auth instanceof net.aethel.core.modules.auth.AuthModule module
-                        && module.consumeWebToken(token))
-                .orElse(false);
-        if (!valid) {
-            context.status(403).html(WebPages.error("Baglanti gecersiz ya da suresi dolmus."));
+
+        Optional<UUID> player = ctx.services().optional(AuthService.class)
+                .filter(net.aethel.core.modules.auth.AuthModule.class::isInstance)
+                .map(net.aethel.core.modules.auth.AuthModule.class::cast)
+                .flatMap(module -> module.consumeWebToken(token));
+
+        if (player.isEmpty()) {
+            context.status(403).html(WebPages.error(
+                    "Baglanti gecersiz ya da suresi dolmus. "
+                            + "Oyun icinden /adminmenu yazarak yeni bir baglanti al."));
             return;
         }
+        sessions.put(token, buildSession(player.get()));
         context.cookie(SESSION_COOKIE, token, settings.sessionMinutes * 60);
         context.redirect("/panel");
+    }
+
+    /**
+     * Oturum kaydini kurar. Yetkili bayragi oyuncunun izninden okunur; oyuncu
+     * cevrimdisiysa (baglantiyi alip cikmissa) yetkisiz oturum acilir — panelin
+     * yetkili uclari o oturuma kapalidir.
+     */
+    private WebSession buildSession(UUID playerId) {
+        var online = ctx.plugin().getServer().getPlayer(playerId);
+        String name = online != null ? online.getName()
+                : ctx.services().optional(ProfileService.class)
+                        .flatMap(profiles -> profiles.cached(playerId))
+                        .map(net.aethel.core.api.PlayerProfile::name)
+                        .orElse(playerId.toString().substring(0, 8));
+
+        boolean admin = online != null && online.hasPermission("aethel.admin.panel");
+        long expiresAt = System.currentTimeMillis() + settings.sessionMinutes * 60_000L;
+        return new WebSession(playerId, name, expiresAt, admin);
     }
 
     private void panel(Context context) {

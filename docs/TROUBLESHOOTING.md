@@ -195,6 +195,47 @@ kapaliydi — davranis dogruydu, **rapor eksikti**.
 adresini gosteriyordu. Artik dinlenen adres ve erisim adresi ayri yaziliyor;
 `admin.web.public-url` bossa bu acikca belirtiliyor.
 
+## 14. Web paneli: dogru baglantiyla girilse bile "Once oyun icinden giris yapmalisin"
+
+**Belirti:** Oyun ici baglantiya tiklaniyor, tarayici `/panel` adresine yonleniyor
+ama 401 hata sayfasi cikiyor.
+
+**Kok sebep — CALISIYORMUS GIBI DURAN OLU KOD.** `WebModule` icinde
+`consumeToken(token, player, name, admin)` diye bir metot vardi ve tam olarak
+oturumu kurmasi gerekeni yapiyordu. **Ama hicbir yerden cagrilmiyordu.**
+
+Gercek akis suydu:
+```
+/auth/{token}  ->  jeton dogrulandi ve TUKETILDI (oyun ici dogrulama calisti)
+               ->  cerez birakildi
+               ->  /panel'e yonlendirildi
+/panel         ->  cerezi oturum tablosunda aradi
+               ->  tablo BOS (kimse doldurmadi)  ->  401
+```
+
+Jeton tuketildigi icin ikinci deneme de calismiyordu — kullanici her seferinde
+yeni baglanti almak zorunda kaliyor ve yine ayni hatayi aliyordu.
+
+**Cozum:**
+- `AuthModule.consumeWebToken()` artik `boolean` degil `Optional<UUID>` donuyor:
+  "gecerli mi" bilgisi tek basina yetmez, **kimin girdigi** de gerekir.
+- Oturum, jetonun tuketildigi yerde (`WebRoutes.authenticate`) kuruluyor.
+- Yetkili bayragi oyuncunun izninden okunuyor; oyuncu cevrimdisiysa yetkisiz
+  oturum aciliyor ve panelin yetkili uclari o oturuma kapali kaliyor.
+- Olu `consumeToken` metodu silindi.
+
+## 15. Mesajlarin Ingilizce gelmesi
+
+**Belirti:** Turkce sunucuda oyuncuya "Register here:" yaziyor.
+
+**Sebep:** `LangService` oyuncunun **istemci dilini** tercih ediyordu; Ingilizce
+istemcili oyuncu Ingilizce metin aliyordu. Davranis dogruydu ama tek dilli bir
+sunucu icin istenmeyen sonuc uretiyor: ceviri eksikse arayuz yarim gorunur.
+
+**Cozum:** `config.yml` icine `language.follow-client` eklendi (varsayilan **false**).
+- `false`: herkese `language.default` gonderilir.
+- `true`: istemci dili desteklenen diller arasindaysa o kullanilir.
+
 ## Beklenen acilis ciktisi (duzeltmelerden sonra)
 
 ```

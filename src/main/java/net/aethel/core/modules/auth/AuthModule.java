@@ -165,12 +165,18 @@ public final class AuthModule implements Module, AuthService {
         return base + "/auth/" + token;
     }
 
-    /** Web paneli jetonu kullandiginda cagrilir; gecerliyse oyuncuyu dogrular. */
-    public boolean consumeWebToken(String token) {
+    /**
+     * Web paneli jetonu kullandiginda cagrilir. Jeton tek kullanimliktir: burada
+     * dusurulur. Donus degeri oyuncunun kimligidir — web tarafinin oturum acabilmesi
+     * icin "gecerli mi" bilgisi tek basina yetmez, KIMIN girdigi de gerekir.
+     */
+    public java.util.Optional<UUID> consumeWebToken(String token) {
         WebToken entry = webTokens.remove(token);
-        if (entry == null || entry.expiresAt() < System.currentTimeMillis()) return false;
+        if (entry == null || entry.expiresAt() < System.currentTimeMillis()) {
+            return java.util.Optional.empty();
+        }
         states.put(entry.player(), State.AUTHENTICATED);
-        return true;
+        return java.util.Optional.of(entry.player());
     }
 
     int attemptsOf(UUID uuid) {

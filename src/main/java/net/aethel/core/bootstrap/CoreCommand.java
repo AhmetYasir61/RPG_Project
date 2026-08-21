@@ -83,7 +83,7 @@ public final class CoreCommand {
                 .filter(net.aethel.core.feature.FeatureRegistry.class::isInstance)
                 .map(net.aethel.core.feature.FeatureRegistry.class::cast)
                 .ifPresent(net.aethel.core.feature.FeatureRegistry::reload);
-        ctx.lang().load("tr", "tr", "en");
+        ctx.lang().reload();
         modules.reloadAll();
         ctx.lang().send(sender, "core.reloaded");
     }

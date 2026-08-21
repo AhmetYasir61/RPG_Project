@@ -87,10 +87,9 @@ public final class WebModule implements Module {
                 : publicUrl));
     }
 
-    /** AuthModule'un urettigi jetonu oturuma cevirir. */
-    public boolean consumeToken(String token, UUID player, String playerName, boolean admin) {
-        sessions.put(token, new WebSession(player, playerName,
-                System.currentTimeMillis() + settings.sessionMinutes * 60_000L, admin));
-        return true;
-    }
+    /**
+     * Oturum tablosu WebRoutes tarafindan doldurulur (jeton tuketimi orada yapilir).
+     * Burada bir "consumeToken" sarmalayicisi vardi ama hicbir yerden cagrilmiyordu;
+     * calisiyormus gibi duran olu kod, oturumun hic olusmamasina yol acmisti.
+     */
 }

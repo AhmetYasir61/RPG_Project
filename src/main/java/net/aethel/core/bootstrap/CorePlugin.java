@@ -52,7 +52,7 @@ public final class CorePlugin extends JavaPlugin {
         EventBus events = new EventBus(getLogger(), scheduler.ioExecutor());
 
         LangService lang = new LangService(getDataFolder(), getLogger());
-        lang.load(settings.defaultLanguage, settings.languageCodes());
+        lang.load(settings.defaultLanguage, settings.followClient, settings.languageCodes());
 
         DatabaseSettings dbSettings = new DatabaseSettings();
         net.aethel.core.config.ConfigMapper.writeDefaults(dbSettings, main.yaml());

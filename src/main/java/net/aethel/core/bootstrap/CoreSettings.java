@@ -11,6 +11,10 @@ public final class CoreSettings {
     @ConfigValue(value = "language.default", comment = "Varsayilan dil kodu")
     public String defaultLanguage = "tr";
 
+    /** false: herkese varsayilan dil gonderilir, istemci dili yoksayilir. */
+    @ConfigValue("language.follow-client")
+    public boolean followClient = true;
+
     @ConfigValue("language.available")
     public java.util.List<?> availableLanguages = java.util.List.of("tr", "en");
 

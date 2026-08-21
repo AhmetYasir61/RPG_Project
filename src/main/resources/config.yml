@@ -4,6 +4,10 @@ schema-version: 1
 
 language:
   default: tr
+  # false: herkese varsayilan dil gonderilir, istemci dili yoksayilir.
+  # Tek dilli bir sunucuda true birakmak, Ingilizce istemcili oyunculara
+  # yarim cevrilmis bir arayuz gosterir.
+  follow-client: false
   available:
     - tr
     - en
