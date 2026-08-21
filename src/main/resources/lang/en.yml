@@ -29,8 +29,8 @@ auth:
   gui-title-login: "<dark_gray>Enter your PIN"
   gui-title-register: "<dark_gray>Choose a PIN"
   gui-title-confirm: "<dark_gray>Repeat your PIN"
-  web-login: "<yellow>Log in here: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
-  web-register: "<yellow>Register here: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  web-login: "<yellow>Log in here: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Register here: <aqua><underlined><url></underlined></aqua></yellow>"
   mismatch: "<red>PINs did not match, try again.</red>"
   login-success: "<green>Logged in. Have fun.</green>"
   login-failed: "<red>Wrong PIN.</red>"
@@ -70,7 +70,7 @@ panel:
   title: "<dark_gray>Admin Panel"
   command-description: "Opens the admin panel"
   current-mode: "<gray>Active panel mode:</gray> <white><mode></white>"
-  web-link: "<yellow>Open panel: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  web-link: "<yellow>Open panel: <aqua><underlined><url></underlined></aqua></yellow>"
   web-unavailable: "<red>The web panel is currently unavailable.</red>"
   selected: "<gray>Selected:</gray> <white><value></white>"
   saved: "<green>Saved.</green>"
@@ -171,7 +171,7 @@ profile:
   not-found: "<red>Player not found:</red> <white><player></white>"
   gui-readonly: "<dark_gray>This view is read-only. Inventory edits happen only in the web panel.</dark_gray>"
   web-inspect: "<gray>Opened in the web panel:</gray> <white><player></white>"
-  web-link: "<yellow>Your profile: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  web-link: "<yellow>Your profile: <aqua><underlined><url></underlined></aqua></yellow>"
 
 core:
   features-header: "<gray>— <yellow>Features</yellow> —</gray>"

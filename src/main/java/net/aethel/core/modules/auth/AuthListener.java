@@ -64,7 +64,7 @@ final class AuthListener implements Listener {
                 .getString("admin.mode", "GUI"));
         if (web) {
             ctx.lang().send(player, registration ? "auth.web-register" : "auth.web-login",
-                    LangService.of("url", auth.webLoginUrl(player)));
+                    LangService.link("url", auth.webLoginUrl(player)));
         } else {
             ctx.lang().send(player, registration ? "auth.gui-register" : "auth.gui-login");
             ctx.services().optional(net.aethel.core.api.MenuService.class)

@@ -2,6 +2,8 @@ package net.aethel.core.i18n;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
@@ -40,9 +42,34 @@ public final class LangService {
                 log.warning("Dil dosyasi bulunamadi: " + file.getName());
                 continue;
             }
-            languages.put(code, YamlConfiguration.loadConfiguration(file));
+            YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
+            repairBrokenLinks(code, yaml);
+            languages.put(code, yaml);
         }
         log.info("Yuklenen diller: " + languages.keySet());
+    }
+
+    /**
+     * Eski dil dosyalarindaki bozuk baglanti kalibini onarir. Kullanicinin dil
+     * dosyalari asla ezilmedigi icin, daha once yazilmis dosyalarda bu kalip kalir
+     * ve her gonderimde paket hatasi uretir; burada bellekte duzeltilir.
+     */
+    private void repairBrokenLinks(String code, YamlConfiguration yaml) {
+        int repaired = 0;
+        for (String key : yaml.getKeys(true)) {
+            String value = yaml.isString(key) ? yaml.getString(key) : null;
+            if (value == null || !value.contains("click:open_url:'<")) continue;
+
+            String fixed = value.replaceAll("<click:open_url:'<[a-zA-Z0-9_]+>'>", "")
+                    .replace("</click>", "");
+            yaml.set(key, fixed);
+            repaired++;
+        }
+        if (repaired > 0) {
+            log.warning("Dil dosyasindaki bozuk baglanti kalibi onarildi (" + code
+                    + "): " + repaired + " anahtar. Kalici duzeltme icin lang/" + code
+                    + ".yml dosyasini silip sunucuyu yeniden baslat.");
+        }
     }
 
     /** Oyuncunun istemci dilini kullanir; desteklenmiyorsa varsayilana duser. */
@@ -77,6 +104,21 @@ public final class LangService {
     /** Kisayol: LangService.of("player", name) -> <player> etiketi. */
     public static TagResolver of(String name, String value) {
         return Placeholder.unparsed(name, value);
+    }
+
+    /**
+     * Tiklanabilir baglanti yer tutucusu.
+     *
+     * Dil dosyasina <click:open_url:'<url>'> YAZILAMAZ: MiniMessage bir etiketin
+     * ARGUMANI icindeki yer tutucuyu cozmez, literal "<url>" metni kalir ve sunucu
+     * "https://<url>" adresini kodlamaya calisirken paket hatasi verir — mesaj
+     * oyuncuya hic ulasmaz. Bu yuzden baglanti burada, hazir bir bilesen olarak kurulur.
+     */
+    public static TagResolver link(String name, String url) {
+        Component component = Component.text(url)
+                .decorate(TextDecoration.UNDERLINED)
+                .clickEvent(ClickEvent.openUrl(url));
+        return Placeholder.component(name, component);
     }
 
     public static TagResolver of(String name, Number value) {

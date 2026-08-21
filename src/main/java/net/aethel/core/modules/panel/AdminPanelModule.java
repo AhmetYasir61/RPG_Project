@@ -111,7 +111,7 @@ public final class AdminPanelModule implements Module, AdminPanelService {
     private void openWeb(Player player) {
         ctx.services().optional(net.aethel.core.api.AuthService.class).ifPresentOrElse(
                 auth -> ctx.lang().send(player, "panel.web-link",
-                        net.aethel.core.i18n.LangService.of("url", auth.webLoginUrl(player))),
+                        net.aethel.core.i18n.LangService.link("url", auth.webLoginUrl(player))),
                 () -> ctx.lang().send(player, "panel.web-unavailable"));
     }
 

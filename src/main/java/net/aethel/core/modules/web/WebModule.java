@@ -76,7 +76,15 @@ public final class WebModule implements Module {
         routes.register(server);
 
         server.start(settings.bind, settings.port);
-        ctx.logger().info("Web paneli: http://" + settings.bind + ":" + settings.port);
+
+        // bind adresi (0.0.0.0) "tum arayuzlerde dinle" demektir, tarayiciya
+        // yazilabilecek bir adres degildir; erisim adresini ayri gosteriyoruz.
+        String publicUrl = ctx.config().get("config.yml").yaml()
+                .getString("admin.web.public-url", "");
+        ctx.logger().info("Web paneli dinlemede: " + settings.bind + ":" + settings.port);
+        ctx.logger().info("Panel adresi: " + (publicUrl.isBlank()
+                ? "http://127.0.0.1:" + settings.port + " (admin.web.public-url bos)"
+                : publicUrl));
     }
 
     /** AuthModule'un urettigi jetonu oturuma cevirir. */

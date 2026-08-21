@@ -85,6 +85,13 @@ public final class ModuleManager {
                 .filter(c -> c.state() == ModuleState.SKIPPED)
                 .map(ModuleContainer::id).toList();
         if (!skipped.isEmpty()) log.info("Atlanan modul: " + skipped);
+
+        // Kapali moduller de yazilir: "24/26" gorup neden 2 tanesinin acilmadigini
+        // anlamaya calismak, ozet satirinin cozmesi gereken sorunun ta kendisidir.
+        List<String> disabled = modules.values().stream()
+                .filter(c -> c.state() == ModuleState.DISABLED)
+                .map(ModuleContainer::id).toList();
+        if (!disabled.isEmpty()) log.info("modules.yml icinde kapali: " + disabled);
     }
 
     /** Ters topolojik sirada kapatir; bagimlilar once gider. */

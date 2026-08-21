@@ -29,8 +29,8 @@ auth:
   gui-title-login: "<dark_gray>PIN'ini gir"
   gui-title-register: "<dark_gray>PIN belirle"
   gui-title-confirm: "<dark_gray>PIN'i tekrar gir"
-  web-login: "<yellow>Giris yapmak icin: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
-  web-register: "<yellow>Kayit olmak icin: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  web-login: "<yellow>Giris yapmak icin: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Kayit olmak icin: <aqua><underlined><url></underlined></aqua></yellow>"
   mismatch: "<red>PIN'ler eslesmedi, tekrar dene.</red>"
   login-success: "<green>Giris basarili. Iyi oyunlar.</green>"
   login-failed: "<red>PIN hatali.</red>"
@@ -70,7 +70,7 @@ panel:
   title: "<dark_gray>Yonetim Paneli"
   command-description: "Yonetim panelini acar"
   current-mode: "<gray>Aktif panel modu:</gray> <white><mode></white>"
-  web-link: "<yellow>Paneli ac: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  web-link: "<yellow>Paneli ac: <aqua><underlined><url></underlined></aqua></yellow>"
   web-unavailable: "<red>Web paneli su anda kullanilamiyor.</red>"
   selected: "<gray>Secildi:</gray> <white><value></white>"
   saved: "<green>Kaydedildi.</green>"
@@ -171,7 +171,7 @@ profile:
   not-found: "<red>Oyuncu bulunamadi:</red> <white><player></white>"
   gui-readonly: "<dark_gray>Bu gorunum salt okunurdur. Envanter mudahalesi yalnizca web panelinden yapilir.</dark_gray>"
   web-inspect: "<gray>Web panelinde acildi:</gray> <white><player></white>"
-  web-link: "<yellow>Profilin: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
+  web-link: "<yellow>Profilin: <aqua><underlined><url></underlined></aqua></yellow>"
 
 core:
   features-header: "<gray>— <yellow>Ozellikler</yellow> —</gray>"

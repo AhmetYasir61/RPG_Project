@@ -150,6 +150,51 @@ Cikarilan dosya sayisi loglaniyor.
 Artik isimler de yaziliyor:
 `Kayitli kok komut (9): [core, profil, adminmenu, parti, waypoint, rpg, meslek, gorev, dungeon]`
 
+## 11. "Illegal character in authority at index 8: https://<url>" — paket kodlama hatasi
+
+**Belirti:** Oyuncu girer girmez devasa bir `EncoderException` yiginı; mesaj oyuncuya
+**hic ulasmaz**.
+
+**Kok sebep:** Dil dosyalarinda su kalip vardi:
+```yaml
+web-login: "... <click:open_url:'<url>'><underlined><url></underlined></click> ..."
+```
+MiniMessage bir etiketin **ARGUMANI** icindeki yer tutucuyu **cozmez**. `<url>`
+degeri gecirilse bile literal `<url>` metni kaliyor, Paper bunu adres sanip
+`https://<url>` kurmaya calisiyor ve URI ayristirmasi patliyor. Hata sohbet paketi
+kodlanirken olustugu icin mesaj hic gonderilmiyor.
+
+**Cozum:** Baglanti artik dil dosyasinda degil, KODDA bir bilesen olarak kuruluyor:
+```java
+LangService.link("url", adres)   // Component + ClickEvent.openUrl
+```
+Dil dosyasinda yalnizca `<url>` durur. Ayrica `LangService` yuklemede eski bozuk
+kalibi tespit edip **bellekte onarir** ve uyari verir — kullanicinin dil dosyalari
+asla ezilmedigi icin eski kurulumlarda bu kalip yoksa da kalabilir.
+
+## 12. "Aktif modul: 24/26" ama hicbir sebep yazilmiyor
+
+**Belirti:** Iki modul acilmamis, ne hata ne uyari var. `/adminmenu` calismiyor.
+
+**Kok sebep:** Ozet satiri `FAILED` ve `SKIPPED` modulleri yaziyordu ama
+`DISABLED` (modules.yml icinde kapatilmis) olanlari yazmiyordu. `panel` ve `pcoins`
+kapaliydi — davranis dogruydu, **rapor eksikti**.
+
+**Cozum:** Ozete `modules.yml icinde kapali: [...]` satiri eklendi.
+
+> Not: `panel` ile `web` bilerek birbirini disler. Web panelini acmak icin
+> `modules.yml` icinde `panel.enabled: false` + `web.enabled: true` yapmak
+> DOGRU kullanimdir; `/adminmenu` bu durumda oyun ici menu yerine tarayici
+> baglantisi vermek uzere `panel` modulune ihtiyac duyar — bu yuzden web modunda
+> da `panel` ACIK kalmalidir. Ikisinin ayrimi `admin.mode` ile yapilir, modul
+> acik/kapali ile degil.
+
+## 13. Web paneli adresi olarak 0.0.0.0 gosterilmesi
+
+8. maddedeki ile ayni karisiklik: `Web paneli: http://0.0.0.0:8080` satiri **bind**
+adresini gosteriyordu. Artik dinlenen adres ve erisim adresi ayri yaziliyor;
+`admin.web.public-url` bossa bu acikca belirtiliyor.
+
 ## Beklenen acilis ciktisi (duzeltmelerden sonra)
 
 ```
