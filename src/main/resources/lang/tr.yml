@@ -55,3 +55,13 @@ pcoins:
   balance: "<gray>PCoin bakiyen:</gray> <light_purple><amount></light_purple>"
   offline: "<red>Magaza su anda kullanilamiyor, birazdan tekrar dene.</red>"
   insufficient: "<red>Yeterli PCoin'in yok.</red>"
+
+region:
+  no-build: "<red>Burada insa edemezsin.</red>"
+  no-pvp: "<red>Bu bolgede PvP kapali.</red>"
+  entered: "<gray>Bolgeye girdin:</gray> <white><region></white> <dark_gray>(<difficulty>)</dark_gray>"
+
+loot:
+  opened: "<green>Sandik acildi:</green> <white><count> parca</white> <dark_gray>(nadirlik x<rarity>)</dark_gray>"
+  cooldown: "<red>Bu sandik henuz yenilenmedi.</red> <gray><seconds> sn</gray>"
+  threat: "<gray>Bolge tehdidi:</gray> <white><threat></white>"
