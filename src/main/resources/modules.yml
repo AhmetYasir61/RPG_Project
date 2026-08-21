@@ -13,10 +13,19 @@ modules:
   quest:        { enabled: true }
   region:       { enabled: true }
   chat:         { enabled: true }
-  essentials:   { enabled: true }
+  party:        { enabled: true }
+  travel:       { enabled: true,  free-teleport: false }
   hologram:     { enabled: true }
   npc:          { enabled: true }
   placeholder:  { enabled: true,  papi-bridge: true }
+  assets:       { enabled: true }
+  hud:          { enabled: true }
+  loot:         { enabled: true }
+  dialog:       { enabled: true }
+  # Yonetim paneli: panel (oyun ici GUI) ve web AYNI ANDA acik olamaz.
+  # Cekirdek boot'ta dogrular; ikisi de acikken web kapatilir ve uyari loglanir.
+  panel:        { enabled: true }
+  web:          { enabled: false, bind: "0.0.0.0", port: 8080 }
 
 # Guvenlik agi: bir modul enable sirasinda patlarsa, bagimlilari otomatik devre disi
 # kalir ve sunucu ayakta kalir (fail-soft). false yaparsan sunucu acilisi durur.

@@ -30,7 +30,8 @@ AethelCore/
    │  ├─ api/                 *** PUBLIC/STABLE addon API — kirilmaz ***
    │  └─ modules/
    │     ├─ profile/ economy/ permissions/ content/ mob/ rpg/
-   │     └─ menu/ quest/ region/ chat/ essentials/ hologram/ npc/ placeholder/
+   │     ├─ menu/ quest/ region/ chat/ party/ travel/ hologram/ npc/ placeholder/
+│     └─ hud/ assets/ dialog/ panel/ web/
    └─ resources/
       ├─ plugin.yml  modules.yml  config.yml
       ├─ lang/tr.yml  lang/en.yml
@@ -89,10 +90,19 @@ Boylece A modulu B'nin servisini onEnable'da guvenle alir; sira sorunu yasanmaz.
 | Quest | `QuestService` | Profile, Menu | Economy, Mob, RPG |
 | Region | `RegionService` | Profile | Permissions |
 | Chat | `ChatService` | — | Permissions, Placeholder |
-| Essentials | `HomeService`, `WarpService`, `TeleportService` | Profile | Economy, Region |
+| Party | `PartyService` | Profile | Chat |
+| Travel | `TravelService`, `WaypointService`, `ScrollService` | Profile, Content | Economy, Region, Party |
 | Hologram | `HologramService` | Packet | Placeholder |
 | NPC | `NpcService` | Packet, NMS | Menu, Quest, Hologram |
 | Placeholder | `PlaceholderService` | — | PAPI (kopru) |
+| Hud | `HudService` | Content (font), Placeholder | RPG, Party |
+| Assets | `AssetService` (png / .bbmodel kaydi) | Content | Web |
+| Dialog | `DialogService` (typewriter) | Content | Quest, NPC |
+| Panel | `AdminPanelService` (GUI + anvil giris) | Menu | tum moduller (duzenleme hedefi) |
+| Web | `WebPanelService` (Javalin) | — | tum moduller |
+
+> `panel` ve `web` **birbirini disler**: `admin.mode` GUI ise web modulu hic acilmaz,
+> WEB ise GUI paneli acilmaz. Tek yonetim komutu: `/adminmenu`.
 
 Cevrim yok: `Mob → RPG` zorunlu degil, RPG tarafi `Optional<MobService>` ile calisir.
 `ServiceRegistry.optional(X.class)` bunun icin var.

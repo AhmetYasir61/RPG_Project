@@ -1,0 +1,21 @@
+# Tum metinler MiniMessage formatindadir: https://docs.advntr.dev/minimessage/
+prefix: "<gradient:#f0c040:#e08020><bold>Aethel</bold></gradient> <dark_gray>»</dark_gray> "
+
+command:
+  player-only: "<red>Bu komut yalnizca oyun icinden kullanilabilir.</red>"
+  player-not-found: "<red>Boyle bir oyuncu bulunamadi.</red>"
+  internal-error: "<red>Komut calistirilirken bir hata olustu. Yetkililer bilgilendirildi.</red>"
+  no-permission: "<red>Bunun icin yetkin yok.</red>"
+  help-header: "<gray>— <yellow>/<command></yellow> komutlari —</gray>"
+  help-line: "<dark_gray>›</dark_gray> <yellow>/<command> <sub></yellow>"
+  core:
+    description: "Cekirdek yonetimi"
+
+core:
+  modules-header: "<gray>— <yellow>Moduller</yellow> —</gray>"
+  modules-line: "<dark_gray>›</dark_gray> <white><id></white> <gray>(<name>)</gray> <dark_gray>-</dark_gray> <aqua><state></aqua>"
+  module-enabled: "<green>Modul acildi:</green> <white><id></white>"
+  module-disabled: "<yellow>Modul kapatildi:</yellow> <white><id></white>"
+  module-action-failed: "<red>Islem basarisiz:</red> <white><id></white> <gray>(konsol loguna bak)</gray>"
+  reloaded: "<green>Yapilandirma ve diller yeniden yuklendi.</green>"
+  version: "<gray>AethelCore surumu:</gray> <white><version></white>"

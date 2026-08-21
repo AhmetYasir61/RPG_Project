@@ -12,12 +12,5 @@ dependencies {
     compileOnly(project(":nms:api"))
 }
 
-// Paper 1.20.5+ sunucusu Mojang-mapped calisir; reobf yerine mojang-mapped ciktiyi veriyoruz.
-configurations.create("reobf") {
-    isCanBeConsumed = true
-    isCanBeResolved = false
-}
-
-artifacts {
-    add("reobf", tasks.jar.flatMap { it.archiveFile })
-}
+// Paper 1.20.5+ sunucusu Mojang-mapped calisir; ayrica reobf adimina gerek yoktur.
+// paperweight'in urettigi standart jar dogrudan shade edilir.

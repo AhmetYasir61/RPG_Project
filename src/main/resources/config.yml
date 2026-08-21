@@ -1,0 +1,32 @@
+# AethelCore ana yapilandirmasi.
+# schema-version cekirdek tarafindan yonetilir, elle degistirme.
+schema-version: 1
+
+language:
+  default: tr
+  available:
+    - tr
+    - en
+
+profile:
+  # Oyuncu verisinin periyodik flush araligi (saniye). Cikista zaten flush edilir.
+  autosave-seconds: 300
+
+performance:
+  # Butceli isler icin tick basina ust sinir (ms). 20 TPS'te bir tick 50 ms surer.
+  tick-budget-ms: 1.5
+
+debug: false
+
+storage:
+  # MYSQL veya SQLITE. 100 oyunculu bir MMORPG icin MYSQL onerilir.
+  type: SQLITE
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    database: aethel
+    username: aethel
+    password: ""
+    pool-size: 10
+  sqlite:
+    file: data.db

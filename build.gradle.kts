@@ -2,8 +2,8 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     java
-    id("com.gradleup.shadow") version "8.3.6"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.16" apply false
+    id("com.gradleup.shadow") version "9.6.1"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.22" apply false
     id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
@@ -20,6 +20,8 @@ allprojects {
         mavenCentral()
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.codemc.io/repository/maven-releases/")   // PacketEvents
+        maven("https://repo.extendedclip.com/releases/")             // PlaceholderAPI
+        maven("https://jitpack.io")                                  // VaultAPI
         maven("https://oss.sonatype.org/content/groups/public/")
     }
 }
@@ -40,7 +42,7 @@ dependencies {
 
     // NMS soyutlama: api derleme zamani, implementasyonlar runtime icin shade edilir.
     implementation(project(":nms:api"))
-    implementation(project(":nms:v1_21_11", configuration = "reobf"))
+    implementation(project(":nms:v1_21_11"))
 
     // Shade edilen kutuphaneler (hepsi relocate ediliyor, bkz. shadowJar).
     implementation("com.github.retrooper:packetevents-spigot:2.9.4")
@@ -48,7 +50,6 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.49.1.0")
     implementation("com.mysql:mysql-connector-j:9.2.0")
     implementation("io.javalin:javalin:6.4.0")                       // resource pack HTTP servisi
-    implementation("org.spongepowered:configurate-yaml:4.2.0")
     implementation("com.google.code.gson:gson:2.11.0")
 
     compileOnly("me.clip:placeholderapi:2.11.6")                     // opsiyonel kopru
@@ -77,6 +78,9 @@ tasks {
         filesMatching("plugin.yml") { expand(props) }
     }
 
+    // Duz jar ile shaded jar ayni dosya adini paylasamaz; duz ciktiyi isaretliyoruz.
+    jar { archiveClassifier.set("dev") }
+
     named<ShadowJar>("shadowJar") {
         archiveFileName.set("${serverName}Core.jar")
         archiveClassifier.set("")
@@ -86,7 +90,6 @@ tasks {
         relocate("io.github.retrooper", "$libs.packetevents.impl")
         relocate("com.zaxxer.hikari", "$libs.hikari")
         relocate("io.javalin", "$libs.javalin")
-        relocate("org.spongepowered.configurate", "$libs.configurate")
         relocate("com.google.gson", "$libs.gson")
 
         mergeServiceFiles()
