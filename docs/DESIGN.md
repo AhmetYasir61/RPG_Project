@@ -515,3 +515,110 @@ kolay yoldur ama her olayda bir metot cagrisi ve bir kontrol maliyeti birakir.
 100 oyunculu bir sunucuda `PlayerMoveEvent` saniyede binlerce kez tetiklenir; kapali
 bir ozellik icin bu maliyeti odemek anlamsizdir. `FeatureRegistry` listener'lari sahiplenip
 `HandlerList`'ten cikarir, ozellik acilinca yeniden baglar.
+
+## 22. Dungeon sistemi
+
+Dungeon bir **modul**dur (`dungeon`) ve icindeki her sey mevcut modullerimizden gelir:
+moblar `MobService`'ten, sandiklar `LootService`'ten, zorluk `RegionService`'ten,
+NPC ve hologramlar kendi modullerinden.
+
+### 22.1 Uc asamali akis
+
+```
+  TASARIM                    URETIM                      OYUN
+  ────────                   ──────                      ────
+  duz tasarim dunyasi        oda havuzundan              girise basan oyuncu
+  chunk chunk oda kur        rastgele + kurallı          yeni bir BOYUTA gecer
+  isaret bloklarini koy      yerlesim uretilir           dungeon o an canlanir
+  /dungeon kaydet <ad>       odalar chunk chunk yazilir  cekirdek kirilinca coker
+```
+
+### 22.2 Tasarim: 1 oda = 1 chunk
+Odalar duz bir tasarim dunyasinda, **chunk sinirlarina hizali** kurulur. Bir chunk
+bir odadir; boylece yerlesim izgarasi ile dunya koordinatlari birebir ortusur ve
+oda birlestirmede hizalama hatasi olmaz.
+
+Tasarimci odaya **isaret bloklari** koyar; bunlar export sirasinda okunur, marker'a
+cevrilir ve **blok olarak kaydedilmez**:
+
+| Blok | Anlami |
+|---|---|
+| Kirmizi yun | mob dogum noktasi (`MobService`) |
+| Sari yun | loot sandigi (`LootService`, tehdit bazli nadirlik burada da calisir) |
+| Mor yun | **dungeon cekirdegi** |
+| Yesil yun | giris / dogum noktasi |
+| Acik mavi yun | cikis kapisi |
+| Turuncu yun | NPC · Macenta yun: hologram · Beyaz yun: spawn |
+| Mavi yun | **kapi** — chunk'in hangi kenarina yakinsa o yon kapi sayilir |
+
+`/dungeon kaydet <oda_adi>` bulunulan chunk'i tarar ve JSON olarak kaydeder.
+
+### 22.3 Depolama: palet + indeks
+Oda 16×16×24 = 6144 blok tutar. Her blok icin ham `BlockData` metni saklamak dosyayi
+onlarca kat buyutur; bunun yerine **palet** (benzersiz blok metinleri) + **indeks
+dizisi** kullaniliyor. Tipik bir odada 20-30 farkli blok olur, dosya kucuk kalir ve
+okuma hizli olur.
+
+### 22.4 Uretim: once ana yol, sonra dallar
+Tamamen rastgele buyuyen bir labirentte cekirdek erisilemez bir kosede kalabilir ve
+dungeon **oynanamaz** hale gelir. Bu yuzden:
+
+1. Giristen cekirdege kendini kesmeyen bir **ana yol** kazilir (cozulebilirlik garanti).
+2. Bu yola hazine/mob/cikmaz **dallar** eklenir.
+3. Her hucreye, gereken **kapi maskesini tutan** bir oda secilir — 4 donus de denenir.
+
+Kapi maskesi 4 bit (K/D/G/B). Oda dondurulunce maske de donduruluyor; aksi halde
+dondurulmus oda komsulariyla eslesmez ve duvara acilan kapilar olusur.
+
+### 22.5 Her ornek ayri bir boyut
+Dungeon'a giren oyuncu **yeni bir dunyaya** gecer. Neden ayri dunya:
+
+- **Izolasyon:** iki parti ayni dungeon'u ayni anda, birbirini gormeden oynar.
+- **Temiz silme:** cokmede dunya klasoru silinir — bloklar, entity'ler, yerdeki
+  esyalar, her sey tek hamlede gider. Ayni dunyada "temizleme" yapmak her zaman
+  arkasinda artik birakir.
+- **Kural izolasyonu:** dungeon dunyasinda gece akmaz, hava yoktur, dogal spawn
+  kapalidir; bunlari ana dunyaya bulastirmayiz.
+
+Dunya `VoidChunkGenerator` ile bostur: vanilla arazi uretimi (gurultu, magara, yapi)
+tamamen kapali, cunku uzerine zaten kendi odalarimizi yaziyoruz.
+
+### 22.6 Cikis tek yonlu
+Cikis kapisindan gecen oyuncu **girisin yanina degil**, uzaktaki bir **ormana**
+birakilir ve ornek kaydindan dusurulur. Ayni ornege geri donemez; tekrar girmek
+yeni bir ornek acmak demektir. Cikisin girise acilmasi, dungeon'un tek yonlu olma
+kuralini anlamsizlastirirdi.
+
+### 22.7 Cokme
+Cekirdek (mor yun ile isaretlenen blok) kirildiginda:
+
+```
+0:00   Cekirdek kirildi -> "Mahzen cokuyor, 10 dakikan var"
+       her saniye: action bar geri sayimi + moloz particle efekti
+5:00 / 3:00 / 1:00 / 30 / 10 / 5 / 3 / 2 / 1   -> baslik + ses uyarisi
+10:00  Sure doldu -> icerde kalan HERKES olur
+       -> 2 saniye sonra dunya ve icindeki her sey SILINIR
+       -> esyalar dunya ile birlikte gider, geri alinamaz
+```
+
+Sure `dungeon.collapse-seconds` ile ayarlanir (varsayilan 600 = 10 dk; 300 = 5 dk).
+Moloz efekti **particle**tir, gercek blok dusurmez: dunya zaten silinecek, blok
+fizigi calistirmak yalnizca sunucuyu yorar.
+
+Cekirdek disindaki bloklar kirilamaz — dungeon bir yapi, insaat alani degil;
+duvar kirip kestirmeden gitmek tum yerlesim mantigini bozar.
+
+### 22.8 Guvenlik aglari
+- **Bos ornek:** icinde kimse kalmayan ornek 2 dakika sonra kendiliginden silinir
+  (baglantisi kopan oyuncu geri gelebilsin diye hemen degil).
+- **Artik dunyalar:** cokus sirasinda sunucu kapanirsa klasor diskte kalir; her
+  acilista `dungeon_` ile baslayan yuklu olmayan dunyalar suprulur.
+- **Silinmis dunyada dogma:** dungeon dunyasinda olen oyuncu daima disariya dogar.
+
+### 22.9 Ozellik anahtarlari
+```yaml
+dungeon:
+  enabled: true          # kapaliysa komut ve girisler yok olur
+  collapse: true         # kapaliysa cekirdek kirmak cokme baslatmaz
+  one-way-exit: true     # cikisin tek yonlulugu
+```

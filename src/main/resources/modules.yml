@@ -26,6 +26,7 @@ modules:
   assets:       { enabled: true }
   hud:          { enabled: true }
   loot:         { enabled: true }
+  dungeon:      { enabled: true }
   dialog:       { enabled: true }
   # Yonetim paneli: panel (oyun ici GUI) ve web AYNI ANDA acik olamaz.
   # Cekirdek boot'ta dogrular; ikisi de acikken web kapatilir ve uyari loglanir.

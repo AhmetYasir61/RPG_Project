@@ -6,6 +6,7 @@ import net.aethel.core.modules.hologram.HologramModule;
 import net.aethel.core.modules.content.ContentModule;
 import net.aethel.core.modules.chat.ChatModule;
 import net.aethel.core.modules.dialog.DialogModule;
+import net.aethel.core.modules.dungeon.DungeonModule;
 import net.aethel.core.modules.economy.EconomyModule;
 import net.aethel.core.modules.npc.NpcModule;
 import net.aethel.core.modules.quest.QuestModule;
@@ -62,6 +63,7 @@ final class ModuleCatalog {
                 new DialogModule(),
                 new QuestModule(),
                 new NpcModule(bridge),
+                new DungeonModule(),
                 new HologramModule(bridge),
                 new WaypointModule(bridge)
         };
