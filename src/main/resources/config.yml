@@ -18,6 +18,41 @@ performance:
 
 debug: false
 
+# Yonetim paneli. GUI ve WEB birbirini disler; ikisi de acikken web devre disi kalir.
+# Tek yonetim komutu: /adminmenu
+admin:
+  mode: GUI                 # GUI | WEB
+  permission: aethel.admin.panel
+  web:
+    bind: "0.0.0.0"
+    port: 8080
+    public-url: "http://127.0.0.1:8080"
+    session-timeout-minutes: 30
+    # WEB modunda yetkili envantere mudahale edebilir; her islem denetim kaydina yazilir.
+    allow-inventory-edit: true
+
+# Giris/kayit. GUI modunda anvil ile, WEB modunda tarayici yonlendirmesi ile.
+auth:
+  mode: PIN                 # PIN | PASSWORD
+  min-length: 4
+  max-length: 32
+  max-attempts: 5
+  timeout-seconds: 60
+  session-minutes: 30
+  freeze-until-login: true
+  web-token-seconds: 300
+
+# Kaynak paketi: oyuncuya sorulmaz, zorunlu gonderilir.
+resource-pack:
+  generate: true
+  generate-on-start: true
+  serve: true
+  bind: "0.0.0.0"
+  port: 8085
+  # Bos birakilirsa sunucunun kendi IP'si kullanilir.
+  public-host: ""
+  force: true
+
 storage:
   # MYSQL veya SQLITE. 100 oyunculu bir MMORPG icin MYSQL onerilir.
   type: SQLITE

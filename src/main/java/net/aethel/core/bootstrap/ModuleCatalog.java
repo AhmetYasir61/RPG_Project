@@ -18,6 +18,7 @@ import net.aethel.core.modules.panel.AdminPanelModule;
 import net.aethel.core.modules.party.PartyModule;
 import net.aethel.core.modules.pcoins.PCoinModule;
 import net.aethel.core.modules.travel.TravelModule;
+import net.aethel.core.modules.web.WebModule;
 import net.aethel.core.modules.permissions.PermissionModule;
 import net.aethel.core.modules.profile.ProfileModule;
 import net.aethel.core.modules.travel.waypoint.WaypointModule;
@@ -52,6 +53,7 @@ final class ModuleCatalog {
                 new PartyModule(),
                 new TravelModule(),
                 new AdminPanelModule(),
+                new WebModule(),
                 new HologramModule(bridge),
                 new WaypointModule(bridge)
         };
