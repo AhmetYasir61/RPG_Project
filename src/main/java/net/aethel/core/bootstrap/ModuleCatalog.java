@@ -3,6 +3,7 @@ package net.aethel.core.bootstrap;
 import net.aethel.core.module.Module;
 import net.aethel.core.modules.auth.AuthModule;
 import net.aethel.core.modules.hologram.HologramModule;
+import net.aethel.core.modules.content.ContentModule;
 import net.aethel.core.modules.economy.EconomyModule;
 import net.aethel.core.modules.menu.MenuModule;
 import net.aethel.core.modules.pcoins.PCoinModule;
@@ -28,6 +29,7 @@ final class ModuleCatalog {
                 new EconomyModule(),
                 new PCoinModule(),
                 new MenuModule(),
+                new ContentModule(),
                 new HologramModule(bridge),
                 new WaypointModule(bridge)
         };

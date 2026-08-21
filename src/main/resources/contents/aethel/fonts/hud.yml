@@ -1,0 +1,26 @@
+# HUD ve ikon parcalari. Her parca bir Unicode ozel kullanim karakterine baglanir
+# (U+E000...), tahsis cache/pack-index.json icinde kalicidir.
+can_bari_dolu:
+  texture: "font/can_bari_dolu.png"
+  height: 9
+  ascent: 8
+
+can_bari_bos:
+  texture: "font/can_bari_bos.png"
+  height: 9
+  ascent: 8
+
+mana_bari:
+  texture: "font/mana_bari.png"
+  height: 9
+  ascent: 8
+
+zorluk_ikonu:
+  texture: "font/zorluk_ikonu.png"
+  height: 8
+  ascent: 7
+
+menu_arkaplan:
+  texture: "gui/menu_arkaplan.png"
+  height: 256
+  ascent: 13

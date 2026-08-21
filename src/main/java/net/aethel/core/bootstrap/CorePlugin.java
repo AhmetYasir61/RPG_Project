@@ -108,6 +108,10 @@ public final class CorePlugin extends JavaPlugin {
         saveResource("modules.yml", false);
         saveResource("lang/tr.yml", false);
         saveResource("lang/en.yml", false);
+        // Ornek icerik: yalnizca ilk acilista yazilir, sonra kullanicinin malidir.
+        saveResource("contents/aethel/items/silahlar.yml", false);
+        saveResource("contents/aethel/fonts/hud.yml", false);
+        saveResource("contents/aethel/menus/ana_menu.yml", false);
     }
 
     public CoreContext context() {

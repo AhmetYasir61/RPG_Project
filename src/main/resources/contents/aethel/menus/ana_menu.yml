@@ -1,0 +1,26 @@
+title: "<white>Ana Menu"
+rows: 3
+items:
+  profil:
+    slot: 11
+    material: PLAYER_HEAD
+    name: "<yellow>Profilin</yellow>"
+    lore:
+      - "<gray>Seviye, istatistik ve mesleklerin.</gray>"
+    actions:
+      - "[command] profil"
+      - "[sound] UI_BUTTON_CLICK 1 1"
+  parti:
+    slot: 13
+    material: LIGHT_BLUE_BANNER
+    name: "<aqua>Parti</aqua>"
+    lore:
+      - "<gray>Arkadaslarini takip et.</gray>"
+    actions:
+      - "[command] parti"
+  kapat:
+    slot: 15
+    material: BARRIER
+    name: "<red>Kapat</red>"
+    actions:
+      - "[close]"

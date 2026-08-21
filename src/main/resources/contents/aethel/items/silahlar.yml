@@ -1,0 +1,52 @@
+# Custom item tanimlari. Gorunum 2D texture + item_model bileseni ile saglanir.
+# Texture yolu: contents/aethel/textures/<texture>
+alev_kilici:
+  display: "<gradient:#ff6a00:#ffcc00><bold>Alev Kilici</bold></gradient>"
+  lore:
+    - "<dark_gray>« Nadir »</dark_gray>"
+    - ""
+    - "<gray>Hasar</gray> <white>+8.5</white>"
+    - "<gray>Yanma</gray> <white>3sn</white>"
+    - ""
+    - "<dark_purple>Yetenek:</dark_purple> <light_purple>Alev Dalgasi</light_purple>"
+  material: IRON_SWORD
+  texture: "item/alev_kilici.png"
+  rarity: RARE
+  custom-model-data: 1001
+  durability: 780
+  glow: true
+  attributes:
+    damage: 8.5
+    attack-speed: -2.2
+  enchantments:
+    fire_aspect: 2
+  tags:
+    - "silah"
+    - "kilic"
+
+sifa_iksiri:
+  display: "<red>Sifa Iksiri</red>"
+  lore:
+    - "<gray>Anlik <white>40</white> can yeniler.</gray>"
+  material: POTION
+  texture: "item/sifa_iksiri.png"
+  rarity: COMMON
+  food:
+    nutrition: 0
+    saturation: 0.0
+    always-edible: true
+    eat-seconds: 1.2
+  tags:
+    - "tuketilebilir"
+
+kesif_parsomeni:
+  display: "<aqua>Kesif Parsomeni</aqua>"
+  lore:
+    - "<gray>Kesfettigin bir waypoint'e isinlanirsin.</gray>"
+    - "<dark_gray>Kullaninca tukenir. Hasar alirsan iptal olur.</dark_gray>"
+  material: PAPER
+  texture: "item/kesif_parsomeni.png"
+  rarity: UNCOMMON
+  tags:
+    - "parsomen"
+    - "seyahat"
