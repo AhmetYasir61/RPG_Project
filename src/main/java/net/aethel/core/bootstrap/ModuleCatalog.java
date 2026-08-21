@@ -5,12 +5,16 @@ import net.aethel.core.modules.auth.AuthModule;
 import net.aethel.core.modules.hologram.HologramModule;
 import net.aethel.core.modules.content.ContentModule;
 import net.aethel.core.modules.economy.EconomyModule;
+import net.aethel.core.modules.hud.HudModule;
 import net.aethel.core.modules.loot.LootModule;
+import net.aethel.core.modules.placeholder.PlaceholderModule;
 import net.aethel.core.modules.region.RegionModule;
 import net.aethel.core.modules.skill.SkillModule;
 import net.aethel.core.modules.menu.MenuModule;
 import net.aethel.core.modules.panel.AdminPanelModule;
+import net.aethel.core.modules.party.PartyModule;
 import net.aethel.core.modules.pcoins.PCoinModule;
+import net.aethel.core.modules.travel.TravelModule;
 import net.aethel.core.modules.permissions.PermissionModule;
 import net.aethel.core.modules.profile.ProfileModule;
 import net.aethel.core.modules.travel.waypoint.WaypointModule;
@@ -37,6 +41,10 @@ final class ModuleCatalog {
                 new RegionModule(),
                 new LootModule(),
                 new SkillModule(),
+                new PlaceholderModule(),
+                new HudModule(),
+                new PartyModule(),
+                new TravelModule(),
                 new AdminPanelModule(),
                 new HologramModule(bridge),
                 new WaypointModule(bridge)
