@@ -13,6 +13,7 @@ public final class ConfigService {
     private final File dataFolder;
     private final Map<String, ConfigFile> files = new LinkedHashMap<>();
     private final Map<String, Object> holders = new LinkedHashMap<>();
+    private java.util.logging.Logger logger;
 
     public ConfigService(File dataFolder) {
         this.dataFolder = dataFolder;
@@ -25,6 +26,7 @@ public final class ConfigService {
     public ConfigFile open(String name, int schemaVersion, Object holder, ConfigMigration migration) {
         ConfigFile config = new ConfigFile(new File(dataFolder, name), schemaVersion);
         if (config.needsMigration()) config.migrate(migration);
+        if (holder != null) warnOnDuplicate(name, holder);
 
         if (holder != null) {
             ConfigMapper.writeDefaults(holder, config.yaml());
@@ -69,5 +71,30 @@ public final class ConfigService {
 
     public File dataFolder() {
         return dataFolder;
+    }
+
+    /**
+     * Bir modul ayarini config.yml'de de bulunan bir yola baglarsa uyarir.
+     *
+     * Bu, teshisi en zor hata siniflarindan biri: kullanici config.yml'yi
+     * duzenler, hicbir sey degismez ve hata mesaji da olmaz. Ayni yolun iki
+     * dosyada bulunmasi her zaman bir tasarim hatasidir; erken soylemek gerekir.
+     */
+    private void warnOnDuplicate(String name, Object holder) {
+        if (name.equals("config.yml") || logger == null) return;
+        ConfigFile core = files.get("config.yml");
+        if (core == null) return;
+
+        for (String path : ConfigMapper.paths(holder)) {
+            if (!core.yaml().contains(path)) continue;
+            logger.warning("Ayar cakismasi: '" + path + "' hem config.yml hem "
+                    + name + " icinde tanimli. Okunan dosya: " + name
+                    + " — config.yml'deki deger YOKSAYILIYOR.");
+        }
+    }
+
+    /** Uyarilar icin gunluk; cekirdek kurulurken baglanir. */
+    public void logger(java.util.logging.Logger logger) {
+        this.logger = logger;
     }
 }

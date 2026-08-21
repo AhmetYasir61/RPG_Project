@@ -296,6 +296,53 @@ Web formundaki etiketler sabit "PIN" yaziyordu. Artik `auth.mode` degerine gore
 "PIN" ya da "Parola" gosteriliyor; PIN modunda sayisal klavye aciliyor, parola
 modunda normal klavye.
 
+## 20. "Config'i hic okumuyor" — config.yml bolumleri dekoratifti
+
+**Belirti:** `config.yml` icindeki `resource-pack.public-host` doldurulmus ama log
+"public-host bos" diyor. Ayni sey `admin.*` ve `auth.*` icin de gecerli.
+
+**Kok sebep:** Ayarlar `config.yml`'de BELGELENIYOR ama baska dosyadan OKUNUYORDU:
+
+| config.yml bolumu | Gercekte okunan dosya |
+|---|---|
+| `resource-pack.*` | `modules/content.yml` |
+| `auth.*` | `modules/auth.yml` |
+| `admin.*` | `modules/panel.yml` |
+| `admin.web.*` | `modules/web.yml` (17. maddede duzeltildi) |
+
+Kullanici dogru yeri duzenliyor, kod baska yere bakiyor, hata mesaji da yok.
+`admin.mode` ise iki yerden birden okunuyordu: bazi siniflar `config.yml`'den,
+`AdminPanelModule` ise `modules/panel.yml`'den — yani ayni ayar iki farkli deger
+tasiyabiliyordu.
+
+**Cozum (uc katmanli):**
+
+1. **Tek kaynak.** `resource-pack.*`, `auth.*`, `admin.*` artik `config.yml`'den
+   okunuyor. `ConfigService.bind()` ile moduller cekirdek config'inin bir bolumunu
+   kendi holder'ina bagliyor.
+
+2. **Otomatik gocs.** `LegacyConfigMigration`: eski `modules/*.yml` dosyalari varsa
+   degerleri `config.yml`'ye tasinir ve dosyalar `.tasindi` uzantisiyla saklanir
+   (silinmez — hatali bir tasimada geri donulebilmeli). Eski dosyadaki deger daha
+   guncel sayilir, cunku o dosya o zamana kadar GERCEKTEN okunan dosyaydi.
+
+3. **Regresyon korumasi.**
+   - Calisma zamani: `ConfigService` ayni yolun iki dosyada tanimlandigini
+     gorurse uyarir ("config.yml'deki deger YOKSAYILIYOR").
+   - Derleme zamani: `ConfigPathTest` kaynak kodunu tarar; `config.yml`'de bulunan
+     bir kok bolum baska dosyaya baglanmissa **test kirilir**.
+     (Kasitli bir cakisma ile dogrulandi: test gercekten yakaliyor.)
+
+4. **Gorunurluk.** Acilista okunan degerler yaziliyor:
+```
+[AethelCore] Okunan ayarlar (config.yml):
+[AethelCore]   dil: tr (istemci dilini takip: true)
+[AethelCore]   panel modu: WEB · web 0.0.0.0:8091
+[AethelCore]   giris: PASSWORD · sure asimi 60 sn
+[AethelCore]   paket: host='193.164.7.118' port=8085 zorunlu=true
+[AethelCore]   veritabani: SQLITE
+```
+
 ## Beklenen acilis ciktisi (duzeltmelerden sonra)
 
 ```

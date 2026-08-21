@@ -48,6 +48,17 @@ public final class ConfigMapper {
         }
     }
 
+    /** Holder'in bagli oldugu tum YAML yollari; cakisma tespiti icin. */
+    public static java.util.List<String> paths(Object holder) {
+        java.util.List<String> paths = new java.util.ArrayList<>();
+        for (Field field : holder.getClass().getDeclaredFields()) {
+            ConfigValue ann = field.getAnnotation(ConfigValue.class);
+            if (ann == null) continue;
+            paths.add(ann.value().isEmpty() ? kebab(field.getName()) : ann.value());
+        }
+        return paths;
+    }
+
     private static Object read(Class<?> type, ConfigurationSection section, String path) {
         if (type == int.class || type == Integer.class) return section.getInt(path);
         if (type == long.class || type == Long.class) return section.getLong(path);

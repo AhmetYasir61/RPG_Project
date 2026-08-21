@@ -33,7 +33,8 @@ public final class AdminPanelModule implements Module, AdminPanelService {
     @Override
     public void onLoad(CoreContext ctx) {
         this.ctx = ctx;
-        ctx.config().open("modules/panel.yml", 1, settings, ConfigMigration.NONE);
+        // Ayarlar cekirdek config.yml -> admin.* bolumunden gelir.
+        ctx.config().bind("config.yml", settings);
         this.mode = PanelMode.parse(settings.mode);
         ctx.services().register(AdminPanelService.class, this, "panel");
         ctx.commands().register("panel", new AdminMenuCommand(ctx, this, settings));

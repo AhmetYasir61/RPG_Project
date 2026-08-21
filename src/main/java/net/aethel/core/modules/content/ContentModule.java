@@ -42,7 +42,10 @@ public final class ContentModule implements Module, ItemService {
     @Override
     public void onLoad(CoreContext ctx) {
         this.ctx = ctx;
-        ctx.config().open("modules/content.yml", 1, settings, ConfigMigration.NONE);
+        // Ayarlar cekirdek config.yml -> resource-pack.* bolumunden gelir.
+        // Ayri bir modules/content.yml tutmak, kullanicinin config.yml'yi
+        // duzenleyip hicbir sey degismedigini gormesine yol aciyordu.
+        ctx.config().bind("config.yml", settings);
 
         this.loader = new ItemLoader(ctx.logger());
         this.factory = new ItemFactory(ctx.plugin());

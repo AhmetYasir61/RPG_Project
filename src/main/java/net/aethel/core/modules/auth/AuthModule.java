@@ -37,7 +37,8 @@ public final class AuthModule implements Module, AuthService {
     @Override
     public void onLoad(CoreContext ctx) {
         this.ctx = ctx;
-        ctx.config().open("modules/auth.yml", 1, settings, ConfigMigration.NONE);
+        // Ayarlar cekirdek config.yml -> auth.* bolumunden gelir.
+        ctx.config().bind("config.yml", settings);
         this.repository = new AuthRepository(ctx.database());
         ctx.services().register(AuthService.class, this, "auth");
 

@@ -40,7 +40,13 @@ public final class CorePlugin extends JavaPlugin {
         saveDefaultResources();
 
         ConfigService configService = new ConfigService(getDataFolder());
+        configService.logger(getLogger());
         ConfigFile main = configService.open("config.yml", CONFIG_SCHEMA, settings, ConfigMigration.NONE);
+
+        // Ayarlar bir donem modules/*.yml icinden okunuyordu; kullanicinin oradaki
+        // degerleri config.yml'ye tasinir, eski dosyalar .tasindi olarak saklanir.
+        net.aethel.core.config.LegacyConfigMigration.run(getDataFolder(), main, getLogger());
+        net.aethel.core.config.ConfigMapper.apply(settings, main.yaml());
 
         // PacketEvents onEnable'dan ONCE yuklenmeli; aksi halde sunucu ag katmani
         // kurulduktan sonra enjekte etmeye calisir ve ilk giren oyunculari kacirir.
@@ -104,6 +110,7 @@ public final class CorePlugin extends JavaPlugin {
         }
         packets.enable();
         modules.enableAll();
+        logEffectiveSettings();
         context.events().post(new CoreReadyEvent(context));
         getLogger().info("Cekirdek hazir.");
     }
@@ -127,6 +134,25 @@ public final class CorePlugin extends JavaPlugin {
                 event -> commands.flush(event.registrar()));
     }
 
+    /**
+     * Okunan onemli ayarlari acilista yazar. Bir ayarin "yazdigim gibi mi okundu"
+     * sorusu, aksi halde ancak yanlis davranis fark edilince sorulabiliyor.
+     */
+    private void logEffectiveSettings() {
+        var yaml = context.config().get("config.yml").yaml();
+        getLogger().info("Okunan ayarlar (config.yml):");
+        getLogger().info("  dil: " + settings.defaultLanguage
+                + " (istemci dilini takip: " + settings.followClient + ")");
+        getLogger().info("  panel modu: " + yaml.getString("admin.mode", "GUI")
+                + " · web " + yaml.getString("admin.web.bind", "?")
+                + ":" + yaml.getInt("admin.web.port", 0));
+        getLogger().info("  giris: " + yaml.getString("auth.mode", "PIN")
+                + " · sure asimi " + yaml.getInt("auth.timeout-seconds", 0) + " sn");
+        getLogger().info("  paket: host='" + yaml.getString("resource-pack.public-host", "")
+                + "' port=" + yaml.getInt("resource-pack.port", 0)
+                + " zorunlu=" + yaml.getBoolean("resource-pack.force", true));
+        getLogger().info("  veritabani: " + yaml.getString("storage.type", "SQLITE"));
+    }
     /**
      * Jar icindeki varsayilan dosyalari veri klasorune acar. Dosyalar ELLE
      * LISTELENMEZ: jar taranir ve config/lang/contents altindaki her sey cikarilir.
