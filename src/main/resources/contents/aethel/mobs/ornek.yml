@@ -1,0 +1,55 @@
+# Mob tanimlari. Moblar GERCEK entity'dir; gorunum katmani serbesttir
+# (vanilla tip, ekipmanli gorunum ya da harici model motoru).
+# Kisit yalnizca skill tarafindadir: skill'ler particle disinda bir sey kullanamaz.
+
+alev_muhafizi:
+  display: "<gold>Alev Muhafizi</gold>"
+  type: WITHER_SKELETON
+  health: 120
+  damage: 9
+  armor: 6
+  speed: 0.26
+  follow-range: 32
+  tier: 3
+  loot-table: dungeon_temel
+  appearance:
+    # model: "aethel:alev_muhafizi"   # bbmodel kullanacaksan burayi ac
+    helmet: "minecraft:golden_helmet"
+    main-hand: "aethel:alev_kilici"
+    health-bar: true
+    boss-bar-color: RED
+  skills:
+    - skill: "aethel:alev_dalgasi"
+      trigger: ON_TIMER
+      interval: 120
+      chance: 0.7
+    - skill: "aethel:golge_patlamasi"
+      trigger: ON_LOW_HEALTH
+      health-threshold: 0.25
+      chance: 1.0
+  spawn:
+    worlds: []
+    biomes: []
+    min-y: -20
+    max-y: 40
+    max-light: 7
+    chance: 0.0
+    max-nearby: 3
+
+buz_cadisi:
+  display: "<aqua>Buz Cadisi</aqua>"
+  type: STRAY
+  health: 70
+  damage: 6
+  speed: 0.25
+  tier: 2
+  loot-table: dungeon_temel
+  appearance:
+    health-bar: true
+  skills:
+    - skill: "aethel:buz_mizragi"
+      trigger: ON_DEAL_DAMAGE
+      chance: 0.35
+    - skill: "aethel:sifa_cemberi"
+      trigger: ON_DAMAGED
+      chance: 0.15

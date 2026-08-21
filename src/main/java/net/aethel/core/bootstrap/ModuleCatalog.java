@@ -7,6 +7,7 @@ import net.aethel.core.modules.content.ContentModule;
 import net.aethel.core.modules.economy.EconomyModule;
 import net.aethel.core.modules.hud.HudModule;
 import net.aethel.core.modules.jobs.JobModule;
+import net.aethel.core.modules.mob.MobModule;
 import net.aethel.core.modules.loot.LootModule;
 import net.aethel.core.modules.rpg.RpgModule;
 import net.aethel.core.modules.placeholder.PlaceholderModule;
@@ -43,6 +44,7 @@ final class ModuleCatalog {
                 new RegionModule(),
                 new LootModule(),
                 new SkillModule(),
+                new MobModule(),
                 new RpgModule(),
                 new JobModule(),
                 new PlaceholderModule(),

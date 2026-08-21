@@ -113,6 +113,7 @@ public final class CorePlugin extends JavaPlugin {
         saveResource("contents/aethel/fonts/hud.yml", false);
         saveResource("contents/aethel/menus/ana_menu.yml", false);
         saveResource("contents/aethel/skills/ornek.yml", false);
+        saveResource("contents/aethel/mobs/ornek.yml", false);
     }
 
     public CoreContext context() {
