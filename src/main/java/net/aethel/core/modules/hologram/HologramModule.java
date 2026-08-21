@@ -5,6 +5,7 @@ import net.aethel.core.api.HologramService;
 import net.aethel.core.bootstrap.CoreContext;
 import net.aethel.core.module.Module;
 import net.aethel.core.module.ModuleInfo;
+import net.aethel.core.module.ModuleUnavailableException;
 import net.aethel.core.nms.VersionAdapter;
 import net.aethel.core.nms.VersionAdapters;
 import net.aethel.core.packet.PacketBridge;
@@ -38,8 +39,11 @@ public final class HologramModule implements Module, HologramService {
     @Override
     public void onLoad(CoreContext ctx) {
         this.ctx = ctx;
-        this.nms = VersionAdapters.detect().orElseThrow(() ->
-                new IllegalStateException("Bu Minecraft surumu icin NMS adapteri yok"));
+        if (!bridge.isAvailable()) {
+            throw new ModuleUnavailableException("paket katmani kullanilamiyor");
+        }
+        this.nms = VersionAdapters.detect(ctx.logger()).orElseThrow(() ->
+                new ModuleUnavailableException("bu surum icin NMS adapteri yok"));
         ctx.services().register(HologramService.class, this, "hologram");
     }
 

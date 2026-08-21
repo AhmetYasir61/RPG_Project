@@ -37,6 +37,7 @@ public final class ProfileModule implements Module, ProfileService, Listener {
         this.ctx = ctx;
         this.repository = new ProfileRepository(ctx.database());
         ctx.services().register(ProfileService.class, this, "profile");
+        ctx.commands().register("profile", new ProfileCommand(ctx));
     }
 
     @Override

@@ -4,7 +4,11 @@ import net.aethel.core.module.Module;
 import net.aethel.core.modules.auth.AuthModule;
 import net.aethel.core.modules.hologram.HologramModule;
 import net.aethel.core.modules.content.ContentModule;
+import net.aethel.core.modules.chat.ChatModule;
+import net.aethel.core.modules.dialog.DialogModule;
 import net.aethel.core.modules.economy.EconomyModule;
+import net.aethel.core.modules.npc.NpcModule;
+import net.aethel.core.modules.quest.QuestModule;
 import net.aethel.core.modules.hud.HudModule;
 import net.aethel.core.modules.jobs.JobModule;
 import net.aethel.core.modules.mob.MobModule;
@@ -54,6 +58,10 @@ final class ModuleCatalog {
                 new TravelModule(),
                 new AdminPanelModule(),
                 new WebModule(),
+                new ChatModule(),
+                new DialogModule(),
+                new QuestModule(),
+                new NpcModule(bridge),
                 new HologramModule(bridge),
                 new WaypointModule(bridge)
         };

@@ -7,6 +7,7 @@ import net.aethel.core.api.SkillService;
 import net.aethel.core.bootstrap.CoreContext;
 import net.aethel.core.module.Module;
 import net.aethel.core.module.ModuleInfo;
+import net.aethel.core.module.ModuleUnavailableException;
 import net.aethel.core.nms.VersionAdapters;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -44,8 +45,8 @@ public final class MobModule implements Module, MobService {
 
     @Override
     public void onEnable(CoreContext ctx) {
-        var adapter = VersionAdapters.detect().orElseThrow(() ->
-                new IllegalStateException("Bu Minecraft surumu icin NMS adapteri yok"));
+        var adapter = VersionAdapters.detect(ctx.logger()).orElseThrow(() ->
+                new ModuleUnavailableException("bu surum icin NMS adapteri yok"));
         this.spawner = new MobSpawner(ctx, adapter);
         reload();
 

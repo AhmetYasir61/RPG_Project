@@ -176,6 +176,13 @@ public final class ModuleManager {
     }
 
     private void handleFailure(ModuleContainer c, String phase, Throwable t) {
+        // Modul "bu sunucuda calisamam" diyorsa bu bir hata degil, bir kosuldur:
+        // stack trace basmak logu kirletir ve gercek hatalari gizler.
+        if (t instanceof ModuleUnavailableException) {
+            c.state(ModuleState.SKIPPED);
+            log.warning("Modul atlandi (" + c.id() + "): " + t.getMessage());
+            return;
+        }
         c.fail(t);
         log.log(Level.SEVERE, "Modul " + phase + " basarisiz: " + c.id(), t);
         if (!failSoft) {

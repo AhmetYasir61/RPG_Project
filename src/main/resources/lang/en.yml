@@ -146,3 +146,29 @@ jobs:
   left: "<yellow>You left the job.</yellow> <gray>Wait <hours>h before joining a new one.</gray>"
   not-joined: "<red>You do not have this job.</red>"
   level-up: "<gold><job> level up:</gold> <white>Lv.<level></white>"
+
+chat:
+  blocked: "<red>Message not sent: inappropriate content.</red>"
+
+quest:
+  command-description: "Quest commands"
+  none: "<gray>You have no active quests.</gray>"
+  header: "<gray>— <yellow>Your Quests</yellow> —</gray>"
+  entry: "<yellow><quest></yellow>"
+  objective: "<dark_gray>›</dark_gray> <gray><description></gray> <white><current>/<total></white>"
+  started: "<green>Quest accepted:</green> <white><quest></white>"
+  completed: "<gold><bold>Quest complete:</bold></gold> <white><quest></white>"
+  abandoned: "<yellow>Quest abandoned.</yellow>"
+  not-active: "<red>That quest is not active.</red>"
+
+profile:
+  command-description: "View profiles"
+  header: "<gray>— <yellow><player></yellow> —</gray>"
+  level: "<dark_gray>›</dark_gray> <gray>Level</gray> <white><level></white> <dark_gray>(<points> points)</dark_gray>"
+  balance: "<dark_gray>›</dark_gray> <gray>Balance</gray> <gold><balance></gold>"
+  job: "<dark_gray>›</dark_gray> <gray>Job</gray> <white><job></white> <gray>Lv.<level></gray>"
+  playtime: "<dark_gray>›</dark_gray> <gray>Playtime</gray> <white><hours>h</white>"
+  not-found: "<red>Player not found:</red> <white><player></white>"
+  gui-readonly: "<dark_gray>This view is read-only. Inventory edits happen only in the web panel.</dark_gray>"
+  web-inspect: "<gray>Opened in the web panel:</gray> <white><player></white>"
+  web-link: "<yellow>Your profile: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"

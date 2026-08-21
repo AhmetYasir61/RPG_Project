@@ -3,6 +3,9 @@ version: '${version}'
 main: ${corePackage}.bootstrap.CorePlugin
 api-version: '${apiVersion}'
 folia-supported: true
+# NMS kodumuz Mojang-mapped derlenir (paperweight). Bu satir olmadan sunucunun
+# remapper'i jar'i Spigot mapping sanip yanlis cevirir ve NMS cagrilari patlar.
+paperweight-mappings-namespace: mojang
 author: ${serverName} Network
 description: Tek JAR, cok modullu sunucu cekirdegi.
 

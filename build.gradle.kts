@@ -20,6 +20,9 @@ allprojects {
         mavenCentral()
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.codemc.io/repository/maven-releases/")   // PacketEvents
+        // 1.21.11 destegi henuz yalnizca gelistirme yapisinda; surum ciktiginda
+        // asagidaki bagimlilik sabit surume cekilmeli.
+        maven("https://repo.codemc.io/repository/maven-snapshots/")
         maven("https://repo.extendedclip.com/releases/")             // PlaceholderAPI
         maven("https://jitpack.io")                                  // VaultAPI
         maven("https://oss.sonatype.org/content/groups/public/")
@@ -45,7 +48,7 @@ dependencies {
     implementation(project(":nms:v1_21_11"))
 
     // Shade edilen kutuphaneler (hepsi relocate ediliyor, bkz. shadowJar).
-    implementation("com.github.retrooper:packetevents-spigot:2.9.4")
+    implementation("com.github.retrooper:packetevents-spigot:2.13.1-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:6.2.1")
     implementation("org.xerial:sqlite-jdbc:3.49.1.0")
     implementation("com.mysql:mysql-connector-j:9.2.0")
@@ -94,10 +97,17 @@ tasks {
 
         mergeServiceFiles()
         minimize {
-            // JDBC suruculeri ve Javalin/Jetty refleksiyonla yuklenir, minimize disi birak.
+            // Refleksiyonla yuklenen her sey minimize disinda kalmali; minimize yalnizca
+            // STATIK referanslari gorur ve gormedigini siler.
+            // NMS adapteri Class.forName ile yuklenir: minimize onu "kullanilmiyor" sanip
+            // siler ve sunucuda "surum adapteri yok" hatasi verir.
+            exclude(project(":nms:api"))
+            exclude(project(":nms:v1_21_11"))
             exclude(dependency("org.xerial:sqlite-jdbc:.*"))
             exclude(dependency("com.mysql:mysql-connector-j:.*"))
             exclude(dependency("io.javalin:.*:.*"))
+            exclude(dependency("com.github.retrooper:.*:.*"))
+            exclude(dependency("io.github.retrooper:.*:.*"))
         }
     }
 

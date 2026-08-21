@@ -71,8 +71,8 @@ public final class HudModule implements Module {
             List<HudLayout.Layer> layers = new ArrayList<>();
             for (Map<?, ?> raw : section.getMapList("layers")) {
                 layers.add(new HudLayout.Layer(
-                        raw.get("text") == null ? "" : String.valueOf(raw.get("text")),
-                        raw.get("offset-x") instanceof Number number ? number.intValue() : 0,
+                        net.aethel.core.util.Yamls.string(raw, "text", ""),
+                        net.aethel.core.util.Yamls.integer(raw, "offset-x", 0),
                         raw.get("show-when") == null ? null : String.valueOf(raw.get("show-when"))));
             }
             layouts.add(new HudLayout(id,

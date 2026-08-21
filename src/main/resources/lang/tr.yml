@@ -146,3 +146,29 @@ jobs:
   left: "<yellow>Meslegi biraktin.</yellow> <gray>Yeni meslek icin <hours> saat beklemelisin.</gray>"
   not-joined: "<red>Bu meslege sahip degilsin.</red>"
   level-up: "<gold><job> seviyesi yukseldi:</gold> <white>Sv.<level></white>"
+
+chat:
+  blocked: "<red>Mesajin gonderilmedi: uygunsuz icerik.</red>"
+
+quest:
+  command-description: "Gorev islemleri"
+  none: "<gray>Aktif gorevin yok.</gray>"
+  header: "<gray>— <yellow>Gorevlerin</yellow> —</gray>"
+  entry: "<yellow><quest></yellow>"
+  objective: "<dark_gray>›</dark_gray> <gray><description></gray> <white><current>/<total></white>"
+  started: "<green>Gorev alindi:</green> <white><quest></white>"
+  completed: "<gold><bold>Gorev tamamlandi:</bold></gold> <white><quest></white>"
+  abandoned: "<yellow>Gorev birakildi.</yellow>"
+  not-active: "<red>Bu gorev aktif degil.</red>"
+
+profile:
+  command-description: "Profil goruntuleme"
+  header: "<gray>— <yellow><player></yellow> —</gray>"
+  level: "<dark_gray>›</dark_gray> <gray>Seviye</gray> <white><level></white> <dark_gray>(<points> puan)</dark_gray>"
+  balance: "<dark_gray>›</dark_gray> <gray>Bakiye</gray> <gold><balance></gold>"
+  job: "<dark_gray>›</dark_gray> <gray>Meslek</gray> <white><job></white> <gray>Sv.<level></gray>"
+  playtime: "<dark_gray>›</dark_gray> <gray>Oynanis</gray> <white><hours> saat</white>"
+  not-found: "<red>Oyuncu bulunamadi:</red> <white><player></white>"
+  gui-readonly: "<dark_gray>Bu gorunum salt okunurdur. Envanter mudahalesi yalnizca web panelinden yapilir.</dark_gray>"
+  web-inspect: "<gray>Web panelinde acildi:</gray> <white><player></white>"
+  web-link: "<yellow>Profilin: <aqua><click:open_url:'<url>'><underlined><url></underlined></click></aqua></yellow>"
