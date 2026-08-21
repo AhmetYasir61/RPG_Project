@@ -1,0 +1,79 @@
+# de — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>Das geht nur im Spiel.</red>"
+  player-not-found: "<red>Spieler nicht gefunden.</red>"
+  internal-error: "<red>Etwas ist schiefgelaufen. Das Team wurde informiert.</red>"
+  no-permission: "<red>Dazu fehlt dir die Berechtigung.</red>"
+auth:
+  required: "<red>Du musst dich zuerst anmelden.</red>"
+  timeout: "<red>Zeit abgelaufen. Bitte neu verbinden.</red>"
+  session-restored: "<green>Sitzung wiederhergestellt, willkommen zurueck.</green>"
+  gui-login: "<yellow>Gib deine PIN ein.</yellow>"
+  gui-register: "<yellow>Registriere dich mit einer PIN.</yellow>"
+  gui-title-login: "<dark_gray>PIN eingeben"
+  gui-title-register: "<dark_gray>PIN waehlen"
+  gui-title-confirm: "<dark_gray>PIN wiederholen"
+  web-login: "<yellow>Hier anmelden: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Hier registrieren: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>PINs stimmen nicht ueberein.</red>"
+  login-success: "<green>Angemeldet. Viel Spass.</green>"
+  login-failed: "<red>Falsche PIN.</red>"
+  register-success: "<green>Registrierung abgeschlossen.</green>"
+  register-failed: "<red>Registrierung fehlgeschlagen.</red>"
+pack:
+  declined: "<red>Du musst das Resourcenpaket akzeptieren.</red>"
+  failed: "<red>Resourcenpaket konnte nicht geladen werden.</red>"
+economy:
+  balance: "<gray>Kontostand:</gray> <gold><amount></gold>"
+  insufficient: "<red>Nicht genug Gold.</red>"
+region:
+  no-build: "<red>Hier kannst du nicht bauen.</red>"
+  no-pvp: "<red>PvP ist hier deaktiviert.</red>"
+loot:
+  opened: "<green>Truhe geoeffnet:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>Diese Truhe ist noch nicht aufgefuellt.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>Du bist in keiner Gruppe.</gray>"
+  invited: "<yellow><player> hat dich in die Gruppe eingeladen.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>Einladung gesendet:</green> <white><player></white>"
+  joined: "<green><player> ist der Gruppe beigetreten.</green>"
+  left: "<yellow><player> hat die Gruppe verlassen.</yellow>"
+  tracking-on: "<green>Mitgliederverfolgung an.</green>"
+  tracking-off: "<yellow>Mitgliederverfolgung aus.</yellow>"
+travel:
+  cast-started: "<yellow>Du beginnst zu lesen... halte still.</yellow>"
+  cast-cancelled: "<red>Der Zauber wurde unterbrochen.</red>"
+  arrived: "<green>Du bist angekommen.</green>"
+  no-scroll: "<red>Du brauchst eine Reiserolle.</red>"
+  not-discovered: "<red>Du musst zuerst selbst dorthin laufen.</red>"
+  in-combat: "<red>Im Kampf kannst du dich nicht teleportieren.</red>"
+  discovered: "<green>Neuen Ort entdeckt:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>Aufgestiegen!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>Du hast keine Punkte uebrig.</red>"
+jobs:
+  joined: "<green>Beigetreten:</green> <white><job></white>"
+  limit-reached: "<red>Du kannst hoechstens so viele Berufe haben: <max></red>"
+  level-up: "<gold><job> Stufe gestiegen:</gold> <white><level></white>"
+quest:
+  started: "<green>Quest angenommen:</green> <white><quest></white>"
+  completed: "<gold><bold>Quest abgeschlossen:</bold></gold> <white><quest></white>"
+  none: "<gray>Du hast keine aktiven Quests.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— finde den Kern und zerstoere ihn.</gray>"
+  exited: "<green>Du bist draussen. Rueckkehr ist nicht moeglich.</green>"
+  no-build: "<red>Hier kannst du keine Bloecke abbauen.</red>"
+  core-broken: "<dark_red><bold>Der Kern ist zerstoert! Das Gewoelbe stuerzt ein.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>EINSTURZ</bold></dark_red>"
+  collapse-subtitle: "<yellow>Erreiche den Ausgang — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>Das Gewoelbe stuerzte ein</bold></dark_red>"
+  collapsed-subtitle: "<gray>Du warst noch drinnen.</gray>"
+  collapse-actionbar: "<dark_red>⚠ Einsturz:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT zum Fortfahren"
+  choose-hint: "Scrollen zum Waehlen · SHIFT bestaetigt"
+chat:
+  blocked: "<red>Nachricht nicht gesendet: unangemessener Inhalt.</red>"

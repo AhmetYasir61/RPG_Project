@@ -3,14 +3,19 @@
 schema-version: 1
 
 language:
+  # Oyuncunun dili bulunamazsa bu dil kullanilir.
   default: tr
-  # false: herkese varsayilan dil gonderilir, istemci dili yoksayilir.
-  # Tek dilli bir sunucuda true birakmak, Ingilizce istemcili oyunculara
-  # yarim cevrilmis bir arayuz gosterir.
-  follow-client: false
-  available:
-    - tr
-    - en
+
+  # true: HER OYUNCU KENDI ISTEMCI DILIYLE konusur.
+  #   Turk oyuncuya Turkce, Japon oyuncuya Japonca, Rus oyuncuya Rusca...
+  #   Eslesme sirasi: tam yerel ad (pt_br) -> dil kodu (pt) -> ayni dilin baska
+  #   varyanti (pt_pt) -> default.
+  # false: herkese default gonderilir.
+  follow-client: true
+
+  # Dil listesi YOK: lang/ klasorundeki her .yml dosyasi otomatik yuklenir.
+  # Yeni dil eklemek icin lang/<minecraft_dil_kodu>.yml dosyasi birak, yeter.
+  # Eksik anahtarlar otomatik olarak default dile duser.
 
 profile:
   # Oyuncu verisinin periyodik flush araligi (saniye). Cikista zaten flush edilir.

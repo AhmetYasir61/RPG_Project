@@ -208,3 +208,8 @@ dungeon:
 dialog:
   continue-hint: "SHIFT ile devam"
   choose-hint: "Tekerlek ile sec · SHIFT ile onayla"
+
+motd:
+  command-description: "MOTD yonetimi"
+  status: "<gray>Yuklu MOTD tanimi:</gray> <white><count></white>"
+  reloaded: "<green>MOTD tanimlari yenilendi:</green> <white><count></white>"

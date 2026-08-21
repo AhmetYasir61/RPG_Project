@@ -1,0 +1,79 @@
+# es — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>Solo se puede usar dentro del juego.</red>"
+  player-not-found: "<red>Jugador no encontrado.</red>"
+  internal-error: "<red>Algo salio mal. El equipo fue avisado.</red>"
+  no-permission: "<red>No tienes permiso para eso.</red>"
+auth:
+  required: "<red>Primero debes iniciar sesion.</red>"
+  timeout: "<red>Tiempo agotado. Vuelve a conectarte.</red>"
+  session-restored: "<green>Sesion restaurada, bienvenido de nuevo.</green>"
+  gui-login: "<yellow>Introduce tu PIN.</yellow>"
+  gui-register: "<yellow>Registrate eligiendo un PIN.</yellow>"
+  gui-title-login: "<dark_gray>Introduce tu PIN"
+  gui-title-register: "<dark_gray>Elige un PIN"
+  gui-title-confirm: "<dark_gray>Repite tu PIN"
+  web-login: "<yellow>Inicia sesion aqui: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Registrate aqui: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>Los PIN no coinciden.</red>"
+  login-success: "<green>Sesion iniciada. Diviertete.</green>"
+  login-failed: "<red>PIN incorrecto.</red>"
+  register-success: "<green>Registro completado.</green>"
+  register-failed: "<red>Registro fallido.</red>"
+pack:
+  declined: "<red>Debes aceptar el paquete de recursos.</red>"
+  failed: "<red>No se pudo descargar el paquete.</red>"
+economy:
+  balance: "<gray>Saldo:</gray> <gold><amount></gold>"
+  insufficient: "<red>No tienes suficiente oro.</red>"
+region:
+  no-build: "<red>No puedes construir aqui.</red>"
+  no-pvp: "<red>El PvP esta desactivado aqui.</red>"
+loot:
+  opened: "<green>Cofre abierto:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>Este cofre aun no se ha rellenado.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>No estas en un grupo.</gray>"
+  invited: "<yellow><player> te invito a su grupo.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>Invitacion enviada:</green> <white><player></white>"
+  joined: "<green><player> se unio al grupo.</green>"
+  left: "<yellow><player> salio del grupo.</yellow>"
+  tracking-on: "<green>Seguimiento activado.</green>"
+  tracking-off: "<yellow>Seguimiento desactivado.</yellow>"
+travel:
+  cast-started: "<yellow>Empiezas a leer... no te muevas.</yellow>"
+  cast-cancelled: "<red>El lanzamiento se interrumpio.</red>"
+  arrived: "<green>Has llegado.</green>"
+  no-scroll: "<red>Necesitas un pergamino de viaje.</red>"
+  not-discovered: "<red>Primero debes ir alli caminando.</red>"
+  in-combat: "<red>No puedes teletransportarte en combate.</red>"
+  discovered: "<green>Descubriste un lugar nuevo:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>¡Subiste de nivel!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>No tienes puntos disponibles.</red>"
+jobs:
+  joined: "<green>Te uniste a:</green> <white><job></white>"
+  limit-reached: "<red>Puedes tener como maximo: <max></red>"
+  level-up: "<gold><job> subio de nivel:</gold> <white><level></white>"
+quest:
+  started: "<green>Mision aceptada:</green> <white><quest></white>"
+  completed: "<gold><bold>Mision completada:</bold></gold> <white><quest></white>"
+  none: "<gray>No tienes misiones activas.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— encuentra el nucleo y rompelo.</gray>"
+  exited: "<green>Has salido. No puedes volver.</green>"
+  no-build: "<red>No puedes romper bloques aqui.</red>"
+  core-broken: "<dark_red><bold>¡El nucleo se rompio! La cripta se derrumba.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>DERRUMBE</bold></dark_red>"
+  collapse-subtitle: "<yellow>Llega a la salida — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>La cripta se derrumbo</bold></dark_red>"
+  collapsed-subtitle: "<gray>Seguias dentro.</gray>"
+  collapse-actionbar: "<dark_red>⚠ Derrumbe:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT para continuar"
+  choose-hint: "Rueda para elegir · SHIFT para confirmar"
+chat:
+  blocked: "<red>Mensaje no enviado: contenido inapropiado.</red>"

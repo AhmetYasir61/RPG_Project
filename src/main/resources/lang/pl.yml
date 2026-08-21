@@ -1,0 +1,79 @@
+# pl — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>Tylko w grze.</red>"
+  player-not-found: "<red>Nie znaleziono gracza.</red>"
+  internal-error: "<red>Cos poszlo nie tak. Administracja zostala powiadomiona.</red>"
+  no-permission: "<red>Nie masz uprawnien.</red>"
+auth:
+  required: "<red>Najpierw sie zaloguj.</red>"
+  timeout: "<red>Czas minal. Polacz sie ponownie.</red>"
+  session-restored: "<green>Sesja przywrocona, witaj z powrotem.</green>"
+  gui-login: "<yellow>Wpisz swoj PIN.</yellow>"
+  gui-register: "<yellow>Zarejestruj sie, wybierajac PIN.</yellow>"
+  gui-title-login: "<dark_gray>Wpisz PIN"
+  gui-title-register: "<dark_gray>Wybierz PIN"
+  gui-title-confirm: "<dark_gray>Powtorz PIN"
+  web-login: "<yellow>Zaloguj sie tutaj: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Zarejestruj sie tutaj: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>PIN-y sie nie zgadzaja.</red>"
+  login-success: "<green>Zalogowano. Milej gry.</green>"
+  login-failed: "<red>Bledny PIN.</red>"
+  register-success: "<green>Rejestracja zakonczona.</green>"
+  register-failed: "<red>Rejestracja nieudana.</red>"
+pack:
+  declined: "<red>Musisz zaakceptowac paczke zasobow.</red>"
+  failed: "<red>Nie udalo sie pobrac paczki zasobow.</red>"
+economy:
+  balance: "<gray>Saldo:</gray> <gold><amount></gold>"
+  insufficient: "<red>Za malo zlota.</red>"
+region:
+  no-build: "<red>Nie mozesz tu budowac.</red>"
+  no-pvp: "<red>PvP jest wylaczone w tym regionie.</red>"
+loot:
+  opened: "<green>Skrzynia otwarta:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>Ta skrzynia jeszcze sie nie odnowila.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>Nie jestes w druzynie.</gray>"
+  invited: "<yellow><player> zaprosil cie do druzyny.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>Zaproszenie wyslane:</green> <white><player></white>"
+  joined: "<green><player> dolaczyl do druzyny.</green>"
+  left: "<yellow><player> opuscil druzyne.</yellow>"
+  tracking-on: "<green>Sledzenie wlaczone.</green>"
+  tracking-off: "<yellow>Sledzenie wylaczone.</yellow>"
+travel:
+  cast-started: "<yellow>Zaczynasz czytac... nie ruszaj sie.</yellow>"
+  cast-cancelled: "<red>Rzucanie przerwane.</red>"
+  arrived: "<green>Dotarles na miejsce.</green>"
+  no-scroll: "<red>Potrzebujesz zwoju podrozy.</red>"
+  not-discovered: "<red>Musisz najpierw dojsc tam pieszo.</red>"
+  in-combat: "<red>Nie mozesz sie teleportowac w walce.</red>"
+  discovered: "<green>Odkryto nowe miejsce:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>Nowy poziom!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>Nie masz punktow.</red>"
+jobs:
+  joined: "<green>Dolaczyles do:</green> <white><job></white>"
+  limit-reached: "<red>Mozesz miec maksymalnie: <max></red>"
+  level-up: "<gold><job> awansowal:</gold> <white><level></white>"
+quest:
+  started: "<green>Zadanie przyjete:</green> <white><quest></white>"
+  completed: "<gold><bold>Zadanie ukonczone:</bold></gold> <white><quest></white>"
+  none: "<gray>Nie masz aktywnych zadan.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— znajdz rdzen i go rozbij.</gray>"
+  exited: "<green>Wyszedles. Nie mozesz wrocic.</green>"
+  no-build: "<red>Nie mozesz tu niszczyc blokow.</red>"
+  core-broken: "<dark_red><bold>Rdzen zniszczony! Krypta sie zawala.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>ZAWALENIE</bold></dark_red>"
+  collapse-subtitle: "<yellow>Dotrzyj do wyjscia — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>Krypta sie zawalila</bold></dark_red>"
+  collapsed-subtitle: "<gray>Nadal byles w srodku.</gray>"
+  collapse-actionbar: "<dark_red>⚠ Zawalenie:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT aby kontynuowac"
+  choose-hint: "Kolko wybiera · SHIFT zatwierdza"
+chat:
+  blocked: "<red>Wiadomosc nie zostala wyslana: nieodpowiednia tresc.</red>"

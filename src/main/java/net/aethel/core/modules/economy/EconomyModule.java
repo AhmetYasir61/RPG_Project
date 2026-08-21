@@ -50,6 +50,19 @@ public final class EconomyModule implements Module, EconomyService {
         }
         ctx.plugin().getServer().getOnlinePlayers()
                 .forEach(player -> load(player.getUniqueId()));
+
+        // %aethel_economy_balance% gibi anahtarlar HUD ve scoreboard'da kullanilir.
+        ctx.services().optional(net.aethel.core.api.PlaceholderService.class)
+                .ifPresent(service -> service.register("economy", (player, key) -> {
+                    if (player == null) return null;
+                    return switch (key) {
+                        case "balance" -> format(balance(player.getUniqueId()));
+                        case "balance_raw" -> String.format("%.2f", balance(player.getUniqueId()));
+                        case "currency" -> settings.name;
+                        case "symbol" -> settings.symbol;
+                        default -> null;
+                    };
+                }));
     }
 
     @Override

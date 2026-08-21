@@ -32,6 +32,16 @@ final class WebPages {
                        padding:7px 12px; cursor:pointer; font-size:13px; }
               button:hover { background:#4a5ee8; }
               .warn { color:#ffb168; }
+              .narrow { max-width:420px; }
+              .small { font-size:12px; }
+              .form { display:flex; flex-direction:column; gap:6px; margin-top:14px; }
+              .form label { font-size:12px; color:#8a8fa8; text-transform:uppercase;
+                            letter-spacing:.06em; }
+              .form input { background:#12131a; border:1px solid #2a2d3d; border-radius:6px;
+                            color:#e8e8ef; padding:10px 12px; font-size:16px;
+                            letter-spacing:.35em; }
+              .form input:focus { outline:none; border-color:#3b4fd8; }
+              .form button { margin-top:10px; padding:10px 12px; font-size:14px; }
             </style>""";
 
     static String landing() {
@@ -54,6 +64,40 @@ final class WebPages {
                     <p class="warn">%s</p>
                   </div>
                 </div>""".formatted(escape(message)));
+    }
+
+    /**
+     * Giris / kayit formu. Kayitta PIN iki kez istenir: yanlis yazilmis bir PIN
+     * oyuncuyu hesabindan tamamen kilitler ve karma geri donusturulemez.
+     */
+    static String credentials(WebSession session, boolean registration, String error) {
+        String title = registration ? "Kayit Ol" : "Giris Yap";
+        String action = registration ? "/register" : "/login";
+        String errorBlock = error == null ? ""
+                : "<p class=\"warn\">" + escape(error) + "</p>";
+        String confirmField = !registration ? "" : """
+                <label for="pin2">PIN (tekrar)</label>
+                <input id="pin2" name="pin2" type="password" inputmode="numeric"
+                       autocomplete="new-password" required>""";
+
+        return page("Aethel · " + title, """
+                <div class="wrap narrow">
+                  <div class="card">
+                    <h2>%s</h2>
+                    <p class="muted">Hesap: <strong>%s</strong></p>
+                    %s
+                    <form method="post" action="%s" class="form">
+                      <label for="pin">PIN</label>
+                      <input id="pin" name="pin" type="password" inputmode="numeric"
+                             autocomplete="%s" autofocus required>
+                      %s
+                      <button type="submit">%s</button>
+                    </form>
+                    <p class="muted small">Bu baglanti %d saniye sonra gecersiz olur.</p>
+                  </div>
+                </div>""".formatted(escape(title), escape(session.playerName()), errorBlock,
+                action, registration ? "new-password" : "current-password",
+                confirmField, escape(title), session.remainingSeconds()));
     }
 
     /** Panel iskeleti; veriler /api uclarindan tarayicida cekilir. */

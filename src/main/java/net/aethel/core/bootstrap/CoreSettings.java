@@ -11,12 +11,12 @@ public final class CoreSettings {
     @ConfigValue(value = "language.default", comment = "Varsayilan dil kodu")
     public String defaultLanguage = "tr";
 
-    /** false: herkese varsayilan dil gonderilir, istemci dili yoksayilir. */
+    /**
+     * true: her oyuncu KENDI istemci diliyle konusur (Turk oyuncuya Turkce,
+     * Japon oyuncuya Japonca). false: herkese varsayilan dil gonderilir.
+     */
     @ConfigValue("language.follow-client")
     public boolean followClient = true;
-
-    @ConfigValue("language.available")
-    public java.util.List<?> availableLanguages = java.util.List.of("tr", "en");
 
     @ConfigValue(value = "profile.autosave-seconds", comment = "Oyuncu verisi flush araligi")
     public int autosaveSeconds = 300;
@@ -27,7 +27,5 @@ public final class CoreSettings {
     @ConfigValue(value = "debug", comment = "Ayrintili loglama")
     public boolean debug = false;
 
-    public String[] languageCodes() {
-        return availableLanguages.stream().map(String::valueOf).toArray(String[]::new);
-    }
+
 }

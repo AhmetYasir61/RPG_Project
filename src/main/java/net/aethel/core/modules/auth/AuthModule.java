@@ -166,17 +166,24 @@ public final class AuthModule implements Module, AuthService {
     }
 
     /**
-     * Web paneli jetonu kullandiginda cagrilir. Jeton tek kullanimliktir: burada
-     * dusurulur. Donus degeri oyuncunun kimligidir — web tarafinin oturum acabilmesi
-     * icin "gecerli mi" bilgisi tek basina yetmez, KIMIN girdigi de gerekir.
+     * Web paneli jetonu kullandiginda cagrilir. Jeton tek kullanimliktir ve burada
+     * dusurulur; donus degeri KIMIN geldigidir.
+     *
+     * Jeton tuketmek oyuncuyu DOGRULAMAZ: baglanti oyuna gonderildigi icin "kim"
+     * sorusunu cevaplar, "sifreyi biliyor mu" sorusunu cevaplamaz. Dogrulama
+     * ancak PIN girildikten sonra markAuthenticated ile yapilir.
      */
     public java.util.Optional<UUID> consumeWebToken(String token) {
         WebToken entry = webTokens.remove(token);
         if (entry == null || entry.expiresAt() < System.currentTimeMillis()) {
             return java.util.Optional.empty();
         }
-        states.put(entry.player(), State.AUTHENTICATED);
         return java.util.Optional.of(entry.player());
+    }
+
+    /** Web tarafi kimligi dogruladiginda oyun ici durumu da acar. */
+    public void markAuthenticated(UUID player) {
+        states.put(player, State.AUTHENTICATED);
     }
 
     int attemptsOf(UUID uuid) {

@@ -1,0 +1,79 @@
+# id — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>Hanya bisa dipakai di dalam game.</red>"
+  player-not-found: "<red>Pemain tidak ditemukan.</red>"
+  internal-error: "<red>Terjadi kesalahan. Staf sudah diberi tahu.</red>"
+  no-permission: "<red>Kamu tidak punya izin.</red>"
+auth:
+  required: "<red>Kamu harus masuk dulu.</red>"
+  timeout: "<red>Waktu habis. Sambungkan ulang.</red>"
+  session-restored: "<green>Sesi dipulihkan, selamat datang kembali.</green>"
+  gui-login: "<yellow>Masukkan PIN kamu.</yellow>"
+  gui-register: "<yellow>Daftar dengan memilih PIN.</yellow>"
+  gui-title-login: "<dark_gray>Masukkan PIN"
+  gui-title-register: "<dark_gray>Pilih PIN"
+  gui-title-confirm: "<dark_gray>Ulangi PIN"
+  web-login: "<yellow>Masuk di sini: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Daftar di sini: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>PIN tidak cocok.</red>"
+  login-success: "<green>Berhasil masuk. Selamat bermain.</green>"
+  login-failed: "<red>PIN salah.</red>"
+  register-success: "<green>Pendaftaran selesai.</green>"
+  register-failed: "<red>Pendaftaran gagal.</red>"
+pack:
+  declined: "<red>Kamu harus menerima resource pack.</red>"
+  failed: "<red>Gagal mengunduh resource pack.</red>"
+economy:
+  balance: "<gray>Saldo:</gray> <gold><amount></gold>"
+  insufficient: "<red>Emas tidak cukup.</red>"
+region:
+  no-build: "<red>Kamu tidak bisa membangun di sini.</red>"
+  no-pvp: "<red>PvP dimatikan di wilayah ini.</red>"
+loot:
+  opened: "<green>Peti dibuka:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>Peti ini belum terisi ulang.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>Kamu tidak dalam party.</gray>"
+  invited: "<yellow><player> mengundangmu ke party.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>Undangan terkirim:</green> <white><player></white>"
+  joined: "<green><player> bergabung ke party.</green>"
+  left: "<yellow><player> keluar dari party.</yellow>"
+  tracking-on: "<green>Pelacakan anggota aktif.</green>"
+  tracking-off: "<yellow>Pelacakan anggota nonaktif.</yellow>"
+travel:
+  cast-started: "<yellow>Kamu mulai membaca... jangan bergerak.</yellow>"
+  cast-cancelled: "<red>Pembacaan terputus.</red>"
+  arrived: "<green>Kamu sudah sampai.</green>"
+  no-scroll: "<red>Kamu butuh gulungan perjalanan.</red>"
+  not-discovered: "<red>Kamu harus ke sana dengan berjalan dulu.</red>"
+  in-combat: "<red>Tidak bisa teleportasi saat bertarung.</red>"
+  discovered: "<green>Menemukan tempat baru:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>Naik level!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>Tidak ada poin tersisa.</red>"
+jobs:
+  joined: "<green>Kamu bergabung:</green> <white><job></white>"
+  limit-reached: "<red>Maksimal yang bisa dipegang: <max></red>"
+  level-up: "<gold><job> naik level:</gold> <white><level></white>"
+quest:
+  started: "<green>Quest diterima:</green> <white><quest></white>"
+  completed: "<gold><bold>Quest selesai:</bold></gold> <white><quest></white>"
+  none: "<gray>Tidak ada quest aktif.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— temukan inti dan hancurkan.</gray>"
+  exited: "<green>Kamu sudah keluar. Tidak bisa kembali.</green>"
+  no-build: "<red>Kamu tidak bisa menghancurkan blok di sini.</red>"
+  core-broken: "<dark_red><bold>Inti hancur! Ruang bawah tanah runtuh.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>RUNTUH</bold></dark_red>"
+  collapse-subtitle: "<yellow>Capai pintu keluar — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>Ruang bawah tanah runtuh</bold></dark_red>"
+  collapsed-subtitle: "<gray>Kamu masih di dalam.</gray>"
+  collapse-actionbar: "<dark_red>⚠ Runtuh:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT untuk lanjut"
+  choose-hint: "Gulir untuk memilih · SHIFT untuk konfirmasi"
+chat:
+  blocked: "<red>Pesan tidak terkirim: konten tidak pantas.</red>"

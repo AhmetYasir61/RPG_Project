@@ -236,6 +236,30 @@ sunucu icin istenmeyen sonuc uretiyor: ceviri eksikse arayuz yarim gorunur.
 - `false`: herkese `language.default` gonderilir.
 - `true`: istemci dili desteklenen diller arasindaysa o kullanilir.
 
+## 16. Web panelinde giris/kayit ekrani hic cikmiyordu
+
+**Belirti:** Baglantiya tiklaninca panel dogrudan aciliyor; PIN hic sorulmuyor.
+
+**Kok sebep (guvenlik acigi):** `/auth/{token}` jetonu tuketip oyuncuyu DOGRUDAN
+`AUTHENTICATED` isaretliyordu. Jeton "kim" sorusunu cevaplar (baglanti oyuna
+gonderildi), ama "sifreyi biliyor mu" sorusunu cevaplamaz. Baglantiyi ele geciren
+biri PIN bilmeden hesaba girebilirdi; kaydi olmayan oyuncu icin ise hic hesap
+olusmuyordu — bu yuzden "kayit sayfasi gelmedi".
+
+**Cozum — akis ikiye ayrildi:**
+```
+/auth/{token}  -> jeton tuketilir, oturum DOGRULANMAMIS olarak acilir
+               -> kaydi yoksa /register, varsa /login
+/register      -> PIN + tekrar  -> AuthService.register
+/login         -> PIN           -> AuthService.login
+               -> basarili ise oturum dogrulanir + oyun ici durum acilir -> /panel
+/panel         -> yalnizca DOGRULANMIS oturum
+/api/*         -> yalnizca DOGRULANMIS oturum (yetkili uclar ayrica admin ister)
+```
+`WebSession` artik `authenticated` bayragi tasiyor ve jetonun kendisi yeterli
+sayilmiyor. `AuthModule.consumeWebToken` oyuncuyu dogrulamiyor; dogrulama
+`markAuthenticated` ile PIN kontrolunden SONRA yapiliyor.
+
 ## Beklenen acilis ciktisi (duzeltmelerden sonra)
 
 ```

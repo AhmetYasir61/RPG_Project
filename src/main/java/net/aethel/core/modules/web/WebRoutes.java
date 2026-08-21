@@ -40,6 +40,10 @@ final class WebRoutes {
     void register(Javalin server) {
         server.get("/", context -> context.html(WebPages.landing()));
         server.get("/auth/{token}", this::authenticate);
+        server.get("/login", context -> credentialPage(context, false));
+        server.get("/register", context -> credentialPage(context, true));
+        server.post("/login", context -> submitCredentials(context, false));
+        server.post("/register", context -> submitCredentials(context, true));
         server.get("/panel", this::panel);
 
         server.get("/api/me", context -> withSession(context, session -> {
@@ -77,11 +81,7 @@ final class WebRoutes {
     private void authenticate(Context context) {
         String token = context.pathParam("token");
 
-        Optional<UUID> player = ctx.services().optional(AuthService.class)
-                .filter(net.aethel.core.modules.auth.AuthModule.class::isInstance)
-                .map(net.aethel.core.modules.auth.AuthModule.class::cast)
-                .flatMap(module -> module.consumeWebToken(token));
-
+        Optional<UUID> player = authModule().flatMap(module -> module.consumeWebToken(token));
         if (player.isEmpty()) {
             context.status(403).html(WebPages.error(
                     "Baglanti gecersiz ya da suresi dolmus. "
@@ -90,14 +90,89 @@ final class WebRoutes {
         }
         sessions.put(token, buildSession(player.get()));
         context.cookie(SESSION_COOKIE, token, settings.sessionMinutes * 60);
-        context.redirect("/panel");
+
+        // Kaydi olmayan oyuncu kayit ekranina, kayitli olan giris ekranina gider.
+        // Jeton "kim" sorusunu cevaplar; "sifreyi biliyor mu" sorusunu bu ekran cevaplar.
+        AuthService.State state = authService()
+                .map(auth -> auth.state(player.get()))
+                .orElse(AuthService.State.AWAITING_LOGIN);
+        context.redirect(state == AuthService.State.UNREGISTERED ? "/register" : "/login");
+    }
+
+    /** Giris / kayit formu. Oturum yoksa form gosterilmez. */
+    private void credentialPage(Context context, boolean registration) {
+        Optional<WebSession> session = session(context);
+        if (session.isEmpty()) {
+            context.status(401).html(WebPages.error(
+                    "Once oyun icinden /adminmenu yazarak baglanti al."));
+            return;
+        }
+        if (session.get().authenticated()) {
+            context.redirect("/panel");
+            return;
+        }
+        context.html(WebPages.credentials(session.get(), registration, null));
     }
 
     /**
-     * Oturum kaydini kurar. Yetkili bayragi oyuncunun izninden okunur; oyuncu
-     * cevrimdisiysa (baglantiyi alip cikmissa) yetkisiz oturum acilir — panelin
-     * yetkili uclari o oturuma kapalidir.
+     * Formu isler. Kayit akisinda PIN iki kez istenir: yanlis yazilmis bir PIN
+     * oyuncuyu hesabindan tamamen kilitler ve geri donusu yoktur.
      */
+    private void submitCredentials(Context context, boolean registration) {
+        Optional<WebSession> found = session(context);
+        if (found.isEmpty()) {
+            context.status(401).html(WebPages.error("Oturum suresi dolmus."));
+            return;
+        }
+        WebSession session = found.get();
+        String secret = context.formParam("pin");
+        String confirm = context.formParam("pin2");
+
+        if (secret == null || secret.isBlank()) {
+            context.html(WebPages.credentials(session, registration, "PIN bos olamaz."));
+            return;
+        }
+        if (registration && !secret.equals(confirm)) {
+            context.html(WebPages.credentials(session, registration, "PIN'ler eslesmedi."));
+            return;
+        }
+        Optional<AuthService> auth = authService();
+        if (auth.isEmpty()) {
+            context.status(503).html(WebPages.error("Kimlik servisi kullanilamiyor."));
+            return;
+        }
+        boolean ok = (registration
+                ? auth.get().register(session.player(), secret)
+                : auth.get().login(session.player(), secret)).join();
+
+        if (!ok) {
+            context.html(WebPages.credentials(session, registration,
+                    registration ? "Kayit basarisiz. PIN kurallara uymuyor olabilir."
+                            : "PIN hatali."));
+            return;
+        }
+        // Oyun ici durum da acilir: oyuncu tarayicidan cikmadan oynamaya baslayabilir.
+        authModule().ifPresent(module -> module.markAuthenticated(session.player()));
+        session.authenticate(isAdmin(session.player()));
+        context.redirect("/panel");
+    }
+
+    private Optional<AuthService> authService() {
+        return ctx.services().optional(AuthService.class);
+    }
+
+    private Optional<net.aethel.core.modules.auth.AuthModule> authModule() {
+        return authService()
+                .filter(net.aethel.core.modules.auth.AuthModule.class::isInstance)
+                .map(net.aethel.core.modules.auth.AuthModule.class::cast);
+    }
+
+    private boolean isAdmin(UUID playerId) {
+        var online = ctx.plugin().getServer().getPlayer(playerId);
+        return online != null && online.hasPermission("aethel.admin.panel");
+    }
+
+    /** Oturum kaydini kurar; DOGRULANMAMIS baslar, PIN girilince acilir. */
     private WebSession buildSession(UUID playerId) {
         var online = ctx.plugin().getServer().getPlayer(playerId);
         String name = online != null ? online.getName()
@@ -106,15 +181,22 @@ final class WebRoutes {
                         .map(net.aethel.core.api.PlayerProfile::name)
                         .orElse(playerId.toString().substring(0, 8));
 
-        boolean admin = online != null && online.hasPermission("aethel.admin.panel");
-        long expiresAt = System.currentTimeMillis() + settings.sessionMinutes * 60_000L;
-        return new WebSession(playerId, name, expiresAt, admin);
+        return new WebSession(playerId, name,
+                System.currentTimeMillis() + settings.sessionMinutes * 60_000L);
     }
 
     private void panel(Context context) {
-        session(context).ifPresentOrElse(
-                found -> context.html(WebPages.panel(found)),
-                () -> context.status(401).html(WebPages.error("Once oyun icinden giris yapmalisin.")));
+        Optional<WebSession> session = session(context);
+        if (session.isEmpty()) {
+            context.status(401).html(WebPages.error(
+                    "Once oyun icinden /adminmenu yazarak baglanti al."));
+            return;
+        }
+        if (!session.get().authenticated()) {
+            context.redirect("/login");
+            return;
+        }
+        context.html(WebPages.panel(session.get()));
     }
 
     private Optional<WebSession> session(Context context) {
@@ -124,12 +206,18 @@ final class WebRoutes {
         return session != null && session.valid() ? Optional.of(session) : Optional.empty();
     }
 
+    /** Dogrulanmis oturum; PIN girmeden hicbir veri ucuna erisilemez. */
+    private Optional<WebSession> authenticatedSession(Context context) {
+        return session(context).filter(WebSession::authenticated);
+    }
+
     private void withSession(Context context, java.util.function.Consumer<WebSession> action) {
-        session(context).ifPresentOrElse(action, () -> context.status(401).result("unauthorized"));
+        authenticatedSession(context).ifPresentOrElse(action,
+                () -> context.status(401).result("unauthorized"));
     }
 
     private void withAdmin(Context context, java.util.function.Consumer<WebSession> action) {
-        session(context).filter(WebSession::admin).ifPresentOrElse(action,
+        authenticatedSession(context).filter(WebSession::admin).ifPresentOrElse(action,
                 () -> context.status(403).result("forbidden"));
     }
 

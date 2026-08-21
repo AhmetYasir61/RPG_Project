@@ -1,0 +1,79 @@
+# ko — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>게임 안에서만 사용할 수 있습니다.</red>"
+  player-not-found: "<red>해당 플레이어를 찾을 수 없습니다.</red>"
+  internal-error: "<red>오류가 발생했습니다. 운영진에게 알렸습니다.</red>"
+  no-permission: "<red>권한이 없습니다.</red>"
+auth:
+  required: "<red>먼저 로그인하세요.</red>"
+  timeout: "<red>시간이 초과되었습니다. 다시 접속하세요.</red>"
+  session-restored: "<green>세션이 복원되었습니다. 다시 오신 것을 환영합니다.</green>"
+  gui-login: "<yellow>PIN을 입력하세요.</yellow>"
+  gui-register: "<yellow>PIN을 정해 가입하세요.</yellow>"
+  gui-title-login: "<dark_gray>PIN 입력"
+  gui-title-register: "<dark_gray>PIN 설정"
+  gui-title-confirm: "<dark_gray>PIN 다시 입력"
+  web-login: "<yellow>여기서 로그인: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>여기서 가입: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>PIN이 일치하지 않습니다.</red>"
+  login-success: "<green>로그인되었습니다. 즐거운 시간 되세요.</green>"
+  login-failed: "<red>PIN이 틀렸습니다.</red>"
+  register-success: "<green>가입이 완료되었습니다.</green>"
+  register-failed: "<red>가입에 실패했습니다.</red>"
+pack:
+  declined: "<red>리소스팩을 수락해야 합니다.</red>"
+  failed: "<red>리소스팩을 내려받지 못했습니다.</red>"
+economy:
+  balance: "<gray>잔액:</gray> <gold><amount></gold>"
+  insufficient: "<red>골드가 부족합니다.</red>"
+region:
+  no-build: "<red>여기서는 건축할 수 없습니다.</red>"
+  no-pvp: "<red>이 지역은 PvP가 비활성화되어 있습니다.</red>"
+loot:
+  opened: "<green>상자를 열었습니다:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>이 상자는 아직 채워지지 않았습니다.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>파티에 속해 있지 않습니다.</gray>"
+  invited: "<yellow><player> 님이 파티에 초대했습니다.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>초대를 보냈습니다:</green> <white><player></white>"
+  joined: "<green><player> 님이 파티에 참가했습니다.</green>"
+  left: "<yellow><player> 님이 파티를 떠났습니다.</yellow>"
+  tracking-on: "<green>멤버 추적 켜짐</green>"
+  tracking-off: "<yellow>멤버 추적 꺼짐</yellow>"
+travel:
+  cast-started: "<yellow>시전을 시작했습니다... 움직이지 마세요.</yellow>"
+  cast-cancelled: "<red>시전이 중단되었습니다.</red>"
+  arrived: "<green>도착했습니다.</green>"
+  no-scroll: "<red>여행 두루마리가 필요합니다.</red>"
+  not-discovered: "<red>먼저 직접 걸어가야 합니다.</red>"
+  in-combat: "<red>전투 중에는 순간이동할 수 없습니다.</red>"
+  discovered: "<green>새로운 장소를 발견했습니다:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>레벨 업!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>사용할 포인트가 없습니다.</red>"
+jobs:
+  joined: "<green>직업에 합류했습니다:</green> <white><job></white>"
+  limit-reached: "<red>최대 보유 가능: <max></red>"
+  level-up: "<gold><job> 레벨 상승:</gold> <white><level></white>"
+quest:
+  started: "<green>퀘스트 수락:</green> <white><quest></white>"
+  completed: "<gold><bold>퀘스트 완료:</bold></gold> <white><quest></white>"
+  none: "<gray>진행 중인 퀘스트가 없습니다.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— 핵을 찾아 부수세요.</gray>"
+  exited: "<green>밖으로 나왔습니다. 같은 던전으로 돌아갈 수 없습니다.</green>"
+  no-build: "<red>여기서는 블록을 부술 수 없습니다.</red>"
+  core-broken: "<dark_red><bold>핵이 파괴되었습니다! 지하실이 무너집니다.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>붕괴</bold></dark_red>"
+  collapse-subtitle: "<yellow>출구로 향하세요 — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>지하실이 무너졌습니다</bold></dark_red>"
+  collapsed-subtitle: "<gray>아직 안에 있었습니다.</gray>"
+  collapse-actionbar: "<dark_red>⚠ 붕괴:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT로 계속"
+  choose-hint: "휠로 선택 · SHIFT로 확인"
+chat:
+  blocked: "<red>메시지가 전송되지 않았습니다: 부적절한 내용.</red>"

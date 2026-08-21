@@ -17,6 +17,8 @@ modules:
   quest:        { enabled: true }
   region:       { enabled: true }
   chat:         { enabled: true }
+  scoreboard:   { enabled: true }
+  motd:         { enabled: true }
   party:        { enabled: true }
   travel:       { enabled: true,  free-teleport: false }
   hologram:     { enabled: true }

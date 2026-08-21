@@ -1,0 +1,79 @@
+# uk — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>Лише у грі.</red>"
+  player-not-found: "<red>Гравця не знайдено.</red>"
+  internal-error: "<red>Сталася помилка. Адміністрацію повідомлено.</red>"
+  no-permission: "<red>У вас немає прав.</red>"
+auth:
+  required: "<red>Спершу увійдіть.</red>"
+  timeout: "<red>Час вичерпано. Перепідключіться.</red>"
+  session-restored: "<green>Сесію відновлено, з поверненням.</green>"
+  gui-login: "<yellow>Введіть свій PIN.</yellow>"
+  gui-register: "<yellow>Зареєструйтесь, обравши PIN.</yellow>"
+  gui-title-login: "<dark_gray>Введіть PIN"
+  gui-title-register: "<dark_gray>Оберіть PIN"
+  gui-title-confirm: "<dark_gray>Повторіть PIN"
+  web-login: "<yellow>Увійти тут: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Реєстрація тут: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>PIN-коди не збігаються.</red>"
+  login-success: "<green>Вхід виконано. Гарної гри.</green>"
+  login-failed: "<red>Невірний PIN.</red>"
+  register-success: "<green>Реєстрацію завершено.</green>"
+  register-failed: "<red>Реєстрація не вдалася.</red>"
+pack:
+  declined: "<red>Потрібно прийняти ресурспак.</red>"
+  failed: "<red>Не вдалося завантажити ресурспак.</red>"
+economy:
+  balance: "<gray>Баланс:</gray> <gold><amount></gold>"
+  insufficient: "<red>Недостатньо золота.</red>"
+region:
+  no-build: "<red>Тут не можна будувати.</red>"
+  no-pvp: "<red>PvP вимкнено в цьому регіоні.</red>"
+loot:
+  opened: "<green>Скриню відкрито:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>Ця скриня ще не поповнилася.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>Ви не в групі.</gray>"
+  invited: "<yellow><player> запросив вас до групи.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>Запрошення надіслано:</green> <white><player></white>"
+  joined: "<green><player> приєднався до групи.</green>"
+  left: "<yellow><player> покинув групу.</yellow>"
+  tracking-on: "<green>Відстеження увімкнено.</green>"
+  tracking-off: "<yellow>Відстеження вимкнено.</yellow>"
+travel:
+  cast-started: "<yellow>Ви починаєте читати... не рухайтесь.</yellow>"
+  cast-cancelled: "<red>Читання перервано.</red>"
+  arrived: "<green>Ви прибули.</green>"
+  no-scroll: "<red>Потрібен сувій подорожі.</red>"
+  not-discovered: "<red>Спершу дійдіть туди пішки.</red>"
+  in-combat: "<red>Не можна телепортуватися в бою.</red>"
+  discovered: "<green>Відкрито нове місце:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>Новий рівень!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>Немає вільних очок.</red>"
+jobs:
+  joined: "<green>Ви опанували професію:</green> <white><job></white>"
+  limit-reached: "<red>Максимум професій: <max></red>"
+  level-up: "<gold><job> підвищив рівень:</gold> <white><level></white>"
+quest:
+  started: "<green>Завдання прийнято:</green> <white><quest></white>"
+  completed: "<gold><bold>Завдання виконано:</bold></gold> <white><quest></white>"
+  none: "<gray>Немає активних завдань.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— знайдіть ядро і розбийте його.</gray>"
+  exited: "<green>Ви вийшли. Повернутися неможливо.</green>"
+  no-build: "<red>Тут не можна ламати блоки.</red>"
+  core-broken: "<dark_red><bold>Ядро зруйновано! Підземелля обвалюється.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>ОБВАЛ</bold></dark_red>"
+  collapse-subtitle: "<yellow>Дістаньтесь виходу — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>Підземелля обвалилося</bold></dark_red>"
+  collapsed-subtitle: "<gray>Ви лишилися всередині.</gray>"
+  collapse-actionbar: "<dark_red>⚠ Обвал:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT — далі"
+  choose-hint: "Колесо — вибір · SHIFT — підтвердити"
+chat:
+  blocked: "<red>Повідомлення не надіслано: неприйнятний вміст.</red>"

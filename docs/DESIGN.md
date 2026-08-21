@@ -699,3 +699,89 @@ icerigi ayni kalir, yalnizca tasiyici degisir — pack olmayan bir sunucuda da c
 `dialog_continue.png` (8×8). Portreler `contents/aethel/textures/portrait/` altina,
 48×48. Tanimlar `contents/aethel/fonts/dialog.yml` icinde; pack uretimi bunlari
 U+E200'den itibaren karaktere baglar.
+
+## 24. Dil: her oyuncu kendi diliyle
+
+Dil **oyuncu bazlidir**, sunucu bazli degil. Turk oyuncuya Turkce, Japon oyuncuya
+Japonca, Rus oyuncuya Rusca gider — ayni anda, ayni sunucuda.
+
+### 24.1 Eslesme zinciri
+```
+oyuncunun istemci dili (or. pt_br)
+  -> lang/pt_br.yml var mi?          evet -> kullan
+  -> lang/pt.yml var mi?             evet -> kullan
+  -> lang/pt_* baska varyant?        evet -> kullan  (pt_pt, ayni dilin varyanti)
+  -> lang/<default>.yml                    -> kullan
+```
+Bolgesel varyanti once denemek onemli: `pt_br` ile `pt_pt`, `zh_cn` ile `zh_tw`
+arasindaki fark oyuncular icin belirgindir.
+
+### 24.2 Anahtar bazli geri dusme
+Bir dil dosyasinin **tam olmasi gerekmez**. Eksik anahtar varsayilan dile duser ve
+bir kez uyarilir. Bu sayede:
+- Yeni bir metin eklendiginde 20 dosyayi ayni anda guncellemek zorunlu degil.
+- Sunucu sahibi tek bir anahtari cevirip birakabilir.
+- Ceviri eksikligi mesaji **kaybettirmez**, yalnizca cevrilmemis gosterir.
+
+### 24.3 Dil listesi yok
+`lang/` klasorundeki her `.yml` otomatik yuklenir. Yeni dil eklemek icin dosya
+birakmak yeterli; config'te liste tutulmuyor. Dosya adi Minecraft dil kodudur.
+
+Kutuda gelen diller: `tr en de fr es it pt_br nl pl ru uk ja ko zh_cn ar id`
+(tr ve en tam; digerleri oyuncunun en sik gordugu ~60 anahtar, gerisi geri duser).
+
+`/core reload` dilleri de tazeler ve ayarlari korur.
+
+## 25. Tab ve Scoreboard modulu
+
+Her oyuncunun **kendi** scoreboard'u vardir: satirlar kisiye ozel placeholder
+tasiyabilir ve metin oyuncunun diline gore degisir.
+
+**Satirlar takim on eki olarak yaziliyor.** Vanilla'da skor girdisinin kendisi
+benzersiz olmak zorundadir — ayni metin iki satirda gorunemez ve uzunluk sinirlidir.
+Girdi olarak gorunmez renk kodu kullanip metni takim on ekine koymak bu iki
+sinirlamayi da kaldirir.
+
+```yaml
+boards:
+  varsayilan:
+    priority: 0
+    condition: ""                    # izin adi; bos = herkese
+    title: "<gradient:#f0c040:#e08020><bold>AETHEL</bold></gradient>"
+    lines:
+      - "<gray>Seviye</gray> <white>%aethel_rpg_level%</white>"
+      - "<gray>Altin</gray> <gold>%aethel_economy_balance%</gold>"
+    tab-header: ["", "<bold>AETHEL</bold>", ""]
+    tab-footer: ["", "<gray>TPS:</gray> <white>%aethel_server_tps%</white>", ""]
+```
+
+Tab listesindeki adin onune rutbe on eki `PermissionService`'ten gelir.
+Ozellikler: `scoreboard.sidebar`, `scoreboard.tab`, `scoreboard.tab-prefix`.
+
+Modul kapatilirken oyuncular ana tabloya dondurulur; aksi halde ekranda
+guncellenmeyen olu bir tablo asili kalir.
+
+## 26. MOTD modulu
+
+`motd.yml` icinde birden fazla MOTD tanimlanir, her pingde rastgele secilir.
+
+```yaml
+motds:
+  varsayilan:
+    line1: "<gradient:#f0c040:#e08020><bold>AETHEL</bold></gradient> <white>Fantasy MMORPG</white>"
+    line2: "<gray>Yeni sezon basladi!</gray>"
+    hover: ["<gold>AETHEL</gold>", "<gray>Dungeon · Meslek · Yetenek agaci</gray>"]
+  bakim:
+    line1: "<red><bold>BAKIM</bold></red>"
+    player-count: "<red>Bakimda</red>"
+```
+
+Ping olayi ana thread disinda gelebilir; bu yuzden burada **hicbir agir is
+yapilmaz**, yalnizca hazir metinler kullanilir. Placeholder cozumu oyuncusuz
+calisir — ping atan taraf bir oyuncu degildir, kisiye ozel veri yoktur.
+
+Fare ile beklendiginde gorunen liste, gercek oyuncu adlarini **temizler**: bu hem
+ozel metin gostermeyi saglar hem de cevrimici oyuncu adlarinin disariya sizmasini
+onler.
+
+Ozellikler: `motd.enabled`, `motd.hover`, `motd.fake-count`. Komut: `/motd yenile`.

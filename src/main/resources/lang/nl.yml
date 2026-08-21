@@ -1,0 +1,79 @@
+# nl — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>Alleen in het spel te gebruiken.</red>"
+  player-not-found: "<red>Speler niet gevonden.</red>"
+  internal-error: "<red>Er ging iets mis. Het team is op de hoogte.</red>"
+  no-permission: "<red>Je hebt hier geen rechten voor.</red>"
+auth:
+  required: "<red>Je moet eerst inloggen.</red>"
+  timeout: "<red>Tijd verlopen. Verbind opnieuw.</red>"
+  session-restored: "<green>Sessie hersteld, welkom terug.</green>"
+  gui-login: "<yellow>Voer je pincode in.</yellow>"
+  gui-register: "<yellow>Registreer met een pincode.</yellow>"
+  gui-title-login: "<dark_gray>Voer pincode in"
+  gui-title-register: "<dark_gray>Kies een pincode"
+  gui-title-confirm: "<dark_gray>Herhaal je pincode"
+  web-login: "<yellow>Log hier in: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Registreer hier: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>Pincodes komen niet overeen.</red>"
+  login-success: "<green>Ingelogd. Veel plezier.</green>"
+  login-failed: "<red>Verkeerde pincode.</red>"
+  register-success: "<green>Registratie voltooid.</green>"
+  register-failed: "<red>Registratie mislukt.</red>"
+pack:
+  declined: "<red>Je moet het resourcepack accepteren.</red>"
+  failed: "<red>Downloaden van resourcepack mislukt.</red>"
+economy:
+  balance: "<gray>Saldo:</gray> <gold><amount></gold>"
+  insufficient: "<red>Niet genoeg goud.</red>"
+region:
+  no-build: "<red>Je kunt hier niet bouwen.</red>"
+  no-pvp: "<red>PvP is uitgeschakeld in dit gebied.</red>"
+loot:
+  opened: "<green>Kist geopend:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>Deze kist is nog niet bijgevuld.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>Je zit niet in een groep.</gray>"
+  invited: "<yellow><player> heeft je uitgenodigd voor de groep.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>Uitnodiging verstuurd:</green> <white><player></white>"
+  joined: "<green><player> is bij de groep gekomen.</green>"
+  left: "<yellow><player> heeft de groep verlaten.</yellow>"
+  tracking-on: "<green>Ledenvolging aan.</green>"
+  tracking-off: "<yellow>Ledenvolging uit.</yellow>"
+travel:
+  cast-started: "<yellow>Je begint te lezen... blijf stilstaan.</yellow>"
+  cast-cancelled: "<red>De bezwering werd onderbroken.</red>"
+  arrived: "<green>Je bent aangekomen.</green>"
+  no-scroll: "<red>Je hebt een reisrol nodig.</red>"
+  not-discovered: "<red>Je moet er eerst zelf heen lopen.</red>"
+  in-combat: "<red>Je kunt niet teleporteren in gevecht.</red>"
+  discovered: "<green>Nieuwe plek ontdekt:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>Level omhoog!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>Je hebt geen punten over.</red>"
+jobs:
+  joined: "<green>Je bent begonnen als:</green> <white><job></white>"
+  limit-reached: "<red>Je kunt er maximaal zoveel hebben: <max></red>"
+  level-up: "<gold><job> is een level gestegen:</gold> <white><level></white>"
+quest:
+  started: "<green>Opdracht aangenomen:</green> <white><quest></white>"
+  completed: "<gold><bold>Opdracht voltooid:</bold></gold> <white><quest></white>"
+  none: "<gray>Je hebt geen actieve opdrachten.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— vind de kern en sla hem stuk.</gray>"
+  exited: "<green>Je bent buiten. Terugkeren kan niet.</green>"
+  no-build: "<red>Je kunt hier geen blokken breken.</red>"
+  core-broken: "<dark_red><bold>De kern is stuk! De kelder stort in.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>INSTORTING</bold></dark_red>"
+  collapse-subtitle: "<yellow>Bereik de uitgang — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>De kelder stortte in</bold></dark_red>"
+  collapsed-subtitle: "<gray>Je was nog binnen.</gray>"
+  collapse-actionbar: "<dark_red>⚠ Instorting:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT om door te gaan"
+  choose-hint: "Scrollen kiest · SHIFT bevestigt"
+chat:
+  blocked: "<red>Bericht niet verzonden: ongepaste inhoud.</red>"

@@ -1,0 +1,79 @@
+# pt_br — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>So pode ser usado no jogo.</red>"
+  player-not-found: "<red>Jogador nao encontrado.</red>"
+  internal-error: "<red>Algo deu errado. A equipe foi avisada.</red>"
+  no-permission: "<red>Voce nao tem permissao.</red>"
+auth:
+  required: "<red>Voce precisa entrar primeiro.</red>"
+  timeout: "<red>Tempo esgotado. Reconecte-se.</red>"
+  session-restored: "<green>Sessao restaurada, bem-vindo de volta.</green>"
+  gui-login: "<yellow>Digite seu PIN.</yellow>"
+  gui-register: "<yellow>Cadastre-se escolhendo um PIN.</yellow>"
+  gui-title-login: "<dark_gray>Digite seu PIN"
+  gui-title-register: "<dark_gray>Escolha um PIN"
+  gui-title-confirm: "<dark_gray>Repita seu PIN"
+  web-login: "<yellow>Entre aqui: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Cadastre-se aqui: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>Os PINs nao coincidem.</red>"
+  login-success: "<green>Conectado. Bom jogo.</green>"
+  login-failed: "<red>PIN incorreto.</red>"
+  register-success: "<green>Cadastro concluido.</green>"
+  register-failed: "<red>Falha no cadastro.</red>"
+pack:
+  declined: "<red>Voce precisa aceitar o pacote de recursos.</red>"
+  failed: "<red>Falha ao baixar o pacote de recursos.</red>"
+economy:
+  balance: "<gray>Saldo:</gray> <gold><amount></gold>"
+  insufficient: "<red>Ouro insuficiente.</red>"
+region:
+  no-build: "<red>Voce nao pode construir aqui.</red>"
+  no-pvp: "<red>PvP desativado nesta regiao.</red>"
+loot:
+  opened: "<green>Bau aberto:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>Este bau ainda nao foi reabastecido.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>Voce nao esta em um grupo.</gray>"
+  invited: "<yellow><player> convidou voce para o grupo.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>Convite enviado:</green> <white><player></white>"
+  joined: "<green><player> entrou no grupo.</green>"
+  left: "<yellow><player> saiu do grupo.</yellow>"
+  tracking-on: "<green>Rastreamento ativado.</green>"
+  tracking-off: "<yellow>Rastreamento desativado.</yellow>"
+travel:
+  cast-started: "<yellow>Voce comeca a ler... nao se mexa.</yellow>"
+  cast-cancelled: "<red>A conjuracao foi interrompida.</red>"
+  arrived: "<green>Voce chegou.</green>"
+  no-scroll: "<red>Voce precisa de um pergaminho de viagem.</red>"
+  not-discovered: "<red>Voce precisa ir ate la a pe primeiro.</red>"
+  in-combat: "<red>Nao da para teleportar em combate.</red>"
+  discovered: "<green>Novo local descoberto:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>Subiu de nivel!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>Voce nao tem pontos.</red>"
+jobs:
+  joined: "<green>Voce entrou em:</green> <white><job></white>"
+  limit-reached: "<red>Voce pode ter no maximo: <max></red>"
+  level-up: "<gold><job> subiu de nivel:</gold> <white><level></white>"
+quest:
+  started: "<green>Missao aceita:</green> <white><quest></white>"
+  completed: "<gold><bold>Missao concluida:</bold></gold> <white><quest></white>"
+  none: "<gray>Voce nao tem missoes ativas.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— encontre o nucleo e quebre-o.</gray>"
+  exited: "<green>Voce saiu. Nao da para voltar.</green>"
+  no-build: "<red>Voce nao pode quebrar blocos aqui.</red>"
+  core-broken: "<dark_red><bold>O nucleo foi quebrado! A cripta esta desabando.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>DESABAMENTO</bold></dark_red>"
+  collapse-subtitle: "<yellow>Chegue a saida — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>A cripta desabou</bold></dark_red>"
+  collapsed-subtitle: "<gray>Voce ainda estava dentro.</gray>"
+  collapse-actionbar: "<dark_red>⚠ Desabamento:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT para continuar"
+  choose-hint: "Role para escolher · SHIFT para confirmar"
+chat:
+  blocked: "<red>Mensagem nao enviada: conteudo inadequado.</red>"

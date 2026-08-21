@@ -1,0 +1,79 @@
+# fr — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>Utilisable uniquement en jeu.</red>"
+  player-not-found: "<red>Joueur introuvable.</red>"
+  internal-error: "<red>Une erreur est survenue. L'equipe a ete prevenue.</red>"
+  no-permission: "<red>Tu n'as pas la permission.</red>"
+auth:
+  required: "<red>Tu dois d'abord te connecter.</red>"
+  timeout: "<red>Delai depasse. Reconnecte-toi.</red>"
+  session-restored: "<green>Session restauree, bon retour.</green>"
+  gui-login: "<yellow>Entre ton code PIN.</yellow>"
+  gui-register: "<yellow>Inscris-toi avec un code PIN.</yellow>"
+  gui-title-login: "<dark_gray>Entre ton PIN"
+  gui-title-register: "<dark_gray>Choisis un PIN"
+  gui-title-confirm: "<dark_gray>Repete ton PIN"
+  web-login: "<yellow>Connecte-toi ici : <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Inscris-toi ici : <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>Les codes ne correspondent pas.</red>"
+  login-success: "<green>Connecte. Bon jeu.</green>"
+  login-failed: "<red>Code PIN incorrect.</red>"
+  register-success: "<green>Inscription terminee.</green>"
+  register-failed: "<red>Echec de l'inscription.</red>"
+pack:
+  declined: "<red>Tu dois accepter le pack de ressources.</red>"
+  failed: "<red>Echec du telechargement du pack.</red>"
+economy:
+  balance: "<gray>Solde :</gray> <gold><amount></gold>"
+  insufficient: "<red>Pas assez d'or.</red>"
+region:
+  no-build: "<red>Tu ne peux pas construire ici.</red>"
+  no-pvp: "<red>Le PvP est desactive ici.</red>"
+loot:
+  opened: "<green>Coffre ouvert :</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>Ce coffre n'est pas encore rempli.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>Tu n'es dans aucun groupe.</gray>"
+  invited: "<yellow><player> t'a invite dans son groupe.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>Invitation envoyee :</green> <white><player></white>"
+  joined: "<green><player> a rejoint le groupe.</green>"
+  left: "<yellow><player> a quitte le groupe.</yellow>"
+  tracking-on: "<green>Suivi des membres active.</green>"
+  tracking-off: "<yellow>Suivi des membres desactive.</yellow>"
+travel:
+  cast-started: "<yellow>Tu commences a lire... ne bouge pas.</yellow>"
+  cast-cancelled: "<red>L'incantation a ete interrompue.</red>"
+  arrived: "<green>Tu es arrive.</green>"
+  no-scroll: "<red>Il te faut un parchemin de voyage.</red>"
+  not-discovered: "<red>Tu dois d'abord y aller a pied.</red>"
+  in-combat: "<red>Impossible de se teleporter en combat.</red>"
+  discovered: "<green>Nouveau lieu decouvert :</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>Niveau superieur !</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>Tu n'as plus de points.</red>"
+jobs:
+  joined: "<green>Tu as rejoint :</green> <white><job></white>"
+  limit-reached: "<red>Tu peux avoir au maximum : <max></red>"
+  level-up: "<gold><job> monte de niveau :</gold> <white><level></white>"
+quest:
+  started: "<green>Quete acceptee :</green> <white><quest></white>"
+  completed: "<gold><bold>Quete terminee :</bold></gold> <white><quest></white>"
+  none: "<gray>Tu n'as aucune quete active.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— trouve le noyau et brise-le.</gray>"
+  exited: "<green>Tu es sorti. Retour impossible.</green>"
+  no-build: "<red>Tu ne peux pas casser de blocs ici.</red>"
+  core-broken: "<dark_red><bold>Le noyau est brise ! La crypte s'effondre.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>EFFONDREMENT</bold></dark_red>"
+  collapse-subtitle: "<yellow>Rejoins la sortie — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>La crypte s'est effondree</bold></dark_red>"
+  collapsed-subtitle: "<gray>Tu etais encore a l'interieur.</gray>"
+  collapse-actionbar: "<dark_red>⚠ Effondrement :</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT pour continuer"
+  choose-hint: "Molette pour choisir · SHIFT pour valider"
+chat:
+  blocked: "<red>Message non envoye : contenu inapproprie.</red>"

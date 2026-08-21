@@ -39,6 +39,8 @@ permissions:
       aethel.admin.pack: true
       aethel.admin.dungeon: true
       aethel.admin.features: true
+      aethel.admin.motd: true
+      aethel.admin.scoreboard: true
   aethel.profile.inspect:
     description: Baska oyuncularin profilini gorme yetkisi.
     default: op

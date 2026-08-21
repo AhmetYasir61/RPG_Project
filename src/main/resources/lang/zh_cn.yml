@@ -1,0 +1,79 @@
+# zh_cn — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>只能在游戏内使用。</red>"
+  player-not-found: "<red>找不到该玩家。</red>"
+  internal-error: "<red>出现错误，已通知管理员。</red>"
+  no-permission: "<red>你没有权限。</red>"
+auth:
+  required: "<red>请先登录。</red>"
+  timeout: "<red>登录超时，请重新连接。</red>"
+  session-restored: "<green>会话已恢复，欢迎回来。</green>"
+  gui-login: "<yellow>请输入你的 PIN。</yellow>"
+  gui-register: "<yellow>请设置 PIN 完成注册。</yellow>"
+  gui-title-login: "<dark_gray>输入 PIN"
+  gui-title-register: "<dark_gray>设置 PIN"
+  gui-title-confirm: "<dark_gray>再次输入 PIN"
+  web-login: "<yellow>在此登录： <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>在此注册： <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>两次 PIN 不一致。</red>"
+  login-success: "<green>登录成功，祝你游戏愉快。</green>"
+  login-failed: "<red>PIN 错误。</red>"
+  register-success: "<green>注册完成。</green>"
+  register-failed: "<red>注册失败。</red>"
+pack:
+  declined: "<red>你必须接受资源包才能游玩。</red>"
+  failed: "<red>资源包下载失败。</red>"
+economy:
+  balance: "<gray>余额：</gray> <gold><amount></gold>"
+  insufficient: "<red>金币不足。</red>"
+region:
+  no-build: "<red>你不能在这里建造。</red>"
+  no-pvp: "<red>此区域已关闭 PvP。</red>"
+loot:
+  opened: "<green>箱子已打开：</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>这个箱子还未刷新。</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>你不在队伍中。</gray>"
+  invited: "<yellow><player> 邀请你加入队伍。</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>已发送邀请：</green> <white><player></white>"
+  joined: "<green><player> 加入了队伍。</green>"
+  left: "<yellow><player> 离开了队伍。</yellow>"
+  tracking-on: "<green>已开启队友追踪。</green>"
+  tracking-off: "<yellow>已关闭队友追踪。</yellow>"
+travel:
+  cast-started: "<yellow>你开始吟唱……别动。</yellow>"
+  cast-cancelled: "<red>吟唱被打断。</red>"
+  arrived: "<green>你已抵达。</green>"
+  no-scroll: "<red>你需要一张旅行卷轴。</red>"
+  not-discovered: "<red>你必须先自己走到那里。</red>"
+  in-combat: "<red>战斗中无法传送。</red>"
+  discovered: "<green>发现新地点：</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>升级了！</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>没有可分配的点数。</red>"
+jobs:
+  joined: "<green>你加入了：</green> <white><job></white>"
+  limit-reached: "<red>最多可同时从事： <max></red>"
+  level-up: "<gold><job> 等级提升：</gold> <white><level></white>"
+quest:
+  started: "<green>已接受任务：</green> <white><quest></white>"
+  completed: "<gold><bold>任务完成：</bold></gold> <white><quest></white>"
+  none: "<gray>你没有进行中的任务。</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— 找到核心并击碎它。</gray>"
+  exited: "<green>你已离开，无法再返回该副本。</green>"
+  no-build: "<red>你不能在这里破坏方块。</red>"
+  core-broken: "<dark_red><bold>核心被击碎！地窖开始坍塌。</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>坍塌</bold></dark_red>"
+  collapse-subtitle: "<yellow>前往出口 — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>地窖已坍塌</bold></dark_red>"
+  collapsed-subtitle: "<gray>你还在里面。</gray>"
+  collapse-actionbar: "<dark_red>⚠ 坍塌：</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT 继续"
+  choose-hint: "滚轮选择 · SHIFT 确认"
+chat:
+  blocked: "<red>消息未发送：内容不当。</red>"

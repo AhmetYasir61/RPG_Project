@@ -1,0 +1,79 @@
+# ar — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>يمكن استخدامه داخل اللعبة فقط.</red>"
+  player-not-found: "<red>لم يتم العثور على اللاعب.</red>"
+  internal-error: "<red>حدث خطأ. تم إبلاغ الإدارة.</red>"
+  no-permission: "<red>ليس لديك صلاحية.</red>"
+auth:
+  required: "<red>يجب تسجيل الدخول أولاً.</red>"
+  timeout: "<red>انتهى الوقت. أعد الاتصال.</red>"
+  session-restored: "<green>تمت استعادة الجلسة، أهلاً بعودتك.</green>"
+  gui-login: "<yellow>أدخل رمز PIN.</yellow>"
+  gui-register: "<yellow>سجّل باختيار رمز PIN.</yellow>"
+  gui-title-login: "<dark_gray>أدخل PIN"
+  gui-title-register: "<dark_gray>اختر PIN"
+  gui-title-confirm: "<dark_gray>أعد إدخال PIN"
+  web-login: "<yellow>سجّل الدخول هنا: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>سجّل هنا: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>الرمزان غير متطابقين.</red>"
+  login-success: "<green>تم تسجيل الدخول. استمتع.</green>"
+  login-failed: "<red>رمز PIN خاطئ.</red>"
+  register-success: "<green>اكتمل التسجيل.</green>"
+  register-failed: "<red>فشل التسجيل.</red>"
+pack:
+  declined: "<red>يجب قبول حزمة الموارد.</red>"
+  failed: "<red>فشل تنزيل حزمة الموارد.</red>"
+economy:
+  balance: "<gray>الرصيد:</gray> <gold><amount></gold>"
+  insufficient: "<red>الذهب غير كافٍ.</red>"
+region:
+  no-build: "<red>لا يمكنك البناء هنا.</red>"
+  no-pvp: "<red>القتال معطّل في هذه المنطقة.</red>"
+loot:
+  opened: "<green>تم فتح الصندوق:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>لم يُملأ هذا الصندوق بعد.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>أنت لست في مجموعة.</gray>"
+  invited: "<yellow><player> دعاك إلى مجموعته.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>تم إرسال الدعوة:</green> <white><player></white>"
+  joined: "<green><player> انضم إلى المجموعة.</green>"
+  left: "<yellow><player> غادر المجموعة.</yellow>"
+  tracking-on: "<green>تتبّع الأعضاء مُفعّل.</green>"
+  tracking-off: "<yellow>تتبّع الأعضاء مُعطّل.</yellow>"
+travel:
+  cast-started: "<yellow>بدأت القراءة... لا تتحرك.</yellow>"
+  cast-cancelled: "<red>انقطعت القراءة.</red>"
+  arrived: "<green>لقد وصلت.</green>"
+  no-scroll: "<red>تحتاج إلى مخطوطة سفر.</red>"
+  not-discovered: "<red>عليك الوصول إلى هناك سيرًا أولاً.</red>"
+  in-combat: "<red>لا يمكن الانتقال أثناء القتال.</red>"
+  discovered: "<green>اكتشفت موقعًا جديدًا:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>ارتفع مستواك!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>لا توجد نقاط متاحة.</red>"
+jobs:
+  joined: "<green>انضممت إلى:</green> <white><job></white>"
+  limit-reached: "<red>الحد الأقصى: <max></red>"
+  level-up: "<gold><job> ارتفع مستواه:</gold> <white><level></white>"
+quest:
+  started: "<green>تم قبول المهمة:</green> <white><quest></white>"
+  completed: "<gold><bold>اكتملت المهمة:</bold></gold> <white><quest></white>"
+  none: "<gray>لا توجد مهام نشطة.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— اعثر على النواة وحطّمها.</gray>"
+  exited: "<green>لقد خرجت. لا يمكنك العودة.</green>"
+  no-build: "<red>لا يمكنك كسر الكتل هنا.</red>"
+  core-broken: "<dark_red><bold>تحطّمت النواة! القبو ينهار.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>انهيار</bold></dark_red>"
+  collapse-subtitle: "<yellow>اتجه إلى المخرج — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>انهار القبو</bold></dark_red>"
+  collapsed-subtitle: "<gray>كنت لا تزال في الداخل.</gray>"
+  collapse-actionbar: "<dark_red>⚠ انهيار:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT للمتابعة"
+  choose-hint: "العجلة للاختيار · SHIFT للتأكيد"
+chat:
+  blocked: "<red>لم يتم إرسال الرسالة: محتوى غير لائق.</red>"

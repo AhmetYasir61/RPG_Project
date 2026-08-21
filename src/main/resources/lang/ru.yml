@@ -1,0 +1,79 @@
+# ru — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>Только в игре.</red>"
+  player-not-found: "<red>Игрок не найден.</red>"
+  internal-error: "<red>Произошла ошибка. Администрация уведомлена.</red>"
+  no-permission: "<red>У вас нет прав.</red>"
+auth:
+  required: "<red>Сначала войдите.</red>"
+  timeout: "<red>Время истекло. Переподключитесь.</red>"
+  session-restored: "<green>Сессия восстановлена, с возвращением.</green>"
+  gui-login: "<yellow>Введите PIN-код.</yellow>"
+  gui-register: "<yellow>Зарегистрируйтесь, выбрав PIN.</yellow>"
+  gui-title-login: "<dark_gray>Введите PIN"
+  gui-title-register: "<dark_gray>Выберите PIN"
+  gui-title-confirm: "<dark_gray>Повторите PIN"
+  web-login: "<yellow>Войти здесь: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>Регистрация здесь: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>PIN-коды не совпадают.</red>"
+  login-success: "<green>Вход выполнен. Приятной игры.</green>"
+  login-failed: "<red>Неверный PIN.</red>"
+  register-success: "<green>Регистрация завершена.</green>"
+  register-failed: "<red>Регистрация не удалась.</red>"
+pack:
+  declined: "<red>Нужно принять ресурспак.</red>"
+  failed: "<red>Не удалось загрузить ресурспак.</red>"
+economy:
+  balance: "<gray>Баланс:</gray> <gold><amount></gold>"
+  insufficient: "<red>Недостаточно золота.</red>"
+region:
+  no-build: "<red>Здесь нельзя строить.</red>"
+  no-pvp: "<red>PvP отключён в этом регионе.</red>"
+loot:
+  opened: "<green>Сундук открыт:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>Сундук ещё не восполнился.</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>Вы не в группе.</gray>"
+  invited: "<yellow><player> пригласил вас в группу.</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>Приглашение отправлено:</green> <white><player></white>"
+  joined: "<green><player> присоединился к группе.</green>"
+  left: "<yellow><player> покинул группу.</yellow>"
+  tracking-on: "<green>Отслеживание включено.</green>"
+  tracking-off: "<yellow>Отслеживание выключено.</yellow>"
+travel:
+  cast-started: "<yellow>Вы начали читать... не двигайтесь.</yellow>"
+  cast-cancelled: "<red>Чтение прервано.</red>"
+  arrived: "<green>Вы прибыли.</green>"
+  no-scroll: "<red>Нужен свиток путешествия.</red>"
+  not-discovered: "<red>Сначала дойдите туда пешком.</red>"
+  in-combat: "<red>Нельзя телепортироваться в бою.</red>"
+  discovered: "<green>Открыто новое место:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>Новый уровень!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>Нет свободных очков.</red>"
+jobs:
+  joined: "<green>Вы освоили профессию:</green> <white><job></white>"
+  limit-reached: "<red>Максимум профессий: <max></red>"
+  level-up: "<gold><job> повысил уровень:</gold> <white><level></white>"
+quest:
+  started: "<green>Задание принято:</green> <white><quest></white>"
+  completed: "<gold><bold>Задание выполнено:</bold></gold> <white><quest></white>"
+  none: "<gray>Нет активных заданий.</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— найдите ядро и разрушьте его.</gray>"
+  exited: "<green>Вы вышли. Вернуться нельзя.</green>"
+  no-build: "<red>Здесь нельзя ломать блоки.</red>"
+  core-broken: "<dark_red><bold>Ядро разрушено! Подземелье рушится.</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>ОБВАЛ</bold></dark_red>"
+  collapse-subtitle: "<yellow>Доберитесь до выхода — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>Подземелье обрушилось</bold></dark_red>"
+  collapsed-subtitle: "<gray>Вы остались внутри.</gray>"
+  collapse-actionbar: "<dark_red>⚠ Обвал:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFT — далее"
+  choose-hint: "Колесо — выбор · SHIFT — подтвердить"
+chat:
+  blocked: "<red>Сообщение не отправлено: недопустимое содержание.</red>"

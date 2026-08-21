@@ -8,7 +8,9 @@ import net.aethel.core.modules.chat.ChatModule;
 import net.aethel.core.modules.dialog.DialogModule;
 import net.aethel.core.modules.dungeon.DungeonModule;
 import net.aethel.core.modules.economy.EconomyModule;
+import net.aethel.core.modules.motd.MotdModule;
 import net.aethel.core.modules.npc.NpcModule;
+import net.aethel.core.modules.scoreboard.ScoreboardModule;
 import net.aethel.core.modules.quest.QuestModule;
 import net.aethel.core.modules.hud.HudModule;
 import net.aethel.core.modules.jobs.JobModule;
@@ -60,6 +62,8 @@ final class ModuleCatalog {
                 new AdminPanelModule(),
                 new WebModule(),
                 new ChatModule(),
+                new ScoreboardModule(),
+                new MotdModule(),
                 new DialogModule(),
                 new QuestModule(),
                 new NpcModule(bridge),

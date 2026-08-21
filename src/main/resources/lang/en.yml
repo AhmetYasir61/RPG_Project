@@ -208,3 +208,8 @@ dungeon:
 dialog:
   continue-hint: "SHIFT to continue"
   choose-hint: "Scroll to choose · SHIFT to confirm"
+
+motd:
+  command-description: "MOTD management"
+  status: "<gray>Loaded MOTD entries:</gray> <white><count></white>"
+  reloaded: "<green>MOTD entries reloaded:</green> <white><count></white>"

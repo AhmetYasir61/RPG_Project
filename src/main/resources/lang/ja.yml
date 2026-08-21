@@ -1,0 +1,79 @@
+# ja — AethelCore
+# Eksik anahtarlar otomatik olarak varsayilan dile duser (LangService).
+# Cevirmek icin yeni anahtar eklemen yeterli; dosya adi = Minecraft dil kodu.
+
+command:
+  player-only: "<red>ゲーム内でのみ使用できます。</red>"
+  player-not-found: "<red>そのプレイヤーは見つかりません。</red>"
+  internal-error: "<red>エラーが発生しました。運営に通知されました。</red>"
+  no-permission: "<red>権限がありません。</red>"
+auth:
+  required: "<red>先にログインしてください。</red>"
+  timeout: "<red>時間切れです。再接続してください。</red>"
+  session-restored: "<green>セッションを復元しました。おかえりなさい。</green>"
+  gui-login: "<yellow>PINを入力してください。</yellow>"
+  gui-register: "<yellow>PINを決めて登録してください。</yellow>"
+  gui-title-login: "<dark_gray>PINを入力"
+  gui-title-register: "<dark_gray>PINを決める"
+  gui-title-confirm: "<dark_gray>PINをもう一度"
+  web-login: "<yellow>こちらからログイン: <aqua><underlined><url></underlined></aqua></yellow>"
+  web-register: "<yellow>こちらから登録: <aqua><underlined><url></underlined></aqua></yellow>"
+  mismatch: "<red>PINが一致しません。</red>"
+  login-success: "<green>ログインしました。楽しんで。</green>"
+  login-failed: "<red>PINが違います。</red>"
+  register-success: "<green>登録が完了しました。</green>"
+  register-failed: "<red>登録に失敗しました。</red>"
+pack:
+  declined: "<red>リソースパックを受け入れる必要があります。</red>"
+  failed: "<red>リソースパックをダウンロードできませんでした。</red>"
+economy:
+  balance: "<gray>所持金:</gray> <gold><amount></gold>"
+  insufficient: "<red>ゴールドが足りません。</red>"
+region:
+  no-build: "<red>ここでは建築できません。</red>"
+  no-pvp: "<red>この地域ではPvPが無効です。</red>"
+loot:
+  opened: "<green>チェストを開けました:</green> <white><count></white> <dark_gray>(x<rarity>)</dark_gray>"
+  cooldown: "<red>このチェストはまだ補充されていません。</red> <gray><seconds> s</gray>"
+party:
+  none: "<gray>パーティーに入っていません。</gray>"
+  invited: "<yellow><player> があなたをパーティーに招待しました。</yellow> <dark_gray>/parti kabul</dark_gray>"
+  invite-sent: "<green>招待を送信:</green> <white><player></white>"
+  joined: "<green><player> がパーティーに参加しました。</green>"
+  left: "<yellow><player> がパーティーを離れました。</yellow>"
+  tracking-on: "<green>メンバー追跡:オン</green>"
+  tracking-off: "<yellow>メンバー追跡:オフ</yellow>"
+travel:
+  cast-started: "<yellow>詠唱を始めた…動かないで。</yellow>"
+  cast-cancelled: "<red>詠唱が中断されました。</red>"
+  arrived: "<green>到着しました。</green>"
+  no-scroll: "<red>旅の巻物が必要です。</red>"
+  not-discovered: "<red>まず自分の足で行く必要があります。</red>"
+  in-combat: "<red>戦闘中はテレポートできません。</red>"
+  discovered: "<green>新しい場所を発見:</green> <white><waypoint></white>"
+rpg:
+  level-up: "<gold><bold>レベルアップ!</bold></gold> <white><level></white> <gray>(+<points>)</gray>"
+  no-points: "<red>使えるポイントがありません。</red>"
+jobs:
+  joined: "<green>職業に就きました:</green> <white><job></white>"
+  limit-reached: "<red>同時に就ける職業の上限: <max></red>"
+  level-up: "<gold><job> がレベルアップ:</gold> <white><level></white>"
+quest:
+  started: "<green>クエストを受注:</green> <white><quest></white>"
+  completed: "<gold><bold>クエスト完了:</bold></gold> <white><quest></white>"
+  none: "<gray>進行中のクエストはありません。</gray>"
+dungeon:
+  entered: "<dark_purple><bold><dungeon></bold></dark_purple> <gray>— コアを見つけて壊せ。</gray>"
+  exited: "<green>外に出ました。同じ場所には戻れません。</green>"
+  no-build: "<red>ここではブロックを壊せません。</red>"
+  core-broken: "<dark_red><bold>コアが壊された!地下室が崩れ始める。</bold></dark_red> <yellow>(<minutes> dk)</yellow>"
+  collapse-title: "<dark_red><bold>崩落</bold></dark_red>"
+  collapse-subtitle: "<yellow>出口へ向かえ — <seconds></yellow>"
+  collapsed-title: "<dark_red><bold>地下室が崩れた</bold></dark_red>"
+  collapsed-subtitle: "<gray>まだ中にいた。</gray>"
+  collapse-actionbar: "<dark_red>⚠ 崩落:</dark_red> <white><seconds></white>"
+dialog:
+  continue-hint: "SHIFTで進む"
+  choose-hint: "ホイールで選択 · SHIFTで決定"
+chat:
+  blocked: "<red>メッセージは送信されませんでした:不適切な内容。</red>"
