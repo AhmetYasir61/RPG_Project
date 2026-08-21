@@ -117,13 +117,10 @@ final class YamlMenuLoader {
 
     private void playSound(Player player, String value) {
         String[] parts = value.split(" ");
-        try {
-            player.playSound(player.getLocation(),
-                    org.bukkit.Sound.valueOf(parts[0].toUpperCase(Locale.ROOT)),
-                    parts.length > 1 ? Float.parseFloat(parts[1]) : 1f,
-                    parts.length > 2 ? Float.parseFloat(parts[2]) : 1f);
-        } catch (IllegalArgumentException e) {
-            ctx.logger().warning("Bilinmeyen ses: " + value);
-        }
+        net.aethel.core.util.Sounds.parse(parts[0]).ifPresentOrElse(sound ->
+                player.playSound(player.getLocation(), sound,
+                        parts.length > 1 ? Float.parseFloat(parts[1]) : 1f,
+                        parts.length > 2 ? Float.parseFloat(parts[2]) : 1f),
+                () -> ctx.logger().warning("Bilinmeyen ses: " + value));
     }
 }

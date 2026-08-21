@@ -1,0 +1,110 @@
+# Yetenek tanimlari. DIKKAT: burada entity, model veya display alani YOKTUR.
+# Gorsel katman yalnizca particle efektlerinden olusur.
+
+alev_dalgasi:
+  display: "<gold>Alev Dalgasi</gold>"
+  description:
+    - "<gray>Cevrene genisleyen bir alev halkasi yayarsin.</gray>"
+  trigger: MANUAL
+  cooldown: 8.0
+  mana-cost: 20
+  range: 6.0
+  targeting: AREA
+  values:
+    damage: 9.0
+  sounds:
+    - "entity.blaze.shoot 1 0.8"
+  effects:
+    - shape: RING
+      motion: EXPAND
+      particle: FLAME
+      count: 48
+      radius: 6.0
+      duration: 20
+      period: 2
+      offset-y: 0.3
+    - shape: RING
+      motion: EXPAND
+      particle: SMALL_FLAME
+      count: 32
+      radius: 4.5
+      duration: 20
+      period: 2
+      offset-y: 0.15
+
+buz_mizragi:
+  display: "<aqua>Buz Mizragi</aqua>"
+  description:
+    - "<gray>Baktigin yone donan bir buz isini gonderirsin.</gray>"
+  trigger: MANUAL
+  cooldown: 4.0
+  mana-cost: 12
+  range: 16.0
+  targeting: LINE
+  values:
+    damage: 12.0
+    width: 1.2
+  sounds:
+    - "block.glass.break 0.8 1.4"
+  effects:
+    - shape: BEAM
+      motion: TRAVEL
+      particle: DUST
+      color: "#7fd4ff"
+      size: 1.2
+      count: 40
+      duration: 12
+      period: 1
+      offset-y: 0.0
+    - shape: BURST
+      motion: STATIC
+      particle: SNOWFLAKE
+      count: 20
+      radius: 1.0
+      duration: 8
+      period: 2
+
+sifa_cemberi:
+  display: "<light_green>Sifa Cemberi</light_green>"
+  description:
+    - "<gray>Cevrendeki muttefikleri iyilestiren bir sarmal.</gray>"
+  trigger: MANUAL
+  cooldown: 20.0
+  mana-cost: 35
+  range: 7.0
+  targeting: ALL_ALLIES
+  values:
+    heal: 14.0
+  sounds:
+    - "block.amethyst_block.chime 1 1.2"
+  effects:
+    - shape: HELIX
+      motion: ORBIT
+      particle: HAPPY_VILLAGER
+      count: 60
+      radius: 2.2
+      height: 3.0
+      duration: 60
+      period: 3
+
+golge_patlamasi:
+  display: "<dark_purple>Golge Patlamasi</dark_purple>"
+  description:
+    - "<gray>Boss yetenegi: dusuk canda kendiliginden patlar.</gray>"
+  trigger: ON_LOW_HEALTH
+  cooldown: 30.0
+  range: 10.0
+  targeting: AREA
+  values:
+    damage: 18.0
+  effects:
+    - shape: SPHERE
+      motion: EXPAND
+      particle: DUST
+      color: "#5a2d82"
+      size: 1.6
+      count: 90
+      radius: 10.0
+      duration: 30
+      period: 2
+      offset-y: 1.0

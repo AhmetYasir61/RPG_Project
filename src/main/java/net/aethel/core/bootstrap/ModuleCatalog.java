@@ -7,6 +7,7 @@ import net.aethel.core.modules.content.ContentModule;
 import net.aethel.core.modules.economy.EconomyModule;
 import net.aethel.core.modules.loot.LootModule;
 import net.aethel.core.modules.region.RegionModule;
+import net.aethel.core.modules.skill.SkillModule;
 import net.aethel.core.modules.menu.MenuModule;
 import net.aethel.core.modules.pcoins.PCoinModule;
 import net.aethel.core.modules.permissions.PermissionModule;
@@ -34,6 +35,7 @@ final class ModuleCatalog {
                 new ContentModule(),
                 new RegionModule(),
                 new LootModule(),
+                new SkillModule(),
                 new HologramModule(bridge),
                 new WaypointModule(bridge)
         };
