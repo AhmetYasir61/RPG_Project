@@ -49,6 +49,7 @@ public final class HologramModule implements Module, HologramService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().register("hologram", new HologramCommand(ctx, this));
         // Gorunurluk her tick degil, saniyede bir taranir: hologram konumu sabit oldugu
         // icin daha sik kontrol etmek yalnizca bos is uretir.
         // Gorunurluk taramasi tick butcesine yayilir: 500 hologramli bir sunucuda

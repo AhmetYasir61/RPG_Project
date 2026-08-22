@@ -58,6 +58,7 @@ public final class NpcModule implements Module, NpcService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().register("npc", new NpcCommand(ctx, this));
         load();
         ctx.listener(new NpcListener(this, ctx, bridge));
         // Gorunurluk saniyede bir taranir; NPC konumlari sabittir, daha sik gerekmez.

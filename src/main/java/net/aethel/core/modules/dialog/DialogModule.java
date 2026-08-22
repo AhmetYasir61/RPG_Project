@@ -50,6 +50,7 @@ public final class DialogModule implements Module, DialogService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().register("dialog", new DialogCommand(ctx, this));
         this.renderer = new DialogRenderer(ctx);
         this.style = ctx.feature("dialog.box") ? DialogStyle.BOX : DialogStyle.CHAT;
         reload();

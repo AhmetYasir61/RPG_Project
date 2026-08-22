@@ -38,6 +38,7 @@ public final class AdminPanelModule implements Module, AdminPanelService {
         this.mode = PanelMode.parse(settings.mode);
         ctx.services().register(AdminPanelService.class, this, "panel");
         ctx.commands().register("panel", new AdminMenuCommand(ctx, this, settings));
+        ctx.commands().register("aethel", new DiagnosticCommand(ctx));
     }
 
     @Override

@@ -41,6 +41,9 @@ permissions:
       aethel.admin.features: true
       aethel.admin.motd: true
       aethel.admin.scoreboard: true
+      aethel.admin.npc: true
+      aethel.admin.hologram: true
+      aethel.admin.dialogs: true
   aethel.profile.inspect:
     description: Baska oyuncularin profilini gorme yetkisi.
     default: op

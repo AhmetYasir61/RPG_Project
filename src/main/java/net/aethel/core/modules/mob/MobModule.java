@@ -45,6 +45,7 @@ public final class MobModule implements Module, MobService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().register("mob", new MobCommand(ctx, this));
         var adapter = VersionAdapters.detect(ctx.logger()).orElseThrow(() ->
                 new ModuleUnavailableException("bu surum icin NMS adapteri yok"));
         this.spawner = new MobSpawner(ctx, adapter);

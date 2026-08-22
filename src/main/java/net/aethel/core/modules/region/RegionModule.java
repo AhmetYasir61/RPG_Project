@@ -42,6 +42,7 @@ public final class RegionModule implements Module, RegionService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().register("region", new RegionCommand(ctx, this));
         storage.loadRegions().forEach(region -> regions.put(region.id(), region));
         storage.loadDifficulties().forEach(diff -> difficulties.put(diff.id(), diff));
         if (difficulties.isEmpty()) {

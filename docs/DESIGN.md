@@ -919,3 +919,54 @@ cagirir ve bu import stil sayfasinin uygulanmasini bekletir. Yoneticinin tarayic
 fonts.googleapis.com'a ULASAMIYORSA panel, import zaman asimina ugrayana kadar
 birkac saniye bicimsiz (beyaz) gorunur, sonra duzelir. Tasarim sistemi dosyasina
 dokunmamak icin oldugu gibi birakildi.
+
+## 30. Oyun ici komutlar: yerlestirme, spawn ve test
+
+Panelden bir sey TANIMLANIR; dunyadaki YERINI vermek ise ancak orada durarak
+anlamlidir. Koordinat yazdirmak, yanlis bir sayiyla NPC'yi kayaya gommenin en
+kolay yoludur. Bu yuzden konum isleri oyun icidir.
+
+| Komut | Ne yapar |
+|---|---|
+| `/aethel` | Tum servislerin durumu: ayakta mi, kac tanim yuklu |
+| `/npc koy <id> [ad]` · `tasi` · `sil` · `yenile` | NPC'yi durdugun yere, baktigin yone koyar |
+| `/hologram olustur <id> <metin>` · `satir` · `geri` · `tasi` · `sil` · `test` | Goz hizasina hologram; satir satir kurulur |
+| `/mob spawn <id> [adet]` · `bilgi` · `temizle <r>` · `yenile` | Baktigin yere mob cikarir; `bilgi` baktigin mobun tanimini soyler |
+| `/region pos1` · `pos2` · `olustur <id> [zorluk]` · `sil` · `nerede` · `zorluk <id> <%>` | Bolgeyi durarak secer |
+| `/loot sandik <id> <tablo>` · `sil` · `tehdit` · `test <tablo>` | Baktigin bloga sandik; `tehdit` o noktanin nadirlik carpanini olcer |
+| `/skill test <id>` · `yenile` | Yetenegi senin uzerinden calistirir |
+| `/dialog test <id>` · `dur` · `yenile` | Diyalogu senin uzerinde baslatir |
+| `/pack yenile` · `gonder` | Paketi bastan uretip herkese gonderir |
+| `/menu` · `/menu itemler` | Item vitrini ve YAML menuleri |
+
+Hepsi `aethel.admin.*` altinda ayri ayri yetkilendirilir; yetkisi olmayan
+oyuncuda komut sekmeye bile gelmez (`requires()` predicate'i onu gizler).
+
+**Tasarim kararlari.**
+
+- **Konum daima komutu yazanin bulundugu yerdir.** Tek istisna `mob spawn` ve
+  `loot sandik`: onlar BAKISLA secer, cunku bir mobu uzaga cikarmak ya da bir
+  sandigi bastigin bloga degil karsindaki bloga baglamak istersin.
+- **`mob temizle` yalnizca CUSTOM moblari siler.** Vanilla canlilara ve oyunculara
+  dokunmaz; test icin cikardigin moblari toplarken kimsenin atini oldurmemeli.
+  Tek seferde en fazla 50 mob cikarilabilir: kazara yazilan bir sifir sunucuyu bogar.
+- **`skill test` sogumayi ATLAMAZ.** Sogumayi atlayan bir test, sogumasi bozuk bir
+  yetenegi saglam gosterirdi.
+- **`loot test` dunyaya hicbir sey birakmaz.** Tabloyu bir kez cevirip ciktiyi
+  yazar; sandik acmadan tablonun gercekte ne verdigini gosterir.
+- **Bolge secimi diske YAZILMAZ.** Oyuncu basina bellekte tutulur ve sunucu
+  kapaninca kaybolur: yarim kalmis bir secimin aylar sonra karsina cikmasi istenmez.
+  Iki kose farkli dunyalardaysa bolge kurulmaz -- boyle bir bolge her testte
+  "icinde degilsin" der ve nedeni gorunmez.
+
+**`/aethel` ne ise yarar.** "Item gorunmuyor" sikayetinin cevabi cogu zaman
+"content modulu hic acilmamis" ya da "0 tanim yuklenmis" oluyor; bunu gormek icin
+sunucu gunlugunu bastan okumak gerekiyordu. Her sayim `try` icinde: bir modulun
+patlamasi digerlerinin durumunu gizlememeli. Servis yoksa "kapali", sayim patlarsa
+"hata" yazar -- ikisinin cozumu farkli oldugu icin ayri gosterilir.
+
+**CommandContractTest** iki sessiz hatayi derleme zamaninda yakalar:
+`plugin.yml`'de tanimsiz bir izin isteyen komut (izin kimsede olmaz, komut hic
+gorunmez, hicbir yere yazilmaz) ve dil dosyasinda karsiligi olmayan bir anahtar
+(oyuncuya bos mesaj gider). Ikisi de silinerek kirmizi dondugu, geri konarak
+yesil dondugu denendi.

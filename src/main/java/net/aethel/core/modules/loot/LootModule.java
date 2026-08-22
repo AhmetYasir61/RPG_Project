@@ -48,6 +48,7 @@ public final class LootModule implements Module, LootService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().register("loot", new LootCommand(ctx, this));
         loadTables();
         loadChests();
         ctx.listener(new LootListener(this, ctx));
