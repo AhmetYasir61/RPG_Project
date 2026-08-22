@@ -47,6 +47,14 @@ public final class PackWriter {
         JsonObject pack = new JsonObject();
         pack.addProperty("pack_format", packFormat);
         pack.addProperty("description", description);
+
+        // supported_formats: istemci pack_format'i birebir tutturmaz, aralikta olmasi
+        // yeter. Boylece sunucu bir ara surume gectiginde pack "eski surum" diye
+        // reddedilmez ve tek bir sayi yuzunden butun icerik gorunmez olmaz.
+        JsonObject supported = new JsonObject();
+        supported.addProperty("min_inclusive", Math.max(1, packFormat - 6));
+        supported.addProperty("max_inclusive", packFormat + 6);
+        pack.add("supported_formats", supported);
         JsonObject root = new JsonObject();
         root.add("pack", pack);
         json(new File(packRoot, "pack.mcmeta"), root);

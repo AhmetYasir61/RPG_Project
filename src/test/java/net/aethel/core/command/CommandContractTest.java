@@ -57,14 +57,16 @@ class CommandContractTest {
         Set<String> english = keysOf(Files.readString(RESOURCES.resolve("lang/en.yml")));
 
         List<String> missing = new ArrayList<>();
-        for (Path file : commandSources()) {
+        for (Path file : allSources()) {
             String body = Files.readString(file);
-            // Anahtar, lang().send/render cagrisinin ILK noktali dizesidir.
-            // Kalibi cagriya baglamak sart: kodda gecen izin adlari, dosya
-            // adlari ve config yollari da noktalidir ve serbest bir arama
-            // onlari dil anahtari sanardi.
+            // Anahtar, lang().send/render cagrisinin ILK noktali dizesidir ve
+            // hemen ardindan "," ya da ")" gelmelidir. Kalibi cagriya baglamak
+            // sart: kodda gecen izin adlari, dosya adlari ve config yollari da
+            // noktalidir. Kapanis kontrolu ise BIRLESTIRILEN anahtarlari eler
+            // ("rpg.unlock-" + tip gibi); onlar calisma aninda olusur ve statik
+            // olarak dogrulanamaz.
             for (String key : matches(body,
-                    "lang\\(\\)\\.(?:send|render)\\([^;]{0,160}?\"([a-z0-9-]+\\.[a-z0-9.-]+)\"")) {
+                    "lang\\(\\)\\.(?:send|render)\\([^;]{0,160}?\"([a-z0-9-]+\\.[a-z0-9.-]+)\"\\s*[,)]")) {
                 if (!turkish.contains(key)) missing.add(file.getFileName() + " -> tr:" + key);
                 if (!english.contains(key)) missing.add(file.getFileName() + " -> en:" + key);
             }
@@ -100,6 +102,17 @@ class CommandContractTest {
         try (Stream<Path> walk = Files.walk(SOURCE)) {
             return walk.filter(path -> path.getFileName().toString().endsWith("Command.java"))
                     .toList();
+        }
+    }
+
+    /**
+     * Dil anahtari yalnizca komutlarda kullanilmiyor. Menude gorunen ham
+     * "menu.catalog-title-admin" yazisi ItemCatalog icindeydi ve yalnizca
+     * *Command.java taradigi icin ilk surumde gozden kacti.
+     */
+    private static List<Path> allSources() throws IOException {
+        try (Stream<Path> walk = Files.walk(SOURCE)) {
+            return walk.filter(path -> path.getFileName().toString().endsWith(".java")).toList();
         }
     }
 }

@@ -71,6 +71,7 @@ public final class ContentModule implements Module, ItemService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        generator.packFormat(settings.format);
         reload();
         ctx.listener(delivery);
         ctx.commands().register("pack", new PackCommand(ctx, this));
@@ -179,6 +180,69 @@ public final class ContentModule implements Module, ItemService {
     /** Su an sunulan paketin hash'i. */
     public String currentHash() {
         return readHash();
+    }
+
+    /** Ayarli pack_format. */
+    public int packFormat() {
+        return generator.packFormat();
+    }
+
+    /**
+     * Paketin gercekten calisip calismayacagini denetler ve sorunlari SATIR SATIR
+     * dondurur. Her kontrol, oyunda sessizce mor-siyah kareye yol acan bir duruma
+     * karsilik gelir.
+     */
+    public java.util.List<String> verify() {
+        java.util.List<String> problems = new java.util.ArrayList<>();
+
+        if (generator.packFormat() != PackGenerator.DEFAULT_PACK_FORMAT) {
+            problems.add("pack_format=" + generator.packFormat() + ", beklenen "
+                    + PackGenerator.DEFAULT_PACK_FORMAT + " (resource-pack.format)");
+        }
+        if (items.isEmpty()) {
+            problems.add("hic item tanimi yuklenmemis (contents/<ns>/items/*.yml)");
+        }
+        // 1) Doku diskte var mi?
+        for (CustomItem item : items.values()) {
+            String texture = item.texture();
+            if (texture == null || texture.isBlank()) {
+                problems.add(item.fullId() + ": texture alani bos");
+                continue;
+            }
+            java.io.File file = new java.io.File(
+                    new java.io.File(paths.contents(), item.namespace()),
+                    "textures/" + texture);
+            if (!file.isFile()) {
+                problems.add(item.fullId() + ": doku diskte yok -> contents/"
+                        + item.namespace() + "/textures/" + texture);
+            }
+        }
+        // 2) Uretilmis bir zip var mi, dokular icine girmis mi?
+        if (!paths.generatedZip().isFile()) {
+            problems.add("generated.zip yok -- /pack yenile calistir");
+            return problems;
+        }
+        try (var zip = new java.util.zip.ZipFile(paths.generatedZip())) {
+            java.util.Set<String> entries = new java.util.HashSet<>();
+            zip.stream().forEach(entry -> entries.add(entry.getName()));
+
+            for (CustomItem item : items.values()) {
+                String path = "assets/" + item.namespace() + "/textures/"
+                        + item.texture();
+                if (!entries.contains(path)) {
+                    problems.add(item.fullId() + ": doku pack zip'inde yok -> " + path
+                            + " (/pack yenile gerekli olabilir)");
+                }
+                String definition = "assets/" + item.namespace() + "/items/"
+                        + item.id() + ".json";
+                if (!entries.contains(definition)) {
+                    problems.add(item.fullId() + ": item_model tanimi zip'te yok -> " + definition);
+                }
+            }
+        } catch (IOException e) {
+            problems.add("generated.zip okunamadi: " + e.getMessage());
+        }
+        return problems;
     }
 
     /** Uretilen zip'in boyutu (bayt); yoksa 0. */

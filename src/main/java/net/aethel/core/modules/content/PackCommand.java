@@ -64,6 +64,32 @@ public final class PackCommand {
         });
     }
 
+    /**
+     * Paketi kontrol eder ve NEDEN gorunmedigini soyler.
+     *
+     * Item'in mor-siyah kare cikmasinin uc yaygin nedeni var ve ucu de sunucu
+     * gunluguene hicbir sey yazmaz: dokunun diskte olmamasi, dokunun uretilen
+     * zip'e girmemis olmasi, ve pack_format'in sunucu surumune uymamasi. Bu komut
+     * ucunu de tek tek yazar.
+     */
+    @Command("dogrula")
+    public void verify(CommandSender sender) {
+        ctx.lang().send(sender, "pack.verify-header",
+                LangService.of("format", content.packFormat()),
+                LangService.of("expected", net.aethel.core.modules.content.pack
+                        .PackGenerator.DEFAULT_PACK_FORMAT));
+
+        var problems = content.verify();
+        if (problems.isEmpty()) {
+            ctx.lang().send(sender, "pack.verify-clean",
+                    LangService.of("items", content.all().size()));
+            return;
+        }
+        problems.forEach(problem ->
+                ctx.lang().send(sender, "pack.verify-problem", LangService.of("text", problem)));
+        ctx.lang().send(sender, "pack.verify-count", LangService.of("count", problems.size()));
+    }
+
     /** Paketi yalnizca bir oyuncuya yeniden gonderir (indirmesi takilan oyuncu icin). */
     @Command("gonder")
     public void resend(CommandSender sender, @Arg("oyuncu") String target) {

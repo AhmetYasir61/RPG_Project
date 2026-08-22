@@ -167,6 +167,7 @@ public final class CorePlugin extends JavaPlugin {
         saveResource("features.yml", false);
         extractBundled("lang/");
         extractBundled("contents/");
+        mergeMissingLanguageKeys();
     }
 
     /** Jar icindeki verilen on ekli tum dosyalari, yoksa, veri klasorune kopyalar. */
@@ -178,7 +179,10 @@ public final class CorePlugin extends JavaPlugin {
             while (entries.hasMoreElements()) {
                 java.util.jar.JarEntry entry = entries.nextElement();
                 if (entry.isDirectory() || !entry.getName().startsWith(prefix)) continue;
-                if (!entry.getName().endsWith(".yml") && !entry.getName().endsWith(".json")) continue;
+                // .png de cikarilmali: ornek itemlarin dokulari YAML ile birlikte
+                // gelmezse pack olusur ama modeller olmayan bir dokuyu gosterir ve
+                // oyunda mor-siyah kare cikar. Bu bir surum boyunca gozden kacti.
+                if (!isBundledAsset(entry.getName())) continue;
 
                 java.io.File target = new java.io.File(getDataFolder(), entry.getName());
                 if (target.exists()) continue;   // kullanicinin dosyasi asla ezilmez
@@ -194,6 +198,53 @@ public final class CorePlugin extends JavaPlugin {
             return;
         }
         if (extracted > 0) getLogger().info("Varsayilan dosya yazildi (" + prefix + "): " + extracted);
+    }
+
+    private static boolean isBundledAsset(String name) {
+        return name.endsWith(".yml") || name.endsWith(".json")
+                || name.endsWith(".png") || name.endsWith(".bbmodel");
+    }
+
+    /**
+     * Diskteki dil dosyalarina, JAR'da olup onlarda OLMAYAN anahtarlari ekler.
+     *
+     * Neden gerekli: extractBundled var olan bir dosyayi asla ezmez (dogru
+     * davranis, kullanici cevirilerini duzenlemis olabilir). Ama o zaman yeni bir
+     * surumun getirdigi anahtarlar diske hic ulasmaz ve oyuncu menude ham anahtar
+     * gorur -- "menu.catalog-title-admin" gibi. Sunucu gunlugune de bir sey
+     * yazilmaz.
+     *
+     * Birlestirme YALNIZCA eksikleri ekler; var olan bir degere asla dokunmaz,
+     * boylece kullanicinin kendi cevirisi korunur.
+     */
+    private void mergeMissingLanguageKeys() {
+        java.io.File folder = new java.io.File(getDataFolder(), "lang");
+        java.io.File[] files = folder.listFiles(file -> file.getName().endsWith(".yml"));
+        if (files == null) return;
+
+        int added = 0;
+        for (java.io.File file : files) {
+            try (var stream = getResource("lang/" + file.getName())) {
+                if (stream == null) continue;   // kullanicinin kendi ekledigi dil
+                var bundled = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(
+                        new java.io.InputStreamReader(stream, java.nio.charset.StandardCharsets.UTF_8));
+                var onDisk = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(file);
+
+                int before = added;
+                for (String key : bundled.getKeys(true)) {
+                    if (bundled.isConfigurationSection(key) || onDisk.contains(key)) continue;
+                    onDisk.set(key, bundled.get(key));
+                    added++;
+                }
+                if (added > before) onDisk.save(file);
+            } catch (java.io.IOException e) {
+                getLogger().warning("Dil dosyasi guncellenemedi: " + file.getName()
+                        + " (" + e.getMessage() + ")");
+            }
+        }
+        if (added > 0) {
+            getLogger().info("Dil dosyalarina eklenen yeni anahtar: " + added);
+        }
     }
 
     public CoreContext context() {

@@ -402,3 +402,43 @@ koymayi zorlastirir, cunku ekranda hicbir hata gorunmez.
 3. **403** ise oturum var ama `aethel.admin.panel` izni yok.
 4. **404** ise bolum kimligi `PanelSchema` icinde tanimli degil. Panel.html'deki
    `SCHEMAS` anahtarlari ile `PanelSchema` bolum kimlikleri BIREBIR ayni olmalidir.
+
+## 23. Menude ham anahtar gorunuyor ("menu.catalog-title-admin")
+
+**Belirti:** Menu basliginda ya da lore'da cevrilmis metin yerine anahtarin kendisi
+yaziyor.
+
+**Kok neden:** `extractBundled()` var olan bir dosyayi ASLA ezmez -- ki bu dogru:
+kullanici cevirileri duzenlemis olabilir. Ama o zaman yeni bir surumun getirdigi
+anahtarlar diskteki `lang/tr.yml` dosyasina hic ulasmaz. JAR'da anahtar vardir,
+diskte yoktur, oyuncu ham anahtari gorur. Gunluge tek satir yazilmaz.
+
+**Cozum:** Acilista `mergeMissingLanguageKeys()` calisiyor: JAR'da olup diskte
+olmayan anahtarlari ekliyor, var olan hicbir degere dokunmuyor. Eklenen anahtar
+sayisi gunluge yaziliyor. `CommandContractTest` artik yalnizca `*Command.java`
+degil, TUM kaynak dosyalarini tariyor -- bu hata `ItemCatalog.java` icindeydi ve
+dar tarama yuzunden ilk surumde kacmisti.
+
+## 24. Item mor-siyah kare gorunuyor
+
+Uc ayri neden, ucu de sunucu gunluguene hicbir sey yazmaz. `/pack dogrula`
+ucunu de tek tek soyler.
+
+**a) pack_format sunucu surumune uymuyor.** En sinsisi. Deger 1.21.4'un formatinda
+(46) kalmisti; 1.21.11 icin **75** olmali. Yanlis formatta istemci paketi "eski
+surum" sayar, `assets/<ns>/items/*.json` item_model tanimlarini yeni kurallarla
+okumaz ve butun custom itemlar mor-siyah kare cikar. Artik `resource-pack.format`
+ile ayarlaniyor, her uretimde gunluge yaziliyor ve `PackGenerationTest` degeri
+dogruluyor. `supported_formats` araligi da yaziliyor, boylece bir ara surume
+gecince pack tek bir sayi yuzunden reddedilmiyor.
+
+**b) Doku diskte yok.** `extractBundled()` yalnizca `.yml` ve `.json` cikariyordu;
+`.png` dosyalari JAR'da duruyor ama diske hic yazilmiyordu. Ornek itemlarin
+dokulari bu yuzden sunucuda yoktu. Artik `.png` ve `.bbmodel` de cikariliyor.
+
+**c) Doku uretilmis zip'e girmemis.** Genelde doku eklendikten sonra `/pack yenile`
+calistirilmamis olmasindandir.
+
+**Teshis sirasi:** `/pack dogrula` -> soyledigi sorunu duzelt -> `/pack yenile`.
+Kendi dokunu eklerken yol sudur: YAML'de `texture: "item/kilicim.png"` yazarsan
+dosya `contents/<namespace>/textures/item/kilicim.png` olmalidir.

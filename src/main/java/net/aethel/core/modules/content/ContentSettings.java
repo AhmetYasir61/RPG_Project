@@ -28,4 +28,8 @@ public final class ContentSettings {
     /** Acilista uretim yapilsin mi; kapaliysa yalnizca mevcut zip sunulur. */
     @ConfigValue("resource-pack.generate-on-start")
     public boolean generateOnStart = true;
+
+    /** Paketin pack_format degeri. 1.21.11 -> 75. */
+    @ConfigValue("resource-pack.format")
+    public int format = 75;
 }

@@ -111,6 +111,31 @@ class PackGenerationTest {
         assertTrue(!first.equals(withExtra), "yeni item eklendiginde hash degismeli");
     }
 
+    /**
+     * pack.mcmeta'daki pack_format sunucu surumuyle uyusmazsa istemci paketi
+     * "eski surum" sayar: item_model tanimlari yeni kurallarla okunmaz ve butun
+     * itemlar mor-siyah kare gorunur. Sunucu gunlugune hicbir sey yazilmaz.
+     * Deger bir kez 46'da (1.21.4) kalmis ve bu yasanmisti.
+     */
+    @Test
+    void mcmetaCarriesTheConfiguredPackFormat(@TempDir Path dataFolder) throws Exception {
+        Path textures = dataFolder.resolve("contents/aethel/textures/item");
+        Files.createDirectories(textures);
+        Files.write(textures.resolve("kilic.png"), pngBytes());
+
+        PackPaths paths = new PackPaths(dataFolder.toFile());
+        PackGenerator generator = new PackGenerator(paths, new PackIndex(paths.index()),
+                Logger.getLogger("test"));
+        generator.generate(List.of(item("kilic", "item/kilic.png")));
+
+        String mcmeta = Files.readString(new File(paths.packTree(), "pack.mcmeta").toPath());
+        assertTrue(mcmeta.contains("\"pack_format\": " + PackGenerator.DEFAULT_PACK_FORMAT)
+                        || mcmeta.contains("\"pack_format\":" + PackGenerator.DEFAULT_PACK_FORMAT),
+                "pack_format beklenen deger degil: " + mcmeta);
+        assertTrue(mcmeta.contains("supported_formats"),
+                "supported_formats araligi yazilmamis: " + mcmeta);
+    }
+
     /** 1x1 saydam PNG. */
     private static byte[] pngBytes() {
         return java.util.Base64.getDecoder().decode(

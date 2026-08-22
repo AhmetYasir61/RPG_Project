@@ -59,6 +59,10 @@ pack:
   failed-generate: "<red>Pack build failed:</red> <white><error></white>"
   warning: "<yellow>Warning:</yellow> <gray><text></gray>"
   resent: "<green>Pack re-sent to <white><player></white>.</green>"
+  verify-header: "<gold>Pack check</gold> <dark_gray>· pack_format <format> (expected <expected>)</dark_gray>"
+  verify-clean: "<green>No problems found.</green> <gray><items> item definitions, textures in place.</gray>"
+  verify-problem: "<red>·</red> <gray><text></gray>"
+  verify-count: "<yellow><count> problem(s) found.</yellow>"
   player-offline: "<red>Player is not online:</red> <white><player></white>"
 
 economy:

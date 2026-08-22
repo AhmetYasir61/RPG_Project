@@ -59,6 +59,10 @@ pack:
   failed-generate: "<red>Paket uretilemedi:</red> <white><error></white>"
   warning: "<yellow>Uyari:</yellow> <gray><text></gray>"
   resent: "<green>Paket <white><player></white> oyuncusuna yeniden gonderildi.</green>"
+  verify-header: "<gold>Paket denetimi</gold> <dark_gray>· pack_format <format> (beklenen <expected>)</dark_gray>"
+  verify-clean: "<green>Sorun bulunmadi.</green> <gray><items> item tanimi, dokular yerinde.</gray>"
+  verify-problem: "<red>·</red> <gray><text></gray>"
+  verify-count: "<yellow><count> sorun bulundu.</yellow>"
   player-offline: "<red>Oyuncu cevrimici degil:</red> <white><player></white>"
 
 economy:

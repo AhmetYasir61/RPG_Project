@@ -67,6 +67,9 @@ resource-pack:
   # Bos birakilirsa sunucunun kendi IP'si kullanilir.
   public-host: ""
   force: true
+  # Istemcinin paketi hangi surum kurallariyla okuyacagi. 1.21.11 -> 75.
+  # Yanlis deger paketi sessizce "eski surum" yapar ve itemlar mor-siyah kare gorunur.
+  format: 75
 
 storage:
   # MYSQL veya SQLITE. 100 oyunculu bir MMORPG icin MYSQL onerilir.

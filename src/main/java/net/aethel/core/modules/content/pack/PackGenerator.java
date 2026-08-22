@@ -21,8 +21,15 @@ import java.util.logging.Logger;
  */
 public final class PackGenerator {
 
-    /** 1.21.x icin pack_format. Surum degisince tek yerden guncellenir. */
-    private static final int PACK_FORMAT = 46;
+    /**
+     * pack_format 1.21.11 icin 75'tir. Yanlis bir deger sessiz bir hatadir:
+     * istemci paketi "eski surum" sayar, item_model tanimlarini (assets/<ns>/items)
+     * yeni kurallarla okumaz ve item mor-siyah kare gorunur -- sunucu gunluguene
+     * hicbir sey yazilmadan. Bu yuzden deger ayardan gelir ve her uretimde loglanir.
+     */
+    public static final int DEFAULT_PACK_FORMAT = 75;
+
+    private int packFormat = DEFAULT_PACK_FORMAT;
 
     private final PackPaths paths;
     private final PackIndex index;
@@ -30,6 +37,15 @@ public final class PackGenerator {
     private final BlockbenchConverter blockbench;
     private final FontGenerator fonts = new FontGenerator();
     private final Logger log;
+
+    /** Ayardan gelen pack_format; 0 ya da negatif deger varsayilana doner. */
+    public void packFormat(int format) {
+        this.packFormat = format > 0 ? format : DEFAULT_PACK_FORMAT;
+    }
+
+    public int packFormat() {
+        return packFormat;
+    }
 
     public PackGenerator(PackPaths paths, PackIndex index, Logger log) {
         this.paths = paths;
@@ -50,7 +66,7 @@ public final class PackGenerator {
         List<String> warnings = new ArrayList<>();
         try {
             writer.clean(paths.packTree());
-            writer.mcmeta(paths.packTree(), PACK_FORMAT, "AethelCore uretilmis paket");
+            writer.mcmeta(paths.packTree(), packFormat, "AethelCore uretilmis paket");
 
             int files = 0;
             files += writeItems(items, warnings);
@@ -63,7 +79,8 @@ public final class PackGenerator {
             index.save(log);
 
             long millis = System.currentTimeMillis() - start;
-            log.info("Pack uretildi: " + files + " dosya, " + millis + " ms, sha1=" + hash);
+            log.info("Pack uretildi: " + files + " dosya, " + millis + " ms, "
+                    + "pack_format=" + packFormat + ", sha1=" + hash);
             return new Result(hash, files, warnings, millis);
         } catch (IOException e) {
             log.log(Level.SEVERE, "Pack uretimi basarisiz", e);
