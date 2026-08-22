@@ -58,6 +58,7 @@ public final class NpcModule implements Module, NpcService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().suggest("npc", () -> all().stream().map(net.aethel.core.api.NpcService.Npc::id).toList());
         ctx.commands().register("npc", new NpcCommand(ctx, this));
         load();
         ctx.listener(new NpcListener(this, ctx, bridge));

@@ -25,7 +25,7 @@ public final class DialogCommand {
 
     /** Diyalogu kendi uzerinde baslatir. */
     @Command("test")
-    public void start(CommandSender sender, @Arg("id") String id) {
+    public void start(CommandSender sender, @Arg(value = "id", suggests = "dialog") String id) {
         Player player = (Player) sender;
         if (dialogs.node(id).isEmpty()) {
             ctx.lang().send(player, "dialog.missing", LangService.of("id", id));

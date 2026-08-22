@@ -970,3 +970,45 @@ patlamasi digerlerinin durumunu gizlememeli. Servis yoksa "kapali", sayim patlar
 gorunmez, hicbir yere yazilmaz) ve dil dosyasinda karsiligi olmayan bir anahtar
 (oyuncuya bos mesaj gider). Ikisi de silinerek kirmizi dondugu, geri konarak
 yesil dondugu denendi.
+
+## 31. Tab-complete: adlandirilmis oneri kaynaklari
+
+Komutlar Brigadier uzerine kuruluydu ama HICBIR argumana oneri baglanmamisti:
+`/dialog test <id>` yazinca ekranda yalnizca `<id>` yer tutucusu goruniyordu ve
+kimlikleri bulmak icin YAML dosyalarini acmak gerekiyordu.
+
+Cozum modul basina degil, tek bir kayit defteri uzerinden:
+
+```java
+// Modul kendi kimliklerini bir kez kaydeder (onEnable icinde):
+ctx.commands().suggest("dialog", nodes::keySet);
+
+// Komut yalnizca kaynagin ADINI soyler:
+public void start(CommandSender sender, @Arg(value = "id", suggests = "dialog") String id)
+```
+
+Komut sinifi hicbir servise bagimli olmaz ve ayni kaynak birden cok komuttan
+kullanilabilir. Kayitli kaynaklar:
+
+`item` · `skill` · `mob` · `npc` · `hologram` · `dialog` · `menu` · `quest` ·
+`job` · `region` · `difficulty` · `loot-chest` · `loot-table` · `waypoint` ·
+`player` · `world`
+
+**Namespace'li kimliklerde ad kismindan da eslesir.** Oyuncu `alev` yazinca
+`aethel:alev_kilici` onerilir; kimligi bastan yazmak zorunda kalmaz.
+
+**Saglayicilar oneri thread'inde cagrilir**, her tus vurusunda. Bu yuzden yalnizca
+BELLEKTEKI hazir koleksiyonlari donduruyorlar (`nodes::keySet` gibi). Diskten okuyan
+ya da veritabanina giden bir saglayici oyuncuyu her harfte bekletirdi. Bir saglayici
+patlarsa liste bos doner: tamamlama eksikligi komutu kullanilamaz yapmamalidir.
+Liste 75 girdiyle sinirli -- daha uzunu istemcide okunmaz hale gelir.
+
+**Yeni kimlik alan komutlarda oneri YOKTUR.** `/npc koy <id>` ve
+`/hologram olustur <id>` yeni bir ad ister; var olanlari onermek "bunlardan birini
+sec" izlenimi verir ve dogrudan cakismaya yonlendirir.
+
+**`SuggestionRegistryTest`** komutlarda gecen her `suggests` adinin bir yerde
+kayitli oldugunu dogrular. Yazim yanlisi olan bir kaynak adi ("diyalog" ile
+"dialog") hicbir hata vermez, yalnizca hicbir oneri gelmez -- yani tam olarak bu
+ozelligi eklemeyi gerektiren duruma geri donulur. Testin yakaladigi, bilerek
+bozularak denendi.

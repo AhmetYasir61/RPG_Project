@@ -71,6 +71,7 @@ public final class ContentModule implements Module, ItemService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().suggest("item", () -> items.keySet());
         generator.packFormat(settings.format);
         reload();
         ctx.listener(delivery);

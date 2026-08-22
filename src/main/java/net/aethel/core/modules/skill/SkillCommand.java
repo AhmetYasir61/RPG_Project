@@ -41,7 +41,7 @@ public final class SkillCommand {
      * atlayan bir test, sogumasi bozuk bir yetenegi saglam gosterirdi.
      */
     @Command("test")
-    public void cast(CommandSender sender, @Arg("id") String id) {
+    public void cast(CommandSender sender, @Arg(value = "id", suggests = "skill") String id) {
         Player player = (Player) sender;
         if (skills.definition(id).isEmpty()) {
             ctx.lang().send(player, "skill.missing", LangService.of("id", id));

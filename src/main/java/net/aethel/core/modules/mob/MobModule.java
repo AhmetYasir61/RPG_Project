@@ -45,6 +45,7 @@ public final class MobModule implements Module, MobService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().suggest("mob", () -> all().stream().map(net.aethel.core.api.MobDefinition::id).toList());
         ctx.commands().register("mob", new MobCommand(ctx, this));
         var adapter = VersionAdapters.detect(ctx.logger()).orElseThrow(() ->
                 new ModuleUnavailableException("bu surum icin NMS adapteri yok"));

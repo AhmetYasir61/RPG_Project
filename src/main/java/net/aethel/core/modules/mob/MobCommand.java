@@ -41,7 +41,7 @@ public final class MobCommand {
 
     /** Baktigin yere, yoksa durdugun yere mob cikarir. */
     @Command("spawn")
-    public void spawn(CommandSender sender, @Arg("id") String id,
+    public void spawn(CommandSender sender, @Arg(value = "id", suggests = "mob") String id,
                       @Arg(value = "adet", optional = true) int amount) {
         Player player = (Player) sender;
         if (mobs.definition(id).isEmpty()) {

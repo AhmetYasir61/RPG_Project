@@ -30,7 +30,7 @@ public final class MenuCommand {
 
     /** Ad ile acma: /menu <ad>. Namespace verilmezse tum namespace'lerde aranir. */
     @Command("ac")
-    public void named(CommandSender sender, @Arg("ad") String menuId) {
+    public void named(CommandSender sender, @Arg(value = "ad", suggests = "menu") String menuId) {
         open((Player) sender, menuId);
     }
 

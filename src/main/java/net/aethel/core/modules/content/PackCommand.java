@@ -120,7 +120,7 @@ public final class PackCommand {
 
     /** Paketi yalnizca bir oyuncuya yeniden gonderir (indirmesi takilan oyuncu icin). */
     @Command("gonder")
-    public void resend(CommandSender sender, @Arg("oyuncu") String target) {
+    public void resend(CommandSender sender, @Arg(value = "oyuncu", suggests = "player") String target) {
         Player player = ctx.plugin().getServer().getPlayerExact(target);
         if (player == null) {
             ctx.lang().send(sender, "pack.player-offline", LangService.of("player", target));

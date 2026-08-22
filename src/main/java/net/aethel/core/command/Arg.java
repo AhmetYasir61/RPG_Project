@@ -21,4 +21,10 @@ public @interface Arg {
 
     /** Yalnizca String parametrelerde: satirin kalanini tek arguman olarak yutar. */
     boolean greedy() default false;
+
+    /**
+     * Tab-complete kaynaginin adi (bkz. SuggestionRegistry). Bos ise arguman
+     * icin oneri gosterilmez.
+     */
+    String suggests() default "";
 }

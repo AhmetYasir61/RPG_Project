@@ -57,6 +57,7 @@ public final class TravelModule implements Module, TravelService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().suggest("waypoint", waypoints::keySet);
         loadWaypoints();
         ctx.listener("travel.combat-lock", new TravelListener(this, ctx, settings));
         // Okuma ilerlemesi ve kesif taramasi ayni turda yapilir.

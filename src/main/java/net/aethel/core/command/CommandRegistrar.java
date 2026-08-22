@@ -33,10 +33,26 @@ public final class CommandRegistrar {
     private FeatureService features;
     private final Map<String, Object> pending = new LinkedHashMap<>();
     private final Map<String, String> owners = new LinkedHashMap<>();
+    private final SuggestionRegistry suggestions = new SuggestionRegistry();
 
     public CommandRegistrar(LangService lang, Logger log) {
         this.lang = lang;
         this.log = log;
+    }
+
+    /**
+     * Modulun kendi kimliklerini tab-complete'e acmasi icin.
+     * Ornek: {@code ctx.commands().suggest("dialog", () -> nodeIds())}
+     *
+     * Saglayici her tus vurusunda cagrilir; bellekteki hazir bir koleksiyon
+     * dondurmelidir.
+     */
+    public void suggest(String name, java.util.function.Supplier<java.util.Collection<String>> source) {
+        suggestions.register(name, source);
+    }
+
+    public SuggestionRegistry suggestions() {
+        return suggestions;
     }
 
     /** Ozellik servisi cekirdek kurulurken baglanir; komut kapisi buradan gecer. */
@@ -121,7 +137,21 @@ public final class CommandRegistrar {
             String name = arg == null || arg.value().isEmpty() ? param.getName() : arg.value();
             var resolver = ArgumentResolvers.forType(param.getType(), greedy);
             bindings.add(new CommandInvoker.Binding(name, resolver.extractor(), param.getType()));
-            chain.add(RequiredArgumentBuilder.argument(name, resolver.type()));
+
+            var argument = RequiredArgumentBuilder
+                    .<CommandSourceStack, Object>argument(name, (com.mojang.brigadier.arguments.ArgumentType<Object>) resolver.type());
+            String source = arg == null ? "" : arg.suggests();
+            if (!source.isEmpty()) {
+                argument.suggests((context, builder) -> {
+                    // builder.getRemaining(): kullanicinin O ANDA yazdigi parca.
+                    // Onerileri buna gore suzmezsek istemci hepsini gosterir ve
+                    // uzun listelerde tamamlama ise yaramaz.
+                    suggestions.suggest(source, builder.getRemaining())
+                            .forEach(builder::suggest);
+                    return builder.buildFuture();
+                });
+            }
+            chain.add(argument);
         }
 
         CommandInvoker invoker = new CommandInvoker(handler, method, bindings, meta.playerOnly(), lang, log);

@@ -41,7 +41,7 @@ public final class TravelCommand {
 
     /** Parsomen ile isinlanma baslatir. */
     @Command(value = "git", feature = "travel.scroll")
-    public void travelTo(CommandSender sender, @Arg("nokta") String waypointId) {
+    public void travelTo(CommandSender sender, @Arg(value = "nokta", suggests = "waypoint") String waypointId) {
         Player player = (Player) sender;
         TravelService.CastResult result = travel.beginScrollTeleport(player, waypointId);
         ctx.lang().send(player, switch (result) {

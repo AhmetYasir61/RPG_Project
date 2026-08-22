@@ -51,6 +51,7 @@ public final class JobModule implements Module, JobService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().suggest("job", jobs::keySet);
         loadJobs();
         ctx.listener("jobs.enabled", new JobListener(this, ctx.plugin()));
     }

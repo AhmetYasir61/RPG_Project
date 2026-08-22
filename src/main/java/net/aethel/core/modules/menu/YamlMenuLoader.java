@@ -52,6 +52,11 @@ final class YamlMenuLoader {
         ctx.logger().info("Yuklenen menu tanimi: " + definitions.size());
     }
 
+    /** Tab-complete icin yuklu menu kimlikleri. */
+    java.util.Collection<String> menuIds() {
+        return definitions.keySet();
+    }
+
     boolean open(Player player, String menuId) {
         YamlConfiguration yaml = definitions.get(menuId);
         if (yaml == null) return false;

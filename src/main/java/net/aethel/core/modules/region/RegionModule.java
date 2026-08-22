@@ -42,6 +42,8 @@ public final class RegionModule implements Module, RegionService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().suggest("region", () -> regions().stream().map(net.aethel.core.api.RegionService.Region::id).toList());
+        ctx.commands().suggest("difficulty", () -> difficulties().stream().map(net.aethel.core.api.Difficulty::id).toList());
         ctx.commands().register("region", new RegionCommand(ctx, this));
         storage.loadRegions().forEach(region -> regions.put(region.id(), region));
         storage.loadDifficulties().forEach(diff -> difficulties.put(diff.id(), diff));

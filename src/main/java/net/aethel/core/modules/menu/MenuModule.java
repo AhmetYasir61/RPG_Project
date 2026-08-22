@@ -35,6 +35,7 @@ public final class MenuModule implements Module, MenuService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().suggest("menu", loader::menuIds);
         ctx.listener(new MenuListener());
         loader.reload();
         ctx.commands().register("menu", new MenuCommand(ctx, this));

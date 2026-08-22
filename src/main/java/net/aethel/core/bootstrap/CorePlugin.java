@@ -75,6 +75,12 @@ public final class CorePlugin extends JavaPlugin {
         FeatureRegistry features = new FeatureRegistry(this, featureConfig, events, getLogger());
         services.register(net.aethel.core.api.FeatureService.class, features, "core");
         commands.features(features);
+        // Cekirdek kaynak: cevrimici oyuncu adlari. Modul basina tekrarlanmasin
+        // diye burada bir kez tanimlaniyor.
+        commands.suggest("player", () -> getServer().getOnlinePlayers().stream()
+                .map(org.bukkit.entity.Player::getName).toList());
+        commands.suggest("world", () -> getServer().getWorlds().stream()
+                .map(org.bukkit.World::getName).toList());
 
         this.context = new CoreContext(this, getLogger(), services, events, configService,
                 lang, commands, scheduler, database, schema, features);

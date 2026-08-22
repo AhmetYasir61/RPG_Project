@@ -48,6 +48,8 @@ public final class LootModule implements Module, LootService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().suggest("loot-chest", () -> chests().stream().map(net.aethel.core.api.LootService.LootChest::id).toList());
+        ctx.commands().suggest("loot-table", tables::keySet);
         ctx.commands().register("loot", new LootCommand(ctx, this));
         loadTables();
         loadChests();

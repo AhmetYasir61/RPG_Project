@@ -42,6 +42,7 @@ public final class SkillModule implements Module, SkillService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().suggest("skill", () -> all().stream().map(net.aethel.core.api.SkillDefinition::id).toList());
         ctx.commands().register("skill", new SkillCommand(ctx, this));
         this.executor = new SkillExecutor(ctx, this);
         reload();

@@ -48,6 +48,7 @@ public final class QuestModule implements Module, QuestService {
 
     @Override
     public void onEnable(CoreContext ctx) {
+        ctx.commands().suggest("quest", () -> quests().stream().map(net.aethel.core.api.QuestService.Quest::id).toList());
         reload();
         ctx.listener("quest.enabled", new QuestListener(this));
     }
