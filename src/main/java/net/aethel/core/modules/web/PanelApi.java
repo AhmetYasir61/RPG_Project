@@ -263,6 +263,47 @@ final class PanelApi {
                 .ifPresent(profiles -> profiles.save(profile));
     }
 
+    /**
+     * Panelden item verme. Item HER ZAMAN oturumun sahibine gider, gonderilen bir
+     * "hedef oyuncu" alanina degil: tarayicidan baskasinin envanterine yazmak,
+     * oyun ici vitrinin sunmadigi bir yetki olurdu ve panel oyun icinden daha
+     * genis olmamali.
+     *
+     * Oyuncu cevrimdisiysa islem yapilmaz -- kuyruga alinip sonra teslim edilmez,
+     * cunku "verdim" deyip vermemek en kotusudur.
+     */
+    GiveResult give(UUID player, String itemId, int amount) {
+        var online = ctx.plugin().getServer().getPlayer(player);
+        if (online == null) return new GiveResult(false, "offline", 0);
+        if (!online.hasPermission(ItemCatalogPermission.KEY)) {
+            return new GiveResult(false, "forbidden", 0);
+        }
+        var service = ctx.services().optional(net.aethel.core.api.ItemService.class);
+        if (service.isEmpty()) return new GiveResult(false, "content-disabled", 0);
+
+        int count = Math.max(1, Math.min(64, amount));
+        var stack = service.get().create(itemId, count);
+        if (stack.isEmpty()) return new GiveResult(false, "unknown-item", 0);
+
+        // Envanter yalnizca ana thread'den degistirilebilir; HTTP thread'i beklemez.
+        ctx.scheduler().sync("web", () -> {
+            var leftover = online.getInventory().addItem(stack.get());
+            leftover.values().forEach(rest ->
+                    online.getWorld().dropItemNaturally(online.getLocation(), rest));
+        });
+        return new GiveResult(true, "queued", count);
+    }
+
+    /** Verme sonucu; basarisizlik nedeni tarayiciya aynen gider. */
+    record GiveResult(boolean ok, String reason, int amount) {}
+
+    /** Oyun ici vitrin ile AYNI yetki anahtari; iki yerde ayrisamasin diye tek yerde. */
+    static final class ItemCatalogPermission {
+        static final String KEY = "aethel.admin.items";
+
+        private ItemCatalogPermission() {}
+    }
+
     void delete(Section section, Map<String, Object> record) throws Exception {
         if (section.readOnly() || section.kind() != PanelSchema.Kind.FILE) {
             throw new IllegalStateException("read-only");

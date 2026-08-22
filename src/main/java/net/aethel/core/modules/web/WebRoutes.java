@@ -77,6 +77,7 @@ final class WebRoutes {
                 context.contentType(JSON).result(PanelApi.json(panelApi.status()))));
         server.get("/api/logs", context -> withAdmin(context, session ->
                 context.contentType(JSON).result(PanelApi.json(logs.tail(200)))));
+        server.post("/api/give", this::giveItem);
         server.get("/api/schema", context -> withAdmin(context, session ->
                 context.contentType(JSON).result(panelApi.schemaJson())));
 
@@ -125,6 +126,30 @@ final class WebRoutes {
         } catch (java.io.IOException exception) {
             context.status(500).result("asset-error");
         }
+    }
+
+    /**
+     * Panelden item verme. Item OTURUMUN SAHIBINE gider; govdedeki bir "hedef
+     * oyuncu" alani okunmaz. Boylece panel, oyun ici vitrinin verdiginden daha
+     * genis bir yetki acmaz. Her verme denetim kaydina yazilir.
+     */
+    private void giveItem(Context context) {
+        withAdmin(context, session -> {
+            Map<String, Object> body = PanelApi.parse(context.body());
+            String itemId = String.valueOf(body.getOrDefault("id", ""));
+            int amount = body.get("amount") instanceof Number number ? number.intValue() : 1;
+
+            PanelApi.GiveResult result = panelApi.give(session.player(), itemId, amount);
+            if (!result.ok()) {
+                context.status(result.reason().equals("forbidden") ? 403 : 409)
+                        .contentType(JSON)
+                        .result("{\"ok\":false,\"reason\":\"" + result.reason() + "\"}");
+                return;
+            }
+            audit.record(session.player(), session.playerName(), session.player(),
+                    "PANEL_GIVE", itemId + " x" + result.amount());
+            context.contentType(JSON).result("{\"ok\":true,\"amount\":" + result.amount() + "}");
+        });
     }
 
     /** Dosya uzantisindan icerik turu; _ds klasoru css, js ve json tasiyor. */

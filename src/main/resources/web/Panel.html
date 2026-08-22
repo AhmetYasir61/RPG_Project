@@ -400,6 +400,9 @@
         <div style="{{ footerStyle }}">
           <button onClick="{{ save }}" class="btn btn-primary" style="padding:8px 18px;">Kaydet</button>
           <button onClick="{{ reset }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-300); border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px;" style-hover="border-color:var(--color-accent-700)">Geri çevir</button>
+          <sc-if value="{{ canGive }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ give }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-300); border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px;" style-hover="border-color:var(--color-accent-700)">Üzerime al</button>
+          </sc-if>
           <div style="flex:1"></div>
           <span style="font-size:11px; color:var(--color-neutral-500);">{{ saveNote }}</span>
           <button onClick="{{ deleteRecord }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-400); border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px;" style-hover="border-color:#7a3b3b; color:#e0a0a0">Sil</button>
@@ -961,6 +964,21 @@ class Component extends DCLogic {
     } catch (e) {}
   }
 
+  // Item'i oyun ici envanterine ister. Sunucu item'i DAIMA oturum sahibine verir;
+  // burada bir hedef oyuncu gonderilmez.
+  async giveToSelf(itemId, amount) {
+    try {
+      const r = await fetch('/api/give', {
+        method:'POST', credentials:'same-origin',
+        headers:{ 'Content-Type':'application/json' },
+        body:JSON.stringify({ id:itemId, amount })
+      });
+      const body = await r.json().catch(() => ({}));
+      return r.ok ? { ok:true, amount:body.amount || amount }
+                  : { ok:false, reason:body.reason || r.status };
+    } catch (e) { return { ok:false, reason:'baglanti' }; }
+  }
+
   async push(section, record) {
     try {
       const r = await fetch('/api/records?section=' + section, {
@@ -1319,6 +1337,17 @@ class Component extends DCLogic {
         return this.setState({ dirty:false, note:'kaydedildi · ' + new Date().toLocaleTimeString('tr-TR').slice(0, 5) + ' · denetime yazıldı' });
       },
       reset: () => this.setState(s => ({ drafts:{ ...s.drafts, [id]: undefined }, dirty:false, note:'diskteki sürüme dönüldü' })),
+      canGive: id === 'items' && !!rec && !!rec.id,
+      give: () => {
+        const itemId = rec.id.includes(':') ? rec.id : 'aethel:' + rec.id;
+        this.setState({ note:'isteniyor…' });
+        this.giveToSelf(itemId, 1).then(res => this.setState({ note: res.ok
+          ? itemId + ' envanterine eklendi'
+          : res.reason === 'offline' ? 'oyunda değilsin — önce sunucuya gir'
+          : res.reason === 'forbidden' ? 'aethel.admin.items yetkin yok'
+          : res.reason === 'unknown-item' ? 'bu item henüz diske kaydedilmemiş'
+          : 'verilemedi · ' + res.reason }));
+      },
       deleteRecord: () => {
         const list = this.recordsOf(id).filter((_, i) => i !== selIdx);
         this.setState(s => ({ drafts:{ ...s.drafts, [id]: list },

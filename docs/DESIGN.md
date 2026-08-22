@@ -891,3 +891,31 @@ Pack `resource-pack.serve: true` ile kendi portundan (varsayilan 8085) sunulur,
 hicbir sey yazilmaz ve oyuncu oyunda mor-siyah kare gorur. Bu hata bir kez yasandi
 (ornek itemlarin dokulari hic yoktu). `PackGenerationTest` artik dokunun pack zip'ine
 gercekten girdigini dogruluyor; doku eksik olursa **derleme kirmizi doner**.
+
+### Panelden item alma
+
+Web modunda item vitrini oyun icindedir; panelde ise **Itemlar** bolumunun ayak
+seridinde bir **"Uzerime al"** dugmesi vardir. Dugme yalnizca Itemlar bolumunde ve
+secili bir kayit varken gorunur.
+
+Uc kural sunucu tarafinda zorlanir, tarayicida degil:
+
+1. **Item daima oturumun sahibine gider.** `/api/give` govdesinde bir "hedef oyuncu"
+   alani OKUNMAZ. Aksi halde panel, oyun ici vitrinin vermedigi bir yetki acardi:
+   tarayicidan baskasinin envanterine yazmak. Panel oyun icinden genis olmamalidir.
+2. **Ayni yetki anahtari:** `aethel.admin.items`. Oturumun panel yetkisi olmasi
+   yetmez; oyuncunun oyun icindeki vitrinden alabilecegi seyi alabilir, fazlasini degil.
+3. **Oyuncu cevrimdisiysa islem yapilmaz.** Kuyruga alinip sonra teslim edilmez:
+   "verdim" deyip vermemek, bastan vermemekten kotudur. Panel "oyunda degilsin" der.
+
+Envanter degisikligi ana thread'e `scheduler().sync` ile gecer; HTTP thread'i
+oyun durumuna hic dokunmaz. Her verme `PANEL_GIVE` olarak denetim kaydina yazilir.
+
+Dugme, panelin kendi ikincil dugme bicimini aynen kullanir (ayni kenarlik, ayni
+tokenlar, ayni olculer); tasarim sistemine yeni bir renk ya da olcu girmez.
+
+**Bilinen kozmetik durum:** `_ds/styles.css` dosyasi Inter'i bir `@import` ile
+cagirir ve bu import stil sayfasinin uygulanmasini bekletir. Yoneticinin tarayicisi
+fonts.googleapis.com'a ULASAMIYORSA panel, import zaman asimina ugrayana kadar
+birkac saniye bicimsiz (beyaz) gorunur, sonra duzelir. Tasarim sistemi dosyasina
+dokunmamak icin oldugu gibi birakildi.
