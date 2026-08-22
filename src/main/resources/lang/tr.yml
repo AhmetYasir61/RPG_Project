@@ -63,6 +63,7 @@ pack:
   verify-clean: "<green>Sorun bulunmadi.</green> <gray><items> item tanimi, dokular yerinde.</gray>"
   verify-problem: "<red>·</red> <gray><text></gray>"
   verify-count: "<yellow><count> sorun bulundu.</yellow>"
+  verify-stale: "<yellow>Envanterinde <count> ESKI item var</yellow> <gray>— kimlikleri NBT'ye gomulu oldugu icin duzelmez. At ve /menu itemler ile yeniden al.</gray>"
   player-offline: "<red>Oyuncu cevrimici degil:</red> <white><player></white>"
 
 economy:

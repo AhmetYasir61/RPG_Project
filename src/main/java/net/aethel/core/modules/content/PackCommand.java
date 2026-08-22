@@ -79,6 +79,7 @@ public final class PackCommand {
                 LangService.of("expected", net.aethel.core.modules.content.pack
                         .PackGenerator.DEFAULT_PACK_FORMAT));
 
+        if (sender instanceof Player player) reportStaleItems(player);
         var problems = content.verify();
         if (problems.isEmpty()) {
             ctx.lang().send(sender, "pack.verify-clean",
@@ -88,6 +89,33 @@ public final class PackCommand {
         problems.forEach(problem ->
                 ctx.lang().send(sender, "pack.verify-problem", LangService.of("text", problem)));
         ctx.lang().send(sender, "pack.verify-count", LangService.of("count", problems.size()));
+    }
+
+    /**
+     * Envanterdeki ESKI itemleri sayar.
+     *
+     * item_model degeri itemin NBT'sine yazilir; tanim ya da uretim duzeltilse
+     * bile ONCEDEN verilmis itemler eski degeri tasimaya devam eder ve bozuk
+     * gorunur. Paket tertemiz oldugu halde "hala kare" denmesinin nedeni budur,
+     * bu yuzden denetimin sonunda ayrica soyleniyor.
+     */
+    private void reportStaleItems(Player player) {
+        var service = ctx.services().optional(net.aethel.core.api.ItemService.class);
+        if (service.isEmpty()) return;
+
+        int stale = 0;
+        for (var stack : player.getInventory().getContents()) {
+            if (stack == null || !stack.hasItemMeta()) continue;
+            var definition = service.get().resolve(stack);
+            if (definition.isEmpty()) continue;
+
+            var current = stack.getItemMeta().getItemModel();
+            String expected = definition.get().modelKey();
+            if (current == null || !current.toString().equals(expected)) stale++;
+        }
+        if (stale > 0) {
+            ctx.lang().send(player, "pack.verify-stale", LangService.of("count", stale));
+        }
     }
 
     /** Paketi yalnizca bir oyuncuya yeniden gonderir (indirmesi takilan oyuncu icin). */

@@ -96,8 +96,12 @@ public final class PackGenerator {
             JsonObject model = new JsonObject();
             model.addProperty("parent", "minecraft:item/generated");
             JsonObject textures = new JsonObject();
-            textures.addProperty("layer0", item.namespace() + ":item/"
-                    + item.texture().replace("item/", "").replace(".png", ""));
+            // Doku kimligi, dokunun contents/<ns>/textures/ ALTINDAKI yolunun
+            // aynisidir; pack'e de oraya kopyalaniyor. Burada bir zamanlar
+            // replace("item/", "") + yeniden "item/" ekleme vardi: "item/" disinda
+            // bir klasordeki doku yanlis adreslenip mor-siyah kare veriyor,
+            // "myitem/kilic.png" gibi bir yol ise "mykilic" olarak bozuluyordu.
+            textures.addProperty("layer0", textureKey(item));
             model.add("textures", textures);
             writer.json(new File(paths.assets(),
                     item.namespace() + "/models/item/" + item.id() + ".json"), model);
@@ -107,13 +111,23 @@ public final class PackGenerator {
             JsonObject definition = new JsonObject();
             JsonObject modelRef = new JsonObject();
             modelRef.addProperty("type", "minecraft:model");
-            modelRef.addProperty("model", item.namespace() + ":item/" + item.id());
+            // Tanim MODEL dosyasini gosterir; tanimin kendi adresi item_model'dir.
+            // Ikisi ayri yollardir ve karistirilmasi paketi sessizce bozar.
+            modelRef.addProperty("model", item.modelPath());
             definition.add("model", modelRef);
             writer.json(new File(paths.assets(),
                     item.namespace() + "/items/" + item.id() + ".json"), definition);
             count++;
         }
         return count;
+    }
+
+    /** "aethel:item/alev_kilici" — dosya yolunun birebir karsiligi. */
+    private static String textureKey(CustomItem item) {
+        String path = item.texture().replace('\\', '/');
+        if (path.startsWith("/")) path = path.substring(1);
+        if (path.endsWith(".png")) path = path.substring(0, path.length() - 4);
+        return item.namespace() + ":" + path;
     }
 
     /** contents/<ns>/textures altindaki her sey pack'e aynen kopyalanir. */

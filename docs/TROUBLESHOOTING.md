@@ -442,3 +442,40 @@ calistirilmamis olmasindandir.
 **Teshis sirasi:** `/pack dogrula` -> soyledigi sorunu duzelt -> `/pack yenile`.
 Kendi dokunu eklerken yol sudur: YAML'de `texture: "item/kilicim.png"` yazarsan
 dosya `contents/<namespace>/textures/item/kilicim.png` olmalidir.
+
+## 25. Item hala mor-siyah kare — pack denetimi "sorun yok" dese bile
+
+Denetim temiz, `pack_format` dogru, dokular yerinde ve item yine kare. Uc ayri
+kok neden vardi; ucu de sunucu gunluguene hicbir sey yazmiyordu.
+
+**a) item_model YANLIS YERE isaret ediyordu.** `CustomItem.modelKey()`
+`aethel:item/<id>` donduruyordu. Istemci `item_model` degerini
+`assets/<ns>/items/<deger>.json` olarak cozer, yani bu deger
+`assets/aethel/items/item/<id>.json` demek oluyordu -- oyle bir dosya
+uretilmiyor. Uretilen dosya `assets/aethel/items/<id>.json`. Tanim
+bulunamayinca TUM custom itemlar kare goruyordu.
+
+`item/` oneki yalnizca MODEL dosyasinin yolunda vardir
+(`assets/<ns>/models/item/<id>.json`) ve ona tanimin ICINDEN isaret edilir.
+Iki yol ayrildi: `modelKey()` (tanimin adresi) ve `modelPath()` (modelin adresi).
+
+Denetim bunu neden yakalamadi: dosyanin VARLIGINA bakiyordu, anahtarin oraya
+cozuldugune degil. Artik `item_model` degerinin cozuldugu tam yol kontrol
+ediliyor.
+
+**b) "item/" disindaki dokular bozuluyordu.** layer0 uretimi
+`texture.replace("item/", "")` yapip basa yeniden `item/` ekliyordu. Sonuc:
+`weapons/kilic.png` -> `aethel:item/weapons/kilic` (yanlis adres) ve
+`myitem/kilic.png` -> `aethel:item/mykilic` (yol bozuluyor, "item/" parcasi
+kelimenin ORTASINDAN siliniyor). Artik doku kimligi dosya yolunun birebir
+karsiligi.
+
+**c) Font dokularinin hicbiri yoktu.** `contents/aethel/fonts/*.yml` 12 parca
+tanimliyordu ama `textures/font/`, `textures/gui/`, `textures/portrait/`
+klasorleri hic yoktu: HUD barlari, diyalog kutusu ve NPC portreleri bos
+karakter olarak ciziliyordu. Yer tutucu dokular eklendi ve `/pack dogrula`
+artik font dokularini da denetliyor.
+
+**Envanterdeki eski itemler duzelmez.** `item_model` degeri itemin NBT'sine
+YAZILIR; uretim duzelse bile onceden verilmis itemler eski degeri tasir.
+`/pack dogrula` bunlari sayip soyluyor: at ve `/menu itemler` ile yeniden al.

@@ -217,7 +217,12 @@ public final class ContentModule implements Module, ItemService {
                         + item.namespace() + "/textures/" + texture);
             }
         }
-        // 2) Uretilmis bir zip var mi, dokular icine girmis mi?
+        // 2) Font parcalarinin dokulari. HUD barlari, diyalog kutusu ve portreler
+        //    bu dokular uzerinden cizilir; eksik olani istemcide bos bir karakter
+        //    olarak gorunur ve sunucu tarafinda hicbir belirti vermez.
+        problems.addAll(missingFontTextures());
+
+        // 3) Uretilmis bir zip var mi, dokular icine girmis mi?
         if (!paths.generatedZip().isFile()) {
             problems.add("generated.zip yok -- /pack yenile calistir");
             return problems;
@@ -233,14 +238,54 @@ public final class ContentModule implements Module, ItemService {
                     problems.add(item.fullId() + ": doku pack zip'inde yok -> " + path
                             + " (/pack yenile gerekli olabilir)");
                 }
-                String definition = "assets/" + item.namespace() + "/items/"
-                        + item.id() + ".json";
-                if (!entries.contains(definition)) {
-                    problems.add(item.fullId() + ": item_model tanimi zip'te yok -> " + definition);
+                // item_model bileseninin GOSTERDIGI dosya. Denetimin can alici
+                // noktasi budur: "bir tanim dosyasi var mi" degil, "itemin
+                // tasidigi anahtar TAM OLARAK o dosyaya mi cozuluyor". Onceki
+                // surumde anahtarda fazladan bir "item/" oneki vardi; tanim
+                // dosyasi uretiliyordu ama istemci baska bir yola bakiyordu ve
+                // denetim "sorun yok" diyordu.
+                String key = item.modelKey();
+                String resolved = "assets/" + key.replace(":", "/items/") + ".json";
+                if (!entries.contains(resolved)) {
+                    problems.add(item.fullId() + ": item_model '" + key
+                            + "' -> " + resolved + " zip'te yok (item mor-siyah kare gorunur)");
+                }
+                String model = "assets/" + item.modelPath().replace(":", "/models/") + ".json";
+                if (!entries.contains(model)) {
+                    problems.add(item.fullId() + ": model dosyasi zip'te yok -> " + model);
                 }
             }
         } catch (IOException e) {
             problems.add("generated.zip okunamadi: " + e.getMessage());
+        }
+        return problems;
+    }
+
+    /** contents/<ns>/fonts/*.yml icinde gecen ama diskte olmayan dokular. */
+    private java.util.List<String> missingFontTextures() {
+        java.util.List<String> problems = new java.util.ArrayList<>();
+        java.io.File[] namespaces = paths.contents().listFiles(java.io.File::isDirectory);
+        if (namespaces == null) return problems;
+
+        for (java.io.File namespace : namespaces) {
+            java.io.File fonts = new java.io.File(namespace, "fonts");
+            java.io.File[] files = fonts.listFiles(file -> file.getName().endsWith(".yml"));
+            if (files == null) continue;
+
+            for (java.io.File file : files) {
+                var yaml = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(file);
+                for (String key : yaml.getKeys(false)) {
+                    var section = yaml.getConfigurationSection(key);
+                    if (section == null) continue;
+                    String texture = section.getString("texture", "font/" + key + ".png");
+                    java.io.File target = new java.io.File(
+                            new java.io.File(namespace, "textures"), texture);
+                    if (!target.isFile()) {
+                        problems.add("font '" + key + "' (" + file.getName() + "): doku yok -> "
+                                + "contents/" + namespace.getName() + "/textures/" + texture);
+                    }
+                }
+            }
         }
         return problems;
     }

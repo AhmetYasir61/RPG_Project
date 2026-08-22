@@ -112,6 +112,47 @@ class PackGenerationTest {
     }
 
     /**
+     * item_model bileseninin degeri, uretilen tanim dosyasinin GERCEK yoluna
+     * cozulmelidir. Anahtarda fazladan bir "item/" oneki vardi: tanim
+     * assets/aethel/items/<id>.json'a yaziliyor, istemci ise
+     * assets/aethel/items/item/<id>.json ariyordu. Tanim bulunamayinca butun
+     * custom itemlar mor-siyah kare goruntu veriyordu -- ve pack denetimi bile
+     * "sorun yok" diyordu, cunku dosyanin VARLIGINA bakiyordu, anahtarin oraya
+     * cozuldugune degil.
+     */
+    @Test
+    void itemModelKeyResolvesToTheGeneratedDefinition(@TempDir Path dataFolder) throws Exception {
+        Path textures = dataFolder.resolve("contents/aethel/textures/item");
+        Files.createDirectories(textures);
+        Files.write(textures.resolve("kilic.png"), pngBytes());
+
+        PackPaths paths = new PackPaths(dataFolder.toFile());
+        CustomItem definition = item("kilic", "item/kilic.png");
+        new PackGenerator(paths, new PackIndex(paths.index()), Logger.getLogger("test"))
+                .generate(List.of(definition));
+
+        Set<String> entries = new HashSet<>();
+        try (ZipFile zip = new ZipFile(paths.generatedZip())) {
+            zip.stream().forEach(entry -> entries.add(entry.getName()));
+        }
+        // Istemcinin item_model'i cozdugu yol.
+        String resolved = "assets/" + definition.modelKey().replace(":", "/items/") + ".json";
+        assertTrue(entries.contains(resolved),
+                "item_model '" + definition.modelKey() + "' -> " + resolved
+                        + " uretilmemis; item mor-siyah kare gorunur. Zip: " + entries);
+
+        // Tanimin gosterdigi model dosyasi da yerinde olmali.
+        String model = "assets/" + definition.modelPath().replace(":", "/models/") + ".json";
+        assertTrue(entries.contains(model), "model dosyasi yok: " + model);
+
+        // Ve tanim gercekten o modeli gostermeli.
+        String json = Files.readString(new File(paths.assets(),
+                "aethel/items/kilic.json").toPath());
+        assertTrue(json.contains(definition.modelPath()),
+                "tanim yanlis modeli gosteriyor: " + json);
+    }
+
+    /**
      * pack.mcmeta'daki pack_format sunucu surumuyle uyusmazsa istemci paketi
      * "eski surum" sayar: item_model tanimlari yeni kurallarla okunmaz ve butun
      * itemlar mor-siyah kare gorunur. Sunucu gunlugune hicbir sey yazilmaz.
@@ -134,6 +175,58 @@ class PackGenerationTest {
                 "pack_format beklenen deger degil: " + mcmeta);
         assertTrue(mcmeta.contains("supported_formats"),
                 "supported_formats araligi yazilmamis: " + mcmeta);
+    }
+
+    /**
+     * Zincirin TAMAMINI ucdan uca dogrular: item_model -> tanim -> model -> doku.
+     * Her halka digerini dogru gostermeli ve gosterilen her dosya zip'te olmali.
+     *
+     * "item/" disinda bir klasordeki doku ozellikle deneniyor: layer0 uretimi bir
+     * zamanlar replace("item/", "") yapip basa yeniden "item/" ekliyordu, bu da
+     * boyle bir dokuyu yanlis adresliyor ve "myitem/kilic.png" gibi bir yolu
+     * "mykilic" olarak bozuyordu.
+     */
+    @Test
+    void wholeChainResolvesForAnyTextureFolder(@TempDir Path dataFolder) throws Exception {
+        Files.createDirectories(dataFolder.resolve("contents/aethel/textures/item"));
+        Files.createDirectories(dataFolder.resolve("contents/aethel/textures/silahlar"));
+        Files.write(dataFolder.resolve("contents/aethel/textures/item/a.png"), pngBytes());
+        Files.write(dataFolder.resolve("contents/aethel/textures/silahlar/b.png"), pngBytes());
+
+        PackPaths paths = new PackPaths(dataFolder.toFile());
+        List<CustomItem> items = List.of(
+                item("a", "item/a.png"), item("b", "silahlar/b.png"));
+        new PackGenerator(paths, new PackIndex(paths.index()), Logger.getLogger("test"))
+                .generate(items);
+
+        Set<String> entries = new HashSet<>();
+        try (ZipFile zip = new ZipFile(paths.generatedZip())) {
+            zip.stream().forEach(entry -> entries.add(entry.getName()));
+        }
+        for (CustomItem definition : items) {
+            // 1. item_model -> tanim dosyasi
+            String defPath = "assets/" + definition.modelKey().replace(":", "/items/") + ".json";
+            assertTrue(entries.contains(defPath), "tanim yok: " + defPath + " / " + entries);
+
+            // 2. tanim -> model dosyasi
+            String defJson = Files.readString(new File(paths.assets(),
+                    "aethel/items/" + definition.id() + ".json").toPath());
+            assertTrue(defJson.contains(definition.modelPath()),
+                    "tanim yanlis modeli gosteriyor: " + defJson);
+            String modelPath = "assets/" + definition.modelPath().replace(":", "/models/") + ".json";
+            assertTrue(entries.contains(modelPath), "model yok: " + modelPath);
+
+            // 3. model -> doku kimligi, ve o kimligin gosterdigi dosya
+            String modelJson = Files.readString(new File(paths.assets(),
+                    "aethel/models/item/" + definition.id() + ".json").toPath());
+            String expectedTexture = "aethel:"
+                    + definition.texture().substring(0, definition.texture().length() - 4);
+            assertTrue(modelJson.contains(expectedTexture),
+                    "model yanlis dokuyu gosteriyor: " + modelJson
+                            + " (beklenen " + expectedTexture + ")");
+            String texturePath = "assets/aethel/textures/" + definition.texture();
+            assertTrue(entries.contains(texturePath), "doku yok: " + texturePath);
+        }
     }
 
     /** 1x1 saydam PNG. */

@@ -63,6 +63,7 @@ pack:
   verify-clean: "<green>No problems found.</green> <gray><items> item definitions, textures in place.</gray>"
   verify-problem: "<red>·</red> <gray><text></gray>"
   verify-count: "<yellow><count> problem(s) found.</yellow>"
+  verify-stale: "<yellow>You carry <count> STALE item(s)</yellow> <gray>— their id is baked into NBT and will not fix itself. Drop them and take fresh ones from /menu itemler.</gray>"
   player-offline: "<red>Player is not online:</red> <white><player></white>"
 
 economy:
