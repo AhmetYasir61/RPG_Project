@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-6bf1fa33-2f8a-456f-953b-46fa5be6c538/styles.css">
+<script src="_ds/nocturne-6bf1fa33-2f8a-456f-953b-46fa5be6c538/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+<style>
+  html, body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-body), Inter, system-ui, sans-serif; margin: 0; }
+  * { box-sizing: border-box; }
+  a { color: var(--color-accent-300); text-decoration: none; }
+  a:hover { color: var(--color-accent); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-neutral-700); border-radius: 99px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  input, select, textarea, button { font-family: inherit; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  @keyframes pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
+  @media (max-width: 1180px) {
+    #shell { grid-template-columns: 196px auto minmax(0,1fr) !important; }
+    #shell #listcol { width: 280px !important; }
+  }
+  @media (max-width: 900px) {
+    #shell { grid-template-columns: minmax(0,1fr) !important; grid-template-rows: 52px auto auto minmax(0,1fr) !important; height: auto !important; }
+    #shell > div:first-child { grid-column: 1 !important; flex-wrap: wrap; height: auto; padding: 8px 12px; }
+    #shell #navcol { border-right: 0 !important; border-bottom: 1px solid var(--color-neutral-800); max-height: 200px; }
+    #shell #listcol { width: 100% !important; border-right: 0 !important; border-bottom: 1px solid var(--color-neutral-800); max-height: 300px; }
+  }
+</style>
+</helmet>
+
+<div id="shell" style="display:grid; grid-template-columns:236px auto minmax(0,1fr); grid-template-rows:52px minmax(0,1fr); height:100vh; min-height:720px; background:var(--color-bg); font-size:13px;">
+
+  <div style="grid-column:1 / -1; display:flex; align-items:center; gap:16px; padding:0 16px; background:linear-gradient(180deg, var(--color-neutral-900), var(--color-bg)); border-bottom:1px solid var(--color-neutral-800);">
+    <div style="display:flex; align-items:center; gap:9px; width:220px;">
+      <div style="width:22px; height:22px; border-radius:6px; border:1px solid var(--color-accent); box-shadow:0 0 12px -2px var(--color-accent-700); display:grid; place-items:center; font-size:11px; color:var(--color-accent);">◆</div>
+      <div style="font-weight:500; letter-spacing:.14em; font-size:11px; text-transform:uppercase; color:var(--color-text);">AethelCore</div>
+      <span style="font-size:10px; padding:1px 6px; border-radius:99px; border:1px solid var(--color-neutral-700); color:var(--color-neutral-300);">web</span>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:8px; color:var(--color-neutral-300); font-size:12px;">
+      <span style="color:var(--color-neutral-400);">Panel</span>
+      <span style="color:var(--color-neutral-600);">/</span>
+      <span style="color:var(--color-text);">{{ groupLabel }}</span>
+      <span style="color:var(--color-neutral-600);">/</span>
+      <span style="color:var(--color-accent-300);">{{ sectionLabel }}</span>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <button onClick="{{ openPalette }}" style="display:flex; align-items:center; gap:8px; background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-neutral-300); border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px;" style-hover="border-color:var(--color-accent-700); color:var(--color-text)">
+      <span>Ara veya komut çalıştır</span>
+      <span style="font-family:ui-monospace,monospace; font-size:10px; border:1px solid var(--color-neutral-700); border-radius:4px; padding:1px 5px; color:var(--color-neutral-400);">⌘K</span>
+    </button>
+
+    <select value="{{ lang }}" onChange="{{ setLang }}" style="background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-neutral-200); border-radius:8px; padding:6px 8px; font-size:12px;">
+      <option value="tr">Türkçe</option>
+      <option value="en">English</option>
+      <option value="de">Deutsch</option>
+      <option value="ru">Русский</option>
+      <option value="ja">日本語</option>
+      <option value="zh_cn">简体中文</option>
+    </select>
+
+    <div style="display:flex; align-items:center; gap:8px; padding-left:14px; border-left:1px solid var(--color-neutral-800);">
+      <div style="width:24px; height:24px; border-radius:6px; background:var(--color-accent-800); border:1px solid var(--color-accent-700); display:grid; place-items:center; font-size:11px; color:var(--color-accent-200);">Y</div>
+      <div style="line-height:1.25;">
+        <div style="font-size:12px;">YasirDev</div>
+        <div style="font-size:10px; color:var(--color-neutral-400);">yetkili · <span style="color:var(--color-accent-300);">{{ sessionLeft }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="navcol" style="border-right:1px solid var(--color-neutral-800); overflow-y:auto; padding:10px 8px 24px; background:var(--color-neutral-900);">
+    <sc-for list="{{ nav }}" as="group" hint-placeholder-count="5">
+      <div style="margin-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:8px; padding:7px 10px 5px;">
+          <span style="font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-500);">{{ group.label }}</span>
+          <span style="flex:1; height:1px; background:linear-gradient(90deg, var(--color-neutral-800), transparent);"></span>
+        </div>
+        <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="4">
+          <button onClick="{{ item.open }}" style="{{ item.style }}" style-hover="background:var(--color-neutral-800); color:var(--color-text)">
+            <span style="{{ item.iconStyle }}">{{ item.icon }}</span>
+            <span style="flex:1; text-align:left;">{{ item.label }}</span>
+            <span style="{{ item.badgeStyle }}">{{ item.badge }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </sc-for>
+    <div style="padding:10px; margin:6px 4px 0; border-top:1px solid var(--color-neutral-800); font-size:11px; color:var(--color-neutral-500); line-height:1.6;">
+      admin.mode <span style="color:var(--color-accent-300);">WEB</span><br>
+      0.0.0.0:8080 · SQLITE
+    </div>
+  </div>
+
+  <div id="listcol" style="{{ listColStyle }}">
+    <div style="padding:10px 12px; border-bottom:1px solid var(--color-neutral-800); display:flex; flex-direction:column; gap:8px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <div style="font-size:12px; font-weight:500;">{{ sectionLabel }}</div>
+        <div style="font-size:11px; color:var(--color-neutral-500);">{{ countLabel }}</div>
+      </div>
+      <input value="{{ query }}" onChange="{{ setQuery }}" placeholder="Filtrele…" style="background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-text); border-radius:8px; padding:7px 10px; font-size:12px; width:100%;">
+      <div style="display:flex; gap:6px;">
+        <button onClick="{{ newRecord }}" class="btn btn-primary" style="flex:1; padding:6px 8px; font-size:12px;">+ Yeni</button>
+        <button onClick="{{ toggleAll }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-300); border-radius:8px; padding:6px 10px; font-size:12px; cursor:pointer;" style-hover="border-color:var(--color-accent-700)">Tümü</button>
+      </div>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; padding:6px;">
+      <sc-if value="{{ isSettingsOnly }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:14px 12px; color:var(--color-neutral-400); font-size:12px; line-height:1.7;">
+          Bu modül kayıt listesi tutmaz; ayarları sağdaki formdan düzenlenir.
+          <div style="margin-top:10px; color:var(--color-neutral-500);">Kaynak: <span style="color:var(--color-accent-300);">{{ sourceFile }}</span></div>
+        </div>
+      </sc-if>
+      <sc-for list="{{ rows }}" as="row" hint-placeholder-count="8">
+        <div onClick="{{ row.select }}" style="{{ row.style }}" style-hover="background:var(--color-neutral-900)">
+          <input type="checkbox" checked="{{ row.checked }}" onClick="{{ row.check }}" style="accent-color:var(--color-accent); width:13px; height:13px; margin-top:3px;">
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-size:12px; color:var(--color-text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ row.title }}</span>
+              <span style="{{ row.tagStyle }}">{{ row.tag }}</span>
+            </div>
+            <div style="font-size:11px; color:var(--color-neutral-500); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ row.meta }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="padding:8px 12px; border-top:1px solid var(--color-neutral-800); font-size:11px; color:var(--color-neutral-500); display:flex; justify-content:space-between;">
+      <span>{{ selectedCountLabel }}</span>
+      <span>{{ sourceFile }}</span>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; min-height:0; overflow:hidden;">
+
+    <sc-if value="{{ showDashboard }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1; overflow-y:auto; padding:18px 22px 32px;">
+       <div style="max-width:1320px; margin:0 auto; width:100%;">
+        <div style="font-size:20px; font-weight:500; letter-spacing:-.01em; margin-bottom:2px;">Sunucu durumu</div>
+        <div style="display:flex; align-items:center; gap:9px; margin-bottom:18px;">
+          <span style="font-size:12px; color:var(--color-neutral-400);">AethelCore · Paper 1.21.11 · Java 21</span>
+          <span style="{{ liveBadgeStyle }}">{{ liveLabel }}</span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px;">
+          <sc-for list="{{ stats }}" as="stat" hint-placeholder-count="5">
+            <div class="card" style="padding:12px 14px;">
+              <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-500);">{{ stat.label }}</div>
+              <div style="font-size:24px; font-weight:400; margin-top:6px; letter-spacing:-.02em;">{{ stat.value }}</div>
+              <div style="font-size:11px; color:var(--color-neutral-500); margin-top:2px;">{{ stat.note }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:14px; margin-top:16px;">
+          <div class="card" style="padding:0; overflow:hidden;">
+            <div style="padding:12px 14px; border-bottom:1px solid var(--color-neutral-800); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-400);">Modül sağlığı</div>
+            <div style="max-height:300px; overflow-y:auto;">
+              <sc-for list="{{ moduleHealth }}" as="m" hint-placeholder-count="8">
+                <div style="display:flex; align-items:center; gap:10px; padding:8px 14px; border-bottom:1px solid var(--color-neutral-900);">
+                  <span style="{{ m.dotStyle }}"></span>
+                  <span style="flex:1; font-size:12px;">{{ m.name }}</span>
+                  <span style="font-size:11px; color:var(--color-neutral-500);">{{ m.deps }}</span>
+                  <span style="{{ m.stateStyle }}">{{ m.state }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div class="card" style="padding:0; overflow:hidden;">
+            <div style="padding:12px 14px; border-bottom:1px solid var(--color-neutral-800); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-400);">Son denetim kayıtları</div>
+            <div style="max-height:300px; overflow-y:auto;">
+              <sc-for list="{{ audit }}" as="a" hint-placeholder-count="5">
+                <div style="padding:9px 14px; border-bottom:1px solid var(--color-neutral-900);">
+                  <div style="display:flex; gap:8px; align-items:center;">
+                    <span style="font-size:11px; color:var(--color-accent-300);">{{ a.action }}</span>
+                    <span style="font-size:11px; color:var(--color-neutral-500);">{{ a.at }}</span>
+                  </div>
+                  <div style="font-size:11px; color:var(--color-neutral-400); margin-top:2px;">{{ a.actor }} → {{ a.details }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:14px; margin-top:14px;">
+          <div class="card" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
+            <div style="padding:12px 14px; border-bottom:1px solid var(--color-neutral-800); display:flex; align-items:center; gap:8px;">
+              <span style="font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-400);">Hızlı işlemler</span>
+              <span style="flex:1; height:1px; background:linear-gradient(90deg, var(--color-neutral-800), transparent);"></span>
+            </div>
+            <div style="padding:12px 14px; display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <sc-for list="{{ actions }}" as="act" hint-placeholder-count="6">
+                <button onClick="{{ act.run }}" style="display:flex; flex-direction:column; gap:3px; text-align:left; background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); border-radius:8px; padding:10px 12px; cursor:pointer; color:var(--color-text);" style-hover="border-color:var(--color-accent-700); background:var(--color-accent-900)">
+                  <span style="font-size:12px;">{{ act.label }}</span>
+                  <span style="font-size:10.5px; color:var(--color-neutral-500);">{{ act.note }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <div style="margin-top:auto; padding:10px 14px; border-top:1px solid var(--color-neutral-800); display:flex; align-items:center; gap:10px;">
+              <span style="font-size:11px; color:var(--color-neutral-500);">Son işlem</span>
+              <span style="font-size:11px; color:var(--color-accent-200);">{{ saveNote }}</span>
+            </div>
+          </div>
+
+          <div class="card" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
+            <div style="padding:12px 14px; border-bottom:1px solid var(--color-neutral-800); display:flex; align-items:center; gap:8px;">
+              <span style="font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-400);">Yönetici notları</span>
+              <span style="flex:1; height:1px; background:linear-gradient(90deg, var(--color-neutral-800), transparent);"></span>
+              <span style="font-size:10px; color:var(--color-neutral-500);">{{ noteCount }}</span>
+            </div>
+            <div style="display:flex; gap:8px; padding:12px 14px 10px;">
+              <input value="{{ noteDraft }}" onChange="{{ setNoteDraft }}" onKeyDown="{{ noteKey }}" placeholder="Not ekle — Enter ile kaydet" style="flex:1; background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-text); border-radius:8px; padding:8px 11px; font-size:12px;">
+              <button onClick="{{ addNote }}" class="btn btn-primary" style="padding:7px 14px; font-size:12px;">Ekle</button>
+            </div>
+            <div style="flex:1; overflow-y:auto; max-height:212px; padding:0 6px 10px;">
+              <sc-for list="{{ notes }}" as="n" hint-placeholder-count="3">
+                <div style="display:flex; align-items:flex-start; gap:9px; padding:8px 9px; border-radius:8px;" style-hover="background:var(--color-neutral-900)">
+                  <span onClick="{{ n.toggle }}" style="{{ n.boxStyle }}">{{ n.mark }}</span>
+                  <div style="flex:1; min-width:0;">
+                    <div style="{{ n.textStyle }}">{{ n.text }}</div>
+                    <div style="font-size:10.5px; color:var(--color-neutral-600); margin-top:2px;">{{ n.at }}</div>
+                  </div>
+                  <span onClick="{{ n.remove }}" style="cursor:pointer; color:var(--color-neutral-600); font-size:13px; padding:0 2px;">×</span>
+                </div>
+              </sc-for>
+              <div style="{{ notesEmptyStyle }}">Henüz not yok — vardiya devri, bekleyen denge değişiklikleri veya şüpheli oyuncular için buraya yaz.</div>
+            </div>
+          </div>
+        </div>
+       </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showConsole }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1; display:flex; flex-direction:column; min-height:0;">
+        <div style="padding:16px 20px 10px; max-width:1060px; margin:0 auto; width:100%;">
+          <div style="font-size:16px; font-weight:500;">Canlı konsol</div>
+          <div style="font-size:12px; color:var(--color-neutral-400);">Sunucu günlüğü, ~1 sn gecikmeli akış</div>
+        </div>
+        <div style="flex:1; overflow-y:auto; margin:0 auto; max-width:1060px; width:calc(100% - 40px); border:1px solid var(--color-neutral-800); border-radius:8px; background:var(--color-neutral-900); padding:10px 12px; font-family:ui-monospace, SFMono-Regular, monospace; font-size:12px; line-height:1.7;">
+          <sc-for list="{{ logs }}" as="line" hint-placeholder-count="12">
+            <div style="display:flex; gap:10px;">
+              <span style="color:var(--color-neutral-600);">{{ line.t }}</span>
+              <span style="{{ line.lvlStyle }}">{{ line.lvl }}</span>
+              <span style="color:var(--color-neutral-200); flex:1;">{{ line.msg }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; gap:8px; padding:12px 20px; max-width:1060px; margin:0 auto; width:100%;">
+          <input value="{{ command }}" onChange="{{ setCommand }}" placeholder="/core modules disable web" style="flex:1; background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-text); border-radius:8px; padding:9px 12px; font-family:ui-monospace,monospace; font-size:12px;">
+          <button onClick="{{ runCommand }}" class="btn btn-primary" style="padding:8px 16px;">Çalıştır</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showEditor }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1; display:flex; flex-direction:column; min-height:0;">
+        <div style="padding:14px 22px 0;">
+          <div style="display:flex; align-items:flex-start; gap:12px;">
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:18px; font-weight:500; letter-spacing:-.01em;">{{ editorTitle }}</div>
+              <div style="font-size:12px; color:var(--color-neutral-400); margin-top:2px;">{{ editorSubtitle }}</div>
+            </div>
+            <sc-if value="{{ dirty }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:11px; color:var(--color-accent-200); border:1px solid var(--color-accent-700); background:var(--color-accent-900); border-radius:99px; padding:3px 9px;">kaydedilmemiş değişiklik</span>
+            </sc-if>
+          </div>
+          <div style="display:flex; gap:2px; margin-top:14px; border-bottom:1px solid var(--color-neutral-800);">
+            <button onClick="{{ tabForm }}" style="{{ tabFormStyle }}">Form</button>
+            <button onClick="{{ tabYaml }}" style="{{ tabYamlStyle }}">YAML</button>
+            <button onClick="{{ tabHistory }}" style="{{ tabHistoryStyle }}">Geçmiş</button>
+            <div style="flex:1"></div>
+            <span style="{{ readOnlyBadgeStyle }}">salt okunur</span>
+          </div>
+        </div>
+
+        <div style="flex:1; overflow-y:auto; padding:18px 22px 28px;">
+
+          <sc-if value="{{ bulkMode }}" hint-placeholder-val="{{ false }}">
+            <div class="card" style="padding:16px; max-width:620px;">
+              <div style="font-size:13px; margin-bottom:4px;">Toplu işlem — {{ bulkCount }} kayıt seçili</div>
+              <div style="font-size:12px; color:var(--color-neutral-400); margin-bottom:14px;">Değişiklik yalnızca doldurduğun alanlara uygulanır; boş alanlar dokunulmaz.</div>
+              <sc-for list="{{ bulkFields }}" as="f" hint-placeholder-count="3">
+                <div style="display:grid; grid-template-columns:170px minmax(0,1fr); gap:12px; align-items:center; padding:7px 0;">
+                  <label style="font-size:12px; color:var(--color-neutral-300);">{{ f.label }}</label>
+                  <input value="{{ f.value }}" onChange="{{ f.onInput }}" placeholder="{{ f.placeholder }}" style="background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-text); border-radius:8px; padding:8px 10px; font-size:12px;">
+                </div>
+              </sc-for>
+              <div style="display:flex; gap:8px; margin-top:16px;">
+                <button onClick="{{ save }}" class="btn btn-primary" style="padding:8px 16px;">Seçilenlere uygula</button>
+                <button onClick="{{ clearSelection }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-300); border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px;">Seçimi temizle</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ formMode }}" hint-placeholder-val="{{ true }}">
+            <div style="max-width:760px; display:flex; flex-direction:column; gap:22px;">
+              <sc-for list="{{ groupsOfFields }}" as="grp" hint-placeholder-count="3">
+                <div>
+                  <div style="font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-500); padding-bottom:8px; border-bottom:1px solid var(--color-neutral-800);">{{ grp.label }}</div>
+                  <sc-for list="{{ grp.fields }}" as="f" hint-placeholder-count="4">
+                    <div style="display:grid; grid-template-columns:200px minmax(0,1fr); gap:16px; align-items:start; padding:11px 0; border-bottom:1px solid var(--color-neutral-900);">
+                      <div style="padding-top:7px;">
+                        <div style="font-size:12px; color:var(--color-neutral-200);">{{ f.label }}</div>
+                        <div style="font-size:11px; color:var(--color-neutral-500); font-family:ui-monospace,monospace; margin-top:2px;">{{ f.key }}</div>
+                      </div>
+                      <div>
+                        <sc-if value="{{ f.isText }}" hint-placeholder-val="{{ true }}">
+                          <input value="{{ f.value }}" onChange="{{ f.onInput }}" style="width:100%; background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-text); border-radius:8px; padding:8px 10px; font-size:12px;">
+                        </sc-if>
+                        <sc-if value="{{ f.isNumber }}" hint-placeholder-val="{{ false }}">
+                          <input type="number" step="any" value="{{ f.value }}" onChange="{{ f.onInput }}" style="width:180px; background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-text); border-radius:8px; padding:8px 10px; font-size:12px; font-family:ui-monospace,monospace;">
+                        </sc-if>
+                        <sc-if value="{{ f.isArea }}" hint-placeholder-val="{{ false }}">
+                          <textarea onChange="{{ f.onInput }}" rows="4" style="width:100%; background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-text); border-radius:8px; padding:9px 11px; font-size:12px; line-height:1.7; resize:vertical;">{{ f.value }}</textarea>
+                        </sc-if>
+                        <sc-if value="{{ f.isSelect }}" hint-placeholder-val="{{ false }}">
+                          <select value="{{ f.value }}" onChange="{{ f.onInput }}" style="min-width:200px; background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-text); border-radius:8px; padding:8px 10px; font-size:12px;">
+                            <sc-for list="{{ f.options }}" as="opt" hint-placeholder-count="3">
+                              <option value="{{ opt }}">{{ opt }}</option>
+                            </sc-for>
+                          </select>
+                        </sc-if>
+                        <sc-if value="{{ f.isBool }}" hint-placeholder-val="{{ false }}">
+                          <button onClick="{{ f.onToggle }}" style="{{ f.switchStyle }}">
+                            <span style="{{ f.knobStyle }}"></span>
+                            <span style="{{ f.switchLabelStyle }}">{{ f.boolLabel }}</span>
+                          </button>
+                        </sc-if>
+                        <sc-if value="{{ f.isColor }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="{{ f.swatchStyle }}"></span>
+                            <input value="{{ f.value }}" onChange="{{ f.onInput }}" style="width:140px; background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); color:var(--color-text); border-radius:8px; padding:8px 10px; font-size:12px; font-family:ui-monospace,monospace;">
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ f.isList }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+                            <sc-for list="{{ f.chips }}" as="chip" hint-placeholder-count="2">
+                              <span style="display:inline-flex; align-items:center; gap:6px; font-size:11px; background:var(--color-accent-900); border:1px solid var(--color-accent-800); color:var(--color-accent-200); border-radius:99px; padding:3px 10px;">
+                                {{ chip.label }}
+                                <span onClick="{{ chip.remove }}" style="cursor:pointer; color:var(--color-neutral-400);">×</span>
+                              </span>
+                            </sc-for>
+                            <input value="{{ f.draft }}" onChange="{{ f.onInput }}" placeholder="ekle + Enter" onKeyDown="{{ f.onAdd }}" style="width:150px; background:var(--color-neutral-900); border:1px dashed var(--color-neutral-700); color:var(--color-text); border-radius:99px; padding:5px 12px; font-size:11px;">
+                          </div>
+                        </sc-if>
+                        <div style="font-size:11px; color:var(--color-neutral-500); margin-top:5px; line-height:1.6;">{{ f.hint }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ yamlMode }}" hint-placeholder-val="{{ false }}">
+            <div style="max-width:820px;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <span style="font-size:11px; color:var(--color-neutral-400);">{{ sourceFile }}</span>
+                <span style="font-size:11px; color:var(--color-neutral-600);">·</span>
+                <span style="font-size:11px; color:var(--color-neutral-400);">form ile çift yönlü senkron</span>
+              </div>
+              <pre style="margin:0; background:var(--color-neutral-900); border:1px solid var(--color-neutral-800); border-radius:8px; padding:16px 18px; font-family:ui-monospace, SFMono-Regular, monospace; font-size:12px; line-height:1.75; color:var(--color-neutral-100); overflow-x:auto;">{{ yaml }}</pre>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ historyMode }}" hint-placeholder-val="{{ false }}">
+            <div style="max-width:720px;">
+              <sc-for list="{{ history }}" as="h" hint-placeholder-count="4">
+                <div style="display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid var(--color-neutral-900);">
+                  <div style="flex:1;">
+                    <div style="font-size:12px;">{{ h.summary }}</div>
+                    <div style="font-size:11px; color:var(--color-neutral-500); margin-top:2px;">{{ h.actor }} · {{ h.at }}</div>
+                  </div>
+                  <button onClick="{{ h.revert }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-200); border-radius:8px; padding:6px 12px; font-size:11px; cursor:pointer;" style-hover="border-color:var(--color-accent); color:var(--color-accent-200)">Geri al</button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="{{ footerStyle }}">
+          <button onClick="{{ save }}" class="btn btn-primary" style="padding:8px 18px;">Kaydet</button>
+          <button onClick="{{ reset }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-300); border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px;" style-hover="border-color:var(--color-accent-700)">Geri çevir</button>
+          <div style="flex:1"></div>
+          <span style="font-size:11px; color:var(--color-neutral-500);">{{ saveNote }}</span>
+          <button onClick="{{ deleteRecord }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-400); border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px;" style-hover="border-color:#7a3b3b; color:#e0a0a0">Sil</button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ paletteOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closePalette }}" style="position:fixed; inset:0; background:rgba(8,9,14,.72); display:flex; align-items:flex-start; justify-content:center; padding-top:12vh; z-index:50;">
+      <div class="card elev-lg" style="width:min(560px,92vw); padding:0; overflow:hidden;">
+        <input value="{{ paletteQuery }}" onChange="{{ setPaletteQuery }}" autoFocus="{{ true }}" placeholder="Modül, kayıt veya komut ara…" style="width:100%; background:transparent; border:0; border-bottom:1px solid var(--color-neutral-800); color:var(--color-text); padding:15px 18px; font-size:14px;">
+        <div style="max-height:340px; overflow-y:auto; padding:6px;">
+          <sc-for list="{{ paletteResults }}" as="r" hint-placeholder-count="6">
+            <div onClick="{{ r.open }}" style="display:flex; align-items:center; gap:12px; padding:9px 12px; border-radius:8px; cursor:pointer;" style-hover="background:var(--color-neutral-800)">
+              <span style="width:16px; text-align:center; color:var(--color-accent-300);">{{ r.icon }}</span>
+              <span style="flex:1; font-size:13px;">{{ r.label }}</span>
+              <span style="font-size:11px; color:var(--color-neutral-500);">{{ r.group }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+const T = { text:'text', num:'number', bool:'bool', sel:'select', area:'area', list:'list', color:'color' };
+
+// Alan semalari ve kayitlar repo kaynaklarindan alindi:
+// contents/aethel/{items,skills,mobs,dialogs,menus,fonts}/*.yml, LootService.LootEntry,
+// Difficulty, QuestService.Quest, PermissionService.Group, *Settings.java, modules.yml, features.yml
+const SCHEMAS = {
+  items: { file:'contents/aethel/items/silahlar.yml', title:'Item Tanımları', icon:'⚔', groups:[
+    { label:'Kimlik', keys:['id','display','material','texture','rarity','custom-model-data'] },
+    { label:'Görünüm ve dayanıklılık', keys:['lore','durability','glow'] },
+    { label:'Nitelikler', keys:['attributes.damage','attributes.attack-speed','enchantments','tags'] },
+    { label:'Tüketim', keys:['food.nutrition','food.saturation','food.always-edible','food.eat-seconds'] }],
+    fields:{
+      id:{label:'Kimlik', t:T.text, hint:'contents içindeki anahtar; namespace ile aethel:<id> olur.'},
+      display:{label:'Görünen ad', t:T.text, hint:'MiniMessage desteklenir.'},
+      material:{label:'Materyal', t:T.sel, options:['IRON_SWORD','DIAMOND_SWORD','NETHERITE_SWORD','BOW','PAPER','POTION','STICK','GOLD_INGOT'], hint:'Taban Bukkit materyali.'},
+      texture:{label:'Doku yolu', t:T.text, hint:'contents/aethel/textures/ altına göre.'},
+      rarity:{label:'Nadirlik', t:T.sel, options:['COMMON','UNCOMMON','RARE','EPIC','LEGENDARY']},
+      'custom-model-data':{label:'Model verisi', t:T.num, hint:'item_model bileşeni ile eşlenir.'},
+      lore:{label:'Lore', t:T.area, hint:'Her satır bir lore satırı.'},
+      durability:{label:'Dayanıklılık', t:T.num},
+      glow:{label:'Parlama', t:T.bool},
+      'attributes.damage':{label:'Hasar', t:T.num},
+      'attributes.attack-speed':{label:'Saldırı hızı', t:T.num, hint:'Vanilla farkı; negatif = yavaş.'},
+      enchantments:{label:'Büyüler', t:T.list, hint:'ad:seviye biçiminde.'},
+      tags:{label:'Etiketler', t:T.list},
+      'food.nutrition':{label:'Besin', t:T.num},
+      'food.saturation':{label:'Doygunluk', t:T.num},
+      'food.always-edible':{label:'Her zaman yenebilir', t:T.bool},
+      'food.eat-seconds':{label:'Yeme süresi', t:T.num}},
+    records:[
+      {id:'alev_kilici', display:'<gradient:#ff6a00:#ffcc00><bold>Alev Kilici</bold></gradient>', material:'IRON_SWORD', texture:'item/alev_kilici.png', rarity:'RARE', 'custom-model-data':1001,
+       lore:'<dark_gray>« Nadir »</dark_gray>\n\n<gray>Hasar</gray> <white>+8.5</white>\n<gray>Yanma</gray> <white>3sn</white>', durability:780, glow:true,
+       'attributes.damage':8.5,'attributes.attack-speed':-2.2, enchantments:['fire_aspect:2'], tags:['silah','kilic'],
+       'food.nutrition':0,'food.saturation':0,'food.always-edible':false,'food.eat-seconds':0},
+      {id:'sifa_iksiri', display:'<red>Sifa Iksiri</red>', material:'POTION', texture:'item/sifa_iksiri.png', rarity:'COMMON', 'custom-model-data':0,
+       lore:'<gray>Anlik <white>40</white> can yeniler.</gray>', durability:0, glow:false,
+       'attributes.damage':0,'attributes.attack-speed':0, enchantments:[], tags:['tuketilebilir'],
+       'food.nutrition':0,'food.saturation':0,'food.always-edible':true,'food.eat-seconds':1.2},
+      {id:'kesif_parsomeni', display:'<aqua>Kesif Parsomeni</aqua>', material:'PAPER', texture:'item/kesif_parsomeni.png', rarity:'UNCOMMON', 'custom-model-data':0,
+       lore:'<gray>Kesfettigin bir waypoint\'e isinlanirsin.</gray>\n<dark_gray>Kullaninca tukenir.</dark_gray>', durability:0, glow:false,
+       'attributes.damage':0,'attributes.attack-speed':0, enchantments:[], tags:['parsomen','seyahat'],
+       'food.nutrition':0,'food.saturation':0,'food.always-edible':false,'food.eat-seconds':0}]},
+
+  skills: { file:'contents/aethel/skills/ornek.yml', title:'Yetenekler', icon:'✦', groups:[
+    { label:'Kimlik', keys:['id','display','description'] },
+    { label:'Kullanım', keys:['trigger','cooldown','mana-cost','range','targeting'] },
+    { label:'Değerler', keys:['values.damage','values.heal','sounds'] },
+    { label:'Parçacık efekti', keys:['effect.shape','effect.motion','effect.particle','effect.color','effect.count','effect.radius','effect.duration','effect.period','effect.offset-y'] }],
+    fields:{
+      id:{label:'Kimlik', t:T.text}, display:{label:'Görünen ad', t:T.text},
+      description:{label:'Açıklama', t:T.area},
+      trigger:{label:'Tetikleyici', t:T.sel, options:['MANUAL','ON_TIMER','ON_LOW_HEALTH','ON_DEAL_DAMAGE','ON_DAMAGED']},
+      cooldown:{label:'Soğuma (sn)', t:T.num}, 'mana-cost':{label:'Mana maliyeti', t:T.num},
+      range:{label:'Menzil', t:T.num},
+      targeting:{label:'Hedefleme', t:T.sel, options:['AREA','LINE','SINGLE','ALL_ALLIES','SELF']},
+      'values.damage':{label:'Hasar', t:T.num}, 'values.heal':{label:'İyileştirme', t:T.num},
+      sounds:{label:'Sesler', t:T.list, hint:'ses ses-seviyesi perde'},
+      'effect.shape':{label:'Şekil', t:T.sel, options:['RING','BEAM','BURST','HELIX','SPHERE']},
+      'effect.motion':{label:'Hareket', t:T.sel, options:['EXPAND','TRAVEL','STATIC','ORBIT']},
+      'effect.particle':{label:'Parçacık', t:T.sel, options:['FLAME','SMALL_FLAME','DUST','SNOWFLAKE','HAPPY_VILLAGER','SOUL']},
+      'effect.color':{label:'Renk', t:T.color, hint:'Yalnızca DUST parçacığında kullanılır.'},
+      'effect.count':{label:'Adet', t:T.num}, 'effect.radius':{label:'Yarıçap', t:T.num},
+      'effect.duration':{label:'Süre (tick)', t:T.num}, 'effect.period':{label:'Periyot (tick)', t:T.num},
+      'effect.offset-y':{label:'Y kayması', t:T.num}},
+    records:[
+      {id:'alev_dalgasi', display:'<gold>Alev Dalgasi</gold>', description:'<gray>Cevrene genisleyen bir alev halkasi yayarsin.</gray>', trigger:'MANUAL', cooldown:8, 'mana-cost':20, range:6, targeting:'AREA', 'values.damage':9, 'values.heal':0, sounds:['entity.blaze.shoot 1 0.8'], 'effect.shape':'RING','effect.motion':'EXPAND','effect.particle':'FLAME','effect.color':'#ff8a3d','effect.count':48,'effect.radius':6,'effect.duration':20,'effect.period':2,'effect.offset-y':0.3},
+      {id:'buz_mizragi', display:'<aqua>Buz Mizragi</aqua>', description:'<gray>Baktigin yone donan bir buz isini gonderirsin.</gray>', trigger:'MANUAL', cooldown:4, 'mana-cost':12, range:16, targeting:'LINE', 'values.damage':12, 'values.heal':0, sounds:['block.glass.break 0.8 1.4'], 'effect.shape':'BEAM','effect.motion':'TRAVEL','effect.particle':'DUST','effect.color':'#7fd4ff','effect.count':40,'effect.radius':1.2,'effect.duration':12,'effect.period':1,'effect.offset-y':0},
+      {id:'sifa_cemberi', display:'<light_green>Sifa Cemberi</light_green>', description:'<gray>Cevrendeki muttefikleri iyilestiren bir sarmal.</gray>', trigger:'MANUAL', cooldown:20, 'mana-cost':35, range:7, targeting:'ALL_ALLIES', 'values.damage':0, 'values.heal':14, sounds:['block.amethyst_block.chime 1 1.2'], 'effect.shape':'HELIX','effect.motion':'ORBIT','effect.particle':'HAPPY_VILLAGER','effect.color':'#a7f3a0','effect.count':60,'effect.radius':2.2,'effect.duration':60,'effect.period':3,'effect.offset-y':0},
+      {id:'golge_patlamasi', display:'<dark_purple>Golge Patlamasi</dark_purple>', description:'<gray>Boss yetenegi: dusuk canda kendiliginden patlar.</gray>', trigger:'ON_LOW_HEALTH', cooldown:30, 'mana-cost':0, range:10, targeting:'AREA', 'values.damage':18, 'values.heal':0, sounds:[], 'effect.shape':'SPHERE','effect.motion':'EXPAND','effect.particle':'DUST','effect.color':'#5a2d82','effect.count':90,'effect.radius':10,'effect.duration':30,'effect.period':2,'effect.offset-y':1}]},
+
+  mobs: { file:'contents/aethel/mobs/ornek.yml', title:'Moblar', icon:'☠', groups:[
+    { label:'Kimlik', keys:['id','display','type','tier'] },
+    { label:'Savaş', keys:['health','damage','armor','speed','follow-range'] },
+    { label:'Görünüm', keys:['appearance.model','appearance.helmet','appearance.main-hand','appearance.health-bar','appearance.boss-bar-color'] },
+    { label:'Yetenekler ve loot', keys:['skills','loot-table'] },
+    { label:'Doğma', keys:['spawn.worlds','spawn.biomes','spawn.min-y','spawn.max-y','spawn.max-light','spawn.chance','spawn.max-nearby'] }],
+    fields:{
+      id:{label:'Kimlik', t:T.text}, display:{label:'Görünen ad', t:T.text},
+      type:{label:'Entity tipi', t:T.sel, options:['WITHER_SKELETON','STRAY','ZOMBIE','HUSK','SKELETON','VINDICATOR','RAVAGER']},
+      tier:{label:'Kademe', t:T.num, hint:'Loot nadirlik hesabına girer.'},
+      health:{label:'Can', t:T.num}, damage:{label:'Hasar', t:T.num}, armor:{label:'Zırh', t:T.num},
+      speed:{label:'Hız', t:T.num}, 'follow-range':{label:'Takip menzili', t:T.num},
+      'appearance.model':{label:'bbmodel', t:T.text, hint:'Boş bırakılırsa vanilla görünüm.'},
+      'appearance.helmet':{label:'Kask', t:T.text}, 'appearance.main-hand':{label:'Ana el', t:T.text},
+      'appearance.health-bar':{label:'Can barı', t:T.bool},
+      'appearance.boss-bar-color':{label:'Boss bar rengi', t:T.sel, options:['RED','BLUE','PURPLE','YELLOW','GREEN','WHITE','—']},
+      skills:{label:'Yetenekler', t:T.list, hint:'skill · trigger · şans'},
+      'loot-table':{label:'Loot tablosu', t:T.sel, options:['dungeon_temel','orman_devriye','yok']},
+      'spawn.worlds':{label:'Dünyalar', t:T.list}, 'spawn.biomes':{label:'Biyomlar', t:T.list},
+      'spawn.min-y':{label:'Min Y', t:T.num}, 'spawn.max-y':{label:'Maks Y', t:T.num},
+      'spawn.max-light':{label:'Maks ışık', t:T.num}, 'spawn.chance':{label:'Şans', t:T.num},
+      'spawn.max-nearby':{label:'Yakında maks', t:T.num}},
+    records:[
+      {id:'alev_muhafizi', display:'<gold>Alev Muhafizi</gold>', type:'WITHER_SKELETON', tier:3, health:120, damage:9, armor:6, speed:0.26, 'follow-range':32, 'appearance.model':'', 'appearance.helmet':'minecraft:golden_helmet', 'appearance.main-hand':'aethel:alev_kilici', 'appearance.health-bar':true, 'appearance.boss-bar-color':'RED', skills:['aethel:alev_dalgasi · ON_TIMER · 0.7','aethel:golge_patlamasi · ON_LOW_HEALTH · 1.0'], 'loot-table':'dungeon_temel', 'spawn.worlds':[], 'spawn.biomes':[], 'spawn.min-y':-20,'spawn.max-y':40,'spawn.max-light':7,'spawn.chance':0,'spawn.max-nearby':3},
+      {id:'buz_cadisi', display:'<aqua>Buz Cadisi</aqua>', type:'STRAY', tier:2, health:70, damage:6, armor:0, speed:0.25, 'follow-range':24, 'appearance.model':'', 'appearance.helmet':'', 'appearance.main-hand':'', 'appearance.health-bar':true, 'appearance.boss-bar-color':'—', skills:['aethel:buz_mizragi · ON_DEAL_DAMAGE · 0.35','aethel:sifa_cemberi · ON_DAMAGED · 0.15'], 'loot-table':'dungeon_temel', 'spawn.worlds':[], 'spawn.biomes':[], 'spawn.min-y':-64,'spawn.max-y':320,'spawn.max-light':15,'spawn.chance':0,'spawn.max-nearby':2}]},
+
+  loot: { file:'loot/tables.yml', title:'Loot Tabloları', icon:'▤', groups:[
+    { label:'Tablo', keys:['id','min-rolls','max-rolls'] },
+    { label:'Girdi', keys:['entry.itemId','entry.minAmount','entry.maxAmount','entry.weight','entry.minRarityTier'] }],
+    fields:{ id:{label:'Tablo kimliği', t:T.text}, 'min-rolls':{label:'Min çekim', t:T.num}, 'max-rolls':{label:'Maks çekim', t:T.num},
+      'entry.itemId':{label:'Item', t:T.sel, options:['aethel:alev_kilici','aethel:sifa_iksiri','aethel:kesif_parsomeni']},
+      'entry.minAmount':{label:'Min adet', t:T.num}, 'entry.maxAmount':{label:'Maks adet', t:T.num},
+      'entry.weight':{label:'Ağırlık', t:T.num, hint:'Düşük ağırlık = nadir; tehdit çarpanı nadirleri yukarı çeker.'},
+      'entry.minRarityTier':{label:'Min nadirlik kademesi', t:T.num}},
+    records:[
+      {id:'dungeon_temel','min-rolls':2,'max-rolls':4,'entry.itemId':'aethel:alev_kilici','entry.minAmount':1,'entry.maxAmount':1,'entry.weight':4,'entry.minRarityTier':3},
+      {id:'orman_devriye','min-rolls':1,'max-rolls':3,'entry.itemId':'aethel:sifa_iksiri','entry.minAmount':1,'entry.maxAmount':3,'entry.weight':30,'entry.minRarityTier':0}]},
+
+  regions: { file:'regions/regions.yml', title:'Bölgeler', icon:'▣', groups:[
+    { label:'Bölge', keys:['id','world','shape','difficulty','priority'] },
+    { label:'Koruma', keys:['build-protection','pvp-protection','difficulty-scaling'] }],
+    fields:{ id:{label:'Bölge kimliği', t:T.text}, world:{label:'Dünya', t:T.text},
+      shape:{label:'Şekil', t:T.sel, options:['CuboidShape','SphereShape','PolygonShape']},
+      difficulty:{label:'Zorluk', t:T.sel, options:['normal','zorlu','mahzen','hardcore']},
+      priority:{label:'Öncelik', t:T.num, hint:'Çakışan bölgelerde yüksek olan kazanır.'},
+      'build-protection':{label:'İnşaat koruması', t:T.bool}, 'pvp-protection':{label:'PvP koruması', t:T.bool},
+      'difficulty-scaling':{label:'Zorluk çarpanları', t:T.bool}},
+    records:[
+      {id:'baslangic_koyu', world:'world', shape:'CuboidShape', difficulty:'normal', priority:10, 'build-protection':true,'pvp-protection':true,'difficulty-scaling':false},
+      {id:'kuzey_ormani', world:'world', shape:'PolygonShape', difficulty:'zorlu', priority:5, 'build-protection':true,'pvp-protection':false,'difficulty-scaling':true},
+      {id:'devrilmis_kule', world:'world', shape:'SphereShape', difficulty:'mahzen', priority:20, 'build-protection':true,'pvp-protection':false,'difficulty-scaling':true}]},
+
+  difficulties: { file:'regions/difficulties.yml', title:'Zorluk Seviyeleri', icon:'◈', groups:[
+    { label:'Zorluk', keys:['id','displayName','percent','icon','hardcore'] }],
+    fields:{ id:{label:'Kimlik', t:T.text}, displayName:{label:'Görünen ad', t:T.text},
+      percent:{label:'Yüzde', t:T.num, hint:'100 = vanilla dengesi. Can doğrusal, hasar karekök ölçekler.'},
+      icon:{label:'Font ikonu', t:T.text}, hardcore:{label:'Hardcore', t:T.bool}},
+    records:[
+      {id:'normal', displayName:'<white>Normal</white>', percent:100, icon:'', hardcore:false},
+      {id:'zorlu', displayName:'<gold>Zorlu</gold>', percent:140, icon:'', hardcore:false},
+      {id:'mahzen', displayName:'<red>Mahzen</red>', percent:185, icon:'', hardcore:false},
+      {id:'kiyamet', displayName:'<dark_red>Kiyamet</dark_red>', percent:260, icon:'', hardcore:true}]},
+
+  quests: { file:'contents/aethel/quests/*.yml', title:'Görevler', icon:'✧', groups:[
+    { label:'Görev', keys:['id','displayName','description','requiredLevel','repeatable','nextQuest'] },
+    { label:'Hedef', keys:['objective.type','objective.target','objective.amount','objective.description'] },
+    { label:'Ödüller', keys:['rewards'] }],
+    fields:{ id:{label:'Kimlik', t:T.text}, displayName:{label:'Görünen ad', t:T.text},
+      description:{label:'Açıklama', t:T.area}, requiredLevel:{label:'Gerekli seviye', t:T.num},
+      repeatable:{label:'Tekrarlanabilir', t:T.bool},
+      nextQuest:{label:'Sonraki görev', t:T.text, hint:'Zincir: biten görev bunu açar.'},
+      'objective.type':{label:'Hedef tipi', t:T.sel, options:['KILL','COLLECT','CRAFT','TRAVEL','TALK','REACH_LEVEL']},
+      'objective.target':{label:'Hedef', t:T.text}, 'objective.amount':{label:'Adet', t:T.num},
+      'objective.description':{label:'Hedef açıklaması', t:T.text},
+      rewards:{label:'Ödüller', t:T.list, hint:'[item], [money], [xp] biçiminde.'}},
+    records:[
+      {id:'mahzen_kesfi', displayName:'Mahzen Kesfi', description:'Devrilmis kulenin altindaki mahzeni bul.', requiredLevel:5, repeatable:false, nextQuest:'aethel:cekirdek', 'objective.type':'TRAVEL','objective.target':'devrilmis_kule','objective.amount':1,'objective.description':'Kuleye ulas', rewards:['[money] 250','[xp] 400']},
+      {id:'cekirdek', displayName:'Cekirdegi Kir', description:'Mahzen cekirdegini kir ve cikisa kos.', requiredLevel:8, repeatable:false, nextQuest:'', 'objective.type':'KILL','objective.target':'aethel:alev_muhafizi','objective.amount':1,'objective.description':'Muhafizi yen', rewards:['[item] aethel:alev_kilici','[xp] 1200']},
+      {id:'gunluk_avlanma', displayName:'Gunluk Avlanma', description:'Kuzey ormaninda 20 mob avla.', requiredLevel:1, repeatable:true, nextQuest:'', 'objective.type':'KILL','objective.target':'aethel:buz_cadisi','objective.amount':20,'objective.description':'Buz cadisi avla', rewards:['[money] 120']}]},
+
+  dialogs: { file:'contents/aethel/dialogs/giris.yml', title:'Diyaloglar', icon:'❝', groups:[
+    { label:'Düğüm', keys:['id','speaker','portrait','chars-per-tick'] },
+    { label:'Metin', keys:['lines'] },
+    { label:'Seçenek ve sonuç', keys:['choices','outcomes'] }],
+    fields:{ id:{label:'Düğüm kimliği', t:T.text}, speaker:{label:'Konuşan', t:T.text},
+      portrait:{label:'Portre', t:T.text}, 'chars-per-tick':{label:'Tick başına harf', t:T.num, hint:'Typewriter hızı.'},
+      lines:{label:'Satırlar', t:T.area}, choices:{label:'Seçenekler', t:T.list, hint:'metin → hedef düğüm'},
+      outcomes:{label:'Sonuçlar', t:T.list, hint:'[quest], [item], [message]'}},
+    records:[
+      {id:'koylu_karsilama', speaker:'Yasli Koylu', portrait:'portrait_koylu', 'chars-per-tick':2, lines:'Sonunda birileri geldi... Sira, bu topraklar seni bekliyordu.\nMahzenin kapisi yeniden acildi ve icerideki sey uyandi.', choices:['Mahzen nerede? → koylu_mahzen','Bana ne verirsin? → koylu_odul','Ilgilenmiyorum. → [message]'], outcomes:[]},
+      {id:'koylu_mahzen', speaker:'Yasli Koylu', portrait:'portrait_koylu', 'chars-per-tick':2, lines:'Ormanin kuzeyinde, devrilmis kulenin altinda.\nAma tek basina gitme.', choices:[], outcomes:['[quest] aethel:mahzen_kesfi']},
+      {id:'koylu_odul', speaker:'Yasli Koylu', portrait:'portrait_koylu', 'chars-per-tick':2, lines:'Elimde ne varsa senin. Bir parsomen ve biraz altin.', choices:[], outcomes:['[item] aethel:kesif_parsomeni','[message] <green>Yasli koylu sana bir parsomen uzatir.</green>']}]},
+
+  menus: { file:'contents/aethel/menus/ana_menu.yml', title:'Menüler', icon:'▦', groups:[
+    { label:'Menü', keys:['id','title','rows'] },
+    { label:'Öğe', keys:['item.slot','item.material','item.name','item.lore','item.actions'] }],
+    fields:{ id:{label:'Kimlik', t:T.text}, title:{label:'Başlık', t:T.text}, rows:{label:'Satır', t:T.num},
+      'item.slot':{label:'Slot', t:T.num}, 'item.material':{label:'Materyal', t:T.sel, options:['PLAYER_HEAD','LIGHT_BLUE_BANNER','BARRIER','PAPER','CHEST']},
+      'item.name':{label:'Ad', t:T.text}, 'item.lore':{label:'Lore', t:T.area},
+      'item.actions':{label:'Eylemler', t:T.list, hint:'[command], [sound], [close]'}},
+    records:[{id:'ana_menu', title:'<white>Ana Menu', rows:3, 'item.slot':11, 'item.material':'PLAYER_HEAD', 'item.name':'<yellow>Profilin</yellow>', 'item.lore':'<gray>Seviye, istatistik ve mesleklerin.</gray>', 'item.actions':['[command] profil','[sound] UI_BUTTON_CLICK 1 1']}]},
+
+  fonts: { file:'contents/aethel/fonts/hud.yml', title:'Font Parçaları', icon:'𝔄', groups:[
+    { label:'Parça', keys:['id','texture','height','ascent'] }],
+    fields:{ id:{label:'Kimlik', t:T.text}, texture:{label:'Doku', t:T.text},
+      height:{label:'Yükseklik', t:T.num}, ascent:{label:'Taban çizgisi', t:T.num, hint:'U+E000 tahsisi cache/pack-index.json içinde kalıcıdır.'}},
+    records:[
+      {id:'can_bari_dolu', texture:'font/can_bari_dolu.png', height:9, ascent:8},
+      {id:'can_bari_bos', texture:'font/can_bari_bos.png', height:9, ascent:8},
+      {id:'mana_bari', texture:'font/mana_bari.png', height:9, ascent:8},
+      {id:'zorluk_ikonu', texture:'font/zorluk_ikonu.png', height:8, ascent:7},
+      {id:'menu_arkaplan', texture:'gui/menu_arkaplan.png', height:256, ascent:13}]},
+
+  players: { file:'profile tablosu (SQLITE)', title:'Oyuncular', icon:'☺', groups:[
+    { label:'Hesap', keys:['name','uuid','world','online'] },
+    { label:'RPG', keys:['rpg:level','rpg:stat:strength','rpg:stat:dexterity','rpg:stat:intelligence','rpg:stat:vitality','rpg:stat:luck'] },
+    { label:'Ekonomi ve gruplar', keys:['balance','groups'] },
+    { label:'Envanter', keys:['inventory'] }],
+    fields:{ name:{label:'Oyuncu', t:T.text}, uuid:{label:'UUID', t:T.text}, world:{label:'Dünya', t:T.text},
+      online:{label:'Çevrimiçi', t:T.bool},
+      'rpg:level':{label:'Seviye', t:T.num},
+      'rpg:stat:strength':{label:'Güç', t:T.num}, 'rpg:stat:dexterity':{label:'Çeviklik', t:T.num},
+      'rpg:stat:intelligence':{label:'Zeka', t:T.num}, 'rpg:stat:vitality':{label:'Dayanıklılık', t:T.num},
+      'rpg:stat:luck':{label:'Şans', t:T.num},
+      balance:{label:'Bakiye', t:T.num}, groups:{label:'Gruplar', t:T.list},
+      inventory:{label:'Envanter', t:T.list, hint:'Kaldırılan eşya silinmez, kanıt deposuna taşınır.'}},
+    records:[
+      {name:'YasirDev', uuid:'8f1c...a29b', world:'world', online:true, 'rpg:level':42, 'rpg:stat:strength':18,'rpg:stat:dexterity':11,'rpg:stat:intelligence':9,'rpg:stat:vitality':14,'rpg:stat:luck':6, balance:12480, groups:['yonetici','oyuncu'], inventory:['0 · aethel:alev_kilici ×1','9 · POTION ×3']},
+      {name:'Ayla', uuid:'2b77...ff01', world:'world', online:true, 'rpg:level':17, 'rpg:stat:strength':7,'rpg:stat:dexterity':12,'rpg:stat:intelligence':5,'rpg:stat:vitality':8,'rpg:stat:luck':3, balance:840, groups:['oyuncu'], inventory:['0 · IRON_SWORD ×1']},
+      {name:'Kerem', uuid:'91aa...30cd', world:'dungeon_1', online:true, 'rpg:level':29, 'rpg:stat:strength':13,'rpg:stat:dexterity':9,'rpg:stat:intelligence':16,'rpg:stat:vitality':10,'rpg:stat:luck':4, balance:3210, groups:['vip','oyuncu'], inventory:['0 · aethel:kesif_parsomeni ×2']},
+      {name:'Selin', uuid:'7cd0...8e14', world:'—', online:false, 'rpg:level':8, 'rpg:stat:strength':4,'rpg:stat:dexterity':5,'rpg:stat:intelligence':3,'rpg:stat:vitality':6,'rpg:stat:luck':2, balance:250, groups:['oyuncu'], inventory:[]}]},
+
+  permissions: { file:'permissions tablosu', title:'Yetkiler', icon:'⚿', groups:[
+    { label:'Grup', keys:['name','displayName','weight'] },
+    { label:'Sohbet', keys:['prefix','suffix'] },
+    { label:'Kalıtım ve izinler', keys:['parents','permissions'] }],
+    fields:{ name:{label:'Grup adı', t:T.text}, displayName:{label:'Görünen ad', t:T.text},
+      weight:{label:'Ağırlık', t:T.num, hint:'Çakışmada yüksek ağırlığın prefix\'i kazanır.'},
+      prefix:{label:'Ön ek', t:T.text}, suffix:{label:'Son ek', t:T.text},
+      parents:{label:'Üst gruplar', t:T.list}, permissions:{label:'İzinler', t:T.list, hint:'Süreli izinler oyuncu bazında verilir.'}},
+    records:[
+      {name:'yonetici', displayName:'Yönetici', weight:100, prefix:'<red>[Yonetici]</red> ', suffix:'', parents:['oyuncu'], permissions:['aethel.admin.*','core.admin']},
+      {name:'vip', displayName:'VIP', weight:50, prefix:'<gold>[VIP]</gold> ', suffix:'', parents:['oyuncu'], permissions:['aethel.travel.scroll','aethel.party.create']},
+      {name:'oyuncu', displayName:'Oyuncu', weight:1, prefix:'', suffix:'', parents:[], permissions:['aethel.profile.self']}]},
+
+  modules: { file:'modules.yml', title:'Modüller', icon:'▚', groups:[
+    { label:'Modül', keys:['id','enabled','state','depends'] },
+    { label:'Ayar', keys:['option'] }],
+    fields:{ id:{label:'Modül', t:T.text}, enabled:{label:'Etkin', t:T.bool},
+      state:{label:'Durum', t:T.sel, options:['ENABLED','DISABLED','FAILED','SKIPPED']},
+      depends:{label:'Bağımlılıklar', t:T.list},
+      option:{label:'Modül ayarı', t:T.text, hint:'modules.yml içindeki ek anahtar.'}},
+    records:[
+      {id:'profile', enabled:true, state:'ENABLED', depends:[], option:''},
+      {id:'auth', enabled:true, state:'ENABLED', depends:['profile'], option:'mode: PIN'},
+      {id:'economy', enabled:true, state:'ENABLED', depends:['profile'], option:'vault-provider: true'},
+      {id:'pcoins', enabled:false, state:'DISABLED', depends:['profile'], option:'endpoint: ""'},
+      {id:'content', enabled:true, state:'ENABLED', depends:['nms','packet'], option:'resource-pack.port: 8085'},
+      {id:'mob', enabled:true, state:'ENABLED', depends:['content'], option:''},
+      {id:'dungeon', enabled:true, state:'ENABLED', depends:['content','region'], option:''},
+      {id:'panel', enabled:true, state:'ENABLED', depends:['menu'], option:''},
+      {id:'web', enabled:true, state:'ENABLED', depends:['profile'], option:'port: 8080'}]},
+
+  features: { file:'features.yml', title:'Özellikler', icon:'⌁', groups:[
+    { label:'Anahtar', keys:['id','enabled'] },
+    { label:'Açıklama', keys:['description','impact'] }],
+    fields:{ id:{label:'Anahtar', t:T.text, hint:'features.yml içindeki tam yol. Burada olmayan anahtar varsayılan olarak açıktır.'},
+      enabled:{label:'Durum', t:T.bool, hint:'Değişiklik anında geçerli; sunucuyu yeniden başlatmak gerekmez.'},
+      description:{label:'Ne yapar', t:T.area},
+      impact:{label:'Kapatınca', t:T.area, hint:'Kapalı özellik oyunda hiç yokmuş gibi davranır.'}},
+    records:[] },
+
+  audit: { file:'web_audit tablosu', title:'Denetim Kaydı', icon:'❑', readOnly:true, groups:[
+    { label:'Kayıt', keys:['action','actor','target','details','at'] }],
+    fields:{ action:{label:'İşlem', t:T.text}, actor:{label:'İşlemi yapan', t:T.text},
+      target:{label:'Hedef', t:T.text}, details:{label:'Ayrıntı', t:T.area},
+      at:{label:'Zaman', t:T.text, hint:'Kayıtlar kalıcıdır; panelden değiştirilemez veya silinemez.'}},
+    records:[] },
+
+  evidence: { file:'web_evidence tablosu', title:'Kanıt Deposu', icon:'⛨', groups:[
+    { label:'Kayıt', keys:['item','slot','target','actor','reason','at'] }],
+    fields:{ item:{label:'Eşya', t:T.text}, slot:{label:'Slot', t:T.num}, target:{label:'Oyuncu', t:T.text},
+      actor:{label:'İşlemi yapan', t:T.text}, reason:{label:'Gerekçe', t:T.text}, at:{label:'Zaman', t:T.text}},
+    records:[
+      {item:'aethel:alev_kilici ×1', slot:0, target:'Kerem', actor:'YasirDev', reason:'dupe şüphesi', at:'20:14'},
+      {item:'DIAMOND_BLOCK ×64', slot:12, target:'Selin', actor:'YasirDev', reason:'kaynak istismarı', at:'19:02'},
+      {item:'aethel:kesif_parsomeni ×9', slot:7, target:'Ayla', actor:'Moderator', reason:'çoğaltma', at:'18:40'}]},
+
+  economy: { file:'config.yml → economy.*', title:'Ekonomi', icon:'◎', kind:'settings', groups:[
+    { label:'Para birimi', keys:['currency-symbol','currency-name','decimals'] },
+    { label:'Bakiyeler', keys:['starting-balance','max-balance'] },
+    { label:'Entegrasyon', keys:['register-vault','keep-transaction-log'] }],
+    fields:{ 'currency-symbol':{label:'Simge', t:T.text}, 'currency-name':{label:'Ad', t:T.text},
+      decimals:{label:'Ondalık', t:T.num}, 'starting-balance':{label:'Başlangıç bakiyesi', t:T.num},
+      'max-balance':{label:'Azami bakiye', t:T.num},
+      'register-vault':{label:'Vault sağlayıcısı', t:T.bool}, 'keep-transaction-log':{label:'İşlem geçmişi', t:T.bool}},
+    records:[{'currency-symbol':'◎','currency-name':'Altin', decimals:2,'starting-balance':250,'max-balance':1000000000,'register-vault':true,'keep-transaction-log':true}]},
+
+  rpg: { file:'config.yml → rpg.*', title:'RPG', icon:'✪', kind:'settings', groups:[
+    { label:'Seviye', keys:['max-level','points-per-level','xp-per-mob-level'] },
+    { label:'Mana', keys:['base-mana','mana-per-intelligence','mana-regen'] },
+    { label:'Stat etkileri', keys:['damage-per-strength','health-per-vitality'] }],
+    fields:{ 'max-level':{label:'Seviye tavanı', t:T.num}, 'points-per-level':{label:'Seviye başına puan', t:T.num},
+      'xp-per-mob-level':{label:'Mob başına XP', t:T.num}, 'base-mana':{label:'Temel mana', t:T.num},
+      'mana-per-intelligence':{label:'Zeka başına mana', t:T.num}, 'mana-regen':{label:'Mana yenilenme /sn', t:T.num},
+      'damage-per-strength':{label:'Güç başına hasar', t:T.num}, 'health-per-vitality':{label:'Dayanıklılık başına can', t:T.num}},
+    records:[{'max-level':100,'points-per-level':3,'xp-per-mob-level':12,'base-mana':100,'mana-per-intelligence':5,'mana-regen':2.5,'damage-per-strength':0.35,'health-per-vitality':0.5}]},
+
+  jobs: { file:'config.yml → jobs.*', title:'Meslekler', icon:'⚒', kind:'settings', groups:[
+    { label:'Sınır', keys:['max-active','leave-cooldown-hours','progress-kept-on-leave'] },
+    { label:'Bildirim', keys:['announce-level-up'] }],
+    fields:{ 'max-active':{label:'Aynı anda meslek', t:T.num}, 'leave-cooldown-hours':{label:'Bırakma soğuması (saat)', t:T.num},
+      'progress-kept-on-leave':{label:'Korunan ilerleme (0..1)', t:T.num}, 'announce-level-up':{label:'Seviye duyurusu', t:T.bool}},
+    records:[{'max-active':2,'leave-cooldown-hours':12,'progress-kept-on-leave':0.5,'announce-level-up':true}]},
+
+  travel: { file:'config.yml → travel.*', title:'Seyahat', icon:'➤', kind:'settings', groups:[
+    { label:'Cast süreleri', keys:['scroll-cast-seconds','hearthstone-cast-seconds','hearthstone-cooldown-minutes'] },
+    { label:'Kısıtlar', keys:['combat-lock-seconds','require-discovery','discovery-radius'] },
+    { label:'Item', keys:['scroll-item'] }],
+    fields:{ 'scroll-cast-seconds':{label:'Parşömen cast (sn)', t:T.num}, 'hearthstone-cast-seconds':{label:'Ocak taşı cast (sn)', t:T.num},
+      'hearthstone-cooldown-minutes':{label:'Ocak taşı soğuma (dk)', t:T.num},
+      'combat-lock-seconds':{label:'Savaş kilidi (sn)', t:T.num}, 'require-discovery':{label:'Keşif zorunlu', t:T.bool},
+      'discovery-radius':{label:'Keşif yarıçapı', t:T.num}, 'scroll-item':{label:'Parşömen item', t:T.text}},
+    records:[{'scroll-cast-seconds':6,'hearthstone-cast-seconds':10,'hearthstone-cooldown-minutes':30,'combat-lock-seconds':10,'require-discovery':true,'discovery-radius':12,'scroll-item':'aethel:kesif_parsomeni'}]},
+
+  dungeon: { file:'config.yml → dungeon.*', title:'Dungeonlar', icon:'⌗', kind:'settings', groups:[
+    { label:'Yaşam süresi', keys:['collapse-seconds','empty-timeout-seconds','max-instances'] },
+    { label:'Tasarım dünyası', keys:['design-world','room-min-y','room-height'] },
+    { label:'Çıkış', keys:['exit-world','exit-biomes','exit-scatter'] }],
+    fields:{ 'collapse-seconds':{label:'Çökme süresi (sn)', t:T.num}, 'empty-timeout-seconds':{label:'Boş örnek zaman aşımı', t:T.num},
+      'max-instances':{label:'Azami örnek', t:T.num}, 'design-world':{label:'Tasarım dünyası', t:T.text},
+      'room-min-y':{label:'Oda min Y', t:T.num}, 'room-height':{label:'Oda yüksekliği', t:T.num},
+      'exit-world':{label:'Çıkış dünyası', t:T.text}, 'exit-biomes':{label:'Çıkış biyomları', t:T.list},
+      'exit-scatter':{label:'Çıkış dağılımı (blok)', t:T.num}},
+    records:[{'collapse-seconds':600,'empty-timeout-seconds':120,'max-instances':8,'design-world':'dungeon_tasarim','room-min-y':64,'room-height':24,'exit-world':'world','exit-biomes':['FOREST','TAIGA','BIRCH_FOREST'],'exit-scatter':200}]},
+
+  auth: { file:'config.yml → auth.*', title:'Kimlik Doğrulama', icon:'⚷', kind:'settings', groups:[
+    { label:'Sır', keys:['mode','min-length','max-length'] },
+    { label:'Oturum', keys:['max-attempts','timeout-seconds','session-minutes','web-token-seconds'] },
+    { label:'Davranış', keys:['freeze-until-login'] }],
+    fields:{ mode:{label:'Mod', t:T.sel, options:['PIN','PASSWORD']}, 'min-length':{label:'Min uzunluk', t:T.num},
+      'max-length':{label:'Maks uzunluk', t:T.num}, 'max-attempts':{label:'Maks deneme', t:T.num},
+      'timeout-seconds':{label:'Zaman aşımı (sn)', t:T.num}, 'session-minutes':{label:'Oturum (dk)', t:T.num},
+      'web-token-seconds':{label:'Web jetonu (sn)', t:T.num, hint:'Tek kullanımlık /adminmenu bağlantısı.'},
+      'freeze-until-login':{label:'Girişe kadar dondur', t:T.bool}},
+    records:[{mode:'PIN','min-length':4,'max-length':32,'max-attempts':5,'timeout-seconds':60,'session-minutes':30,'web-token-seconds':300,'freeze-until-login':true}]},
+
+  pack: { file:'config.yml → resource-pack.*', title:'Kaynak Paketi', icon:'❒', kind:'settings', groups:[
+    { label:'Üretim', keys:['generate','generate-on-start','force'] },
+    { label:'Sunum', keys:['serve','bind','port','public-host'] }],
+    fields:{ generate:{label:'Üret', t:T.bool}, 'generate-on-start':{label:'Açılışta üret', t:T.bool},
+      force:{label:'Zorunlu gönder', t:T.bool}, serve:{label:'Sun', t:T.bool},
+      bind:{label:'Dinlenen adres', t:T.text}, port:{label:'Port', t:T.num},
+      'public-host':{label:'Genel adres', t:T.text, hint:'Boşsa sunucunun IP\'si kullanılır.'}},
+    records:[{generate:true,'generate-on-start':true,force:true,serve:true,bind:'0.0.0.0',port:8085,'public-host':''}]},
+
+  hud: { file:'hud/*.yml', title:'HUD', icon:'▭', groups:[
+    { label:'Düzen', keys:['id','condition','priority','updateTicks'] },
+    { label:'Katman', keys:['layer.text','layer.offsetX','layer.showWhen'] }],
+    fields:{ id:{label:'Düzen kimliği', t:T.text}, condition:{label:'Koşul', t:T.text},
+      priority:{label:'Öncelik', t:T.num}, updateTicks:{label:'Güncelleme (tick)', t:T.num},
+      'layer.text':{label:'Katman metni', t:T.text, hint:'Font parçaları ve placeholder kullanılabilir.'},
+      'layer.offsetX':{label:'X kayması (px)', t:T.num, hint:'Negatif boşluk karakterleriyle uygulanır.'},
+      'layer.showWhen':{label:'Gösterim koşulu', t:T.text}},
+    records:[
+      {id:'varsayilan', condition:'', priority:0, updateTicks:5, 'layer.text':'%aethel_can_bari% %aethel_mana_bari%', 'layer.offsetX':-96, 'layer.showWhen':''},
+      {id:'savas', condition:'combat', priority:10, updateTicks:2, 'layer.text':'%aethel_hedef_adi% %aethel_hedef_can%', 'layer.offsetX':-40, 'layer.showWhen':'target'}]},
+
+  scoreboard: { file:'config.yml → scoreboard.*', title:'Scoreboard & Tab', icon:'▥', kind:'settings', groups:[
+    { label:'Yenileme', keys:['update-ticks'] },
+    { label:'Görünürlük', keys:['sidebar-enabled','tab-enabled','tab-prefix'] }],
+    fields:{ 'update-ticks':{label:'Güncelleme (tick)', t:T.num}, 'sidebar-enabled':{label:'Yan tablo', t:T.bool},
+      'tab-enabled':{label:'Tab listesi', t:T.bool}, 'tab-prefix':{label:'Tab ön eki', t:T.bool}},
+    records:[{'update-ticks':20,'sidebar-enabled':true,'tab-enabled':true,'tab-prefix':true}]},
+
+  motd: { file:'config.yml → motd.*', title:'MOTD', icon:'❖', kind:'settings', groups:[
+    { label:'Metin', keys:['random','icon-file'] },
+    { label:'Oyuncu sayısı', keys:['custom-player-count','fake-max-players','hover-enabled'] }],
+    fields:{ random:{label:'Rastgele MOTD', t:T.bool}, 'icon-file':{label:'Sunucu ikonu', t:T.text},
+      'custom-player-count':{label:'Özel oyuncu sayısı', t:T.bool}, 'fake-max-players':{label:'Sahte azami', t:T.num},
+      'hover-enabled':{label:'Hover listesi', t:T.bool}},
+    records:[{random:true,'icon-file':'server-icon.png','custom-player-count':false,'fake-max-players':0,'hover-enabled':true}]},
+
+  chat: { file:'chat.yml', title:'Sohbet', icon:'✉', kind:'settings', groups:[
+    { label:'Biçim', keys:['format','local-radius'] },
+    { label:'Denetim', keys:['mentions','filter','filter-words'] }],
+    fields:{ format:{label:'Format', t:T.text, hint:'prefix/suffix ve renk; PlaceholderAPI köprüsü açık.'},
+      'local-radius':{label:'Yerel sohbet yarıçapı', t:T.num},
+      mentions:{label:'Bahsetme sesi', t:T.bool}, filter:{label:'Kelime filtresi', t:T.bool},
+      'filter-words':{label:'Filtre listesi', t:T.list}},
+    records:[{format:'%prefix%%player% <dark_gray>»</dark_gray> <white>%message%','local-radius':0, mentions:true, filter:true,'filter-words':['spam','reklam']}]},
+
+  npc: { file:'npc/npcs.yml', title:'NPC ve Hologramlar', icon:'☖', groups:[
+    { label:'NPC', keys:['id','name','world','skin','dialog'] },
+    { label:'Etkileşim', keys:['menu','quest','hologram-lines'] }],
+    fields:{ id:{label:'Kimlik', t:T.text}, name:{label:'Ad', t:T.text}, world:{label:'Dünya', t:T.text},
+      skin:{label:'Kaplama', t:T.text}, dialog:{label:'Diyalog', t:T.sel, options:['aethel:koylu_karsilama','aethel:koylu_mahzen','yok']},
+      menu:{label:'Menü', t:T.sel, options:['ana_menu','yok']}, quest:{label:'Görev', t:T.text},
+      'hologram-lines':{label:'Hologram satırları', t:T.list}},
+    records:[
+      {id:'yasli_koylu', name:'<yellow>Yasli Koylu</yellow>', world:'world', skin:'koylu', dialog:'aethel:koylu_karsilama', menu:'yok', quest:'aethel:mahzen_kesfi', 'hologram-lines':['<gray>Gorev veren</gray>','<yellow>Sag tikla</yellow>']},
+      {id:'banka', name:'<gold>Banka</gold>', world:'world', skin:'tuccar', dialog:'yok', menu:'ana_menu', quest:'', 'hologram-lines':['<gold>Banka</gold>']}]},
+
+  waypoints: { file:'travel/waypoints.yml', title:'Waypointler', icon:'✥', groups:[
+    { label:'Nokta', keys:['id','display','world','x','y','z'] },
+    { label:'Kural', keys:['discovery-required','cost'] }],
+    fields:{ id:{label:'Kimlik', t:T.text}, display:{label:'Görünen ad', t:T.text}, world:{label:'Dünya', t:T.text},
+      x:{label:'X', t:T.num}, y:{label:'Y', t:T.num}, z:{label:'Z', t:T.num},
+      'discovery-required':{label:'Keşif gerekli', t:T.bool}, cost:{label:'Ücret', t:T.num}},
+    records:[
+      {id:'baslangic', display:'<white>Baslangic Koyu</white>', world:'world', x:120, y:70, z:-340, 'discovery-required':false, cost:0},
+      {id:'kule', display:'<red>Devrilmis Kule</red>', world:'world', x:-880, y:64, z:410, 'discovery-required':true, cost:75}]},
+
+  party: { file:'config.yml → party.*', title:'Parti', icon:'⚭', kind:'settings', groups:[
+    { label:'Sınır', keys:['max-members','invite-timeout-seconds'] },
+    { label:'Paylaşım', keys:['shared-xp','shared-loot','tracking','share-radius'] }],
+    fields:{ 'max-members':{label:'Azami üye', t:T.num}, 'invite-timeout-seconds':{label:'Davet zaman aşımı', t:T.num},
+      'shared-xp':{label:'Ortak XP', t:T.bool}, 'shared-loot':{label:'Ortak loot', t:T.bool},
+      tracking:{label:'Üye takibi', t:T.bool}, 'share-radius':{label:'Paylaşım yarıçapı', t:T.num}},
+    records:[{'max-members':5,'invite-timeout-seconds':60,'shared-xp':true,'shared-loot':true, tracking:true,'share-radius':48}]},
+
+  pcoins: { file:'config.yml → pcoins.*', title:'PCoins', icon:'◍', kind:'settings', groups:[
+    { label:'Bağlantı', keys:['enabled','endpoint','api-key'] },
+    { label:'Davranış', keys:['claim-purchases','spending','poll-seconds'] }],
+    fields:{ enabled:{label:'Etkin', t:T.bool}, endpoint:{label:'Uç nokta', t:T.text}, 'api-key':{label:'API anahtarı', t:T.text},
+      'claim-purchases':{label:'Satın alma teslimi', t:T.bool}, spending:{label:'Oyun içi harcama', t:T.bool},
+      'poll-seconds':{label:'Sorgu aralığı (sn)', t:T.num}},
+    records:[{enabled:false, endpoint:'', 'api-key':'', 'claim-purchases':true, spending:true, 'poll-seconds':60}]},
+
+  placeholder: { file:'placeholder kayıtları', title:'Placeholderlar', icon:'%', groups:[
+    { label:'Anahtar', keys:['key','module','example'] }],
+    fields:{ key:{label:'Anahtar', t:T.text}, module:{label:'Modül', t:T.text}, example:{label:'Örnek çıktı', t:T.text}},
+    records:[
+      {key:'%aethel_level%', module:'rpg', example:'42'},
+      {key:'%aethel_bakiye%', module:'economy', example:'12.480◎'},
+      {key:'%aethel_bolge%', module:'region', example:'kuzey_ormani'},
+      {key:'%aethel_parti_uye%', module:'party', example:'3/5'}]},
+
+  assets: { file:'assets/ + cache/pack-index.json', title:'Varlıklar', icon:'▧', groups:[
+    { label:'Dosya', keys:['name','type','size','used-by'] }],
+    fields:{ name:{label:'Dosya', t:T.text}, type:{label:'Tür', t:T.sel, options:['png','bbmodel','ogg','json']},
+      size:{label:'Boyut (KB)', t:T.num}, 'used-by':{label:'Kullanan', t:T.list, hint:'Azami yükleme: admin.web.max-upload-mb = 16'}},
+    records:[
+      {name:'item/alev_kilici.png', type:'png', size:3, 'used-by':['aethel:alev_kilici']},
+      {name:'font/can_bari_dolu.png', type:'png', size:2, 'used-by':['hud:varsayilan']},
+      {name:'gui/menu_arkaplan.png', type:'png', size:41, 'used-by':['menu:ana_menu']},
+      {name:'alev_muhafizi.bbmodel', type:'bbmodel', size:118, 'used-by':[]}]}
+};
+
+const NAV = [
+  { label:'Genel', items:[['dashboard','Panel','◫'],['modules','Modüller','▚'],['features','Özellikler','⌁'],['console','Konsol','▮'],['audit','Denetim','❑'],['evidence','Kanıt Deposu','⛨']] },
+  { label:'İçerik', items:[['items','Itemlar','⚔'],['skills','Yetenekler','✦'],['mobs','Moblar','☠'],['loot','Loot','▤'],['menus','Menüler','▦'],['fonts','Fontlar','𝔄'],['assets','Varlıklar','▧'],['pack','Kaynak Paketi','❒']] },
+  { label:'Dünya', items:[['regions','Bölgeler','▣'],['difficulties','Zorluklar','◈'],['dungeon','Dungeonlar','⌗'],['waypoints','Waypointler','✥'],['npc','NPC & Hologram','☖']] },
+  { label:'Oyuncu', items:[['players','Oyuncular','☺'],['rpg','RPG','✪'],['jobs','Meslekler','⚒'],['permissions','Yetkiler','⚿'],['economy','Ekonomi','◎'],['pcoins','PCoins','◍'],['party','Parti','⚭'],['travel','Seyahat','➤'],['auth','Kimlik','⚷']] },
+  { label:'Arayüz', items:[['quests','Görevler','✧'],['dialogs','Diyaloglar','❝'],['hud','HUD','▭'],['scoreboard','Scoreboard','▥'],['chat','Sohbet','✉'],['motd','MOTD','❖'],['placeholder','Placeholder','%']] }
+];
+
+const FEATURES = [
+  ['travel.scroll','Keşif parşömeni ile ışınlanma',true],
+  ['travel.hearthstone','Ocak taşı: tek bağ noktası',true],
+  ['travel.discovery-required','Işınlanmak için önce yürüyerek varma',true],
+  ['travel.combat-lock','Savaşta ışınlanma kilidi',true],
+  ['party.tracking','Üye takibi: şeffaf kafa işareti',true],
+  ['party.shared-xp','Ortak XP paylaşımı',true],
+  ['party.shared-loot','Ortak loot',true],
+  ['loot.threat-scaling','Tehdide göre nadirlik artışı',true],
+  ['loot.chest-cooldown','Sandık açma soğuması',true],
+  ['rpg.skill-tree','Yetenek ağacı',true],
+  ['rpg.stat-points','Stat puanı dağıtımı',true],
+  ['rpg.mana','Mana havuzu ve yenilenmesi',true],
+  ['rpg.stat-combat','Statların hasara etkisi',true],
+  ['jobs.limit','Meslek sınırını uygula',true],
+  ['jobs.leave-cooldown','Meslek bırakma soğuması',true],
+  ['economy.transfer','Oyuncular arası transfer',true],
+  ['economy.transaction-log','İşlem geçmişi kaydı',true],
+  ['pcoins.claim-purchases','Site satın alımlarını uygula',false],
+  ['pcoins.spending','Oyun içi mağazadan harcama',false],
+  ['chat.format','Özel sohbet formatı',true],
+  ['chat.mentions','Bahsetme bildirimi',true],
+  ['chat.filter','Kelime filtresi',true],
+  ['hud.bars','Can/mana çubukları',true],
+  ['hud.target-info','Hedef bilgisi',true],
+  ['quest.chains','Zincirleme görevler',true],
+  ['dialog.typewriter','Harf harf akan metin',true],
+  ['region.build-protection','İnşaat koruması',true],
+  ['region.pvp-protection','PvP koruması',true],
+  ['region.difficulty-scaling','Zorluk çarpanları',true],
+  ['content.pack-generation','Kaynak paketi üretimi',true],
+  ['content.force-pack','Paketi zorunlu gönder',true],
+  ['auth.freeze','Doğrulanmamış oyuncuyu dondur',true],
+  ['auth.ip-session','Aynı IP\'den otomatik doğrula',true]
+];
+
+const AUDIT = [
+  {action:'SEIZE_ITEM', actor:'YasirDev', details:'slot=0 item=alev_kilici reason=dupe', at:'20:14:07'},
+  {action:'FEATURE_SET', actor:'YasirDev', details:'pcoins.spending=false', at:'20:02:41'},
+  {action:'SAVE_DIFFICULTY', actor:'YasirDev', details:'mahzen percent=185', at:'19:47:12'},
+  {action:'MODULE_DISABLE', actor:'Konsol', details:'pcoins (fail-soft)', at:'19:31:55'},
+  {action:'GROUP_SAVE', actor:'Moderator', details:'vip weight=50', at:'18:58:03'},
+  {action:'LOGIN', actor:'Kerem', details:'web-token ok', at:'18:40:20'}
+];
+
+const IMPACT = {
+  'travel.scroll':'/waypoint git komutu yok olur, parşömen sıradan bir item olur.',
+  'rpg.skill-tree':'/rpg agac ve /rpg ac komutları yok olur.',
+  'dialog.typewriter':'Metin harf harf akmaz, tek seferde gösterilir.',
+  'auth.freeze':'Doğrulanmamış oyuncu serbest hareket eder.',
+  'content.force-pack':'Paketi kabul etmeyen oyuncu kicklenmez.'
+};
+SCHEMAS.features.records = FEATURES.map(([key, desc, on]) => ({
+  id:key, enabled:on, description:desc,
+  impact: IMPACT[key] || 'Komut tab-complete\'te görünmez, listener Bukkit\'e kaydedilmez, menüde ve panelde yer kaplamaz.'
+}));
+SCHEMAS.audit.records = AUDIT.map(a => ({
+  action:a.action, actor:a.actor, target:a.details.split(' ')[0], details:a.details, at:a.at
+}));
+
+const LOGS = [
+  ['20:14:07','INFO','Web paneli dinlemede: 0.0.0.0:8080'],
+  ['20:14:07','INFO','Panel adresi: http://127.0.0.1:8080'],
+  ['20:14:09','INFO','ModuleManager: 28 modül keşfedildi, topolojik sıra kuruldu'],
+  ['20:14:09','INFO','profile → auth → permissions → economy → menu → content …'],
+  ['20:14:10','WARN','pcoins.endpoint boş; modül DISABLED bırakıldı'],
+  ['20:14:11','INFO','PackGenerator: 5 font parçası, 3 item, 1 gui dokusu yazıldı'],
+  ['20:14:11','INFO','generated.zip üretildi (412 KB), 8085 portunda sunuluyor'],
+  ['20:14:12','INFO','LangService: 16 dil yüklendi (varsayılan tr, follow-client=true)'],
+  ['20:14:13','INFO','Vault bulundu; ekonomi sağlayıcısı olarak kaydedildi'],
+  ['20:14:13','INFO','CoreReadyEvent yayınlandı'],
+  ['20:15:02','INFO','Kerem katıldı (world) — profil önbelleğe alındı'],
+  ['20:15:40','INFO','dungeon: örnek #3 oluşturuldu (mahzen, 8 oda)'],
+  ['20:16:04','WARN','tick bütçesi aşıldı: 1.9ms / 1.5ms (MobSpawner)'],
+  ['20:16:31','INFO','SEIZE_ITEM kanıt deposuna yazıldı (Kerem, slot 0)']
+];
+
+class Component extends DCLogic {
+  state = {
+    section:'dashboard', lang:'tr', query:'', tab:'form',
+    sel:{}, checked:{}, drafts:{}, dirty:false, palette:false, pq:'', command:'',
+    left:1782, note:'Son kayıt 20:14 · YasirDev', live:false, status:null,
+    noteDraft:'', notes:[
+      { id:1, text:'Mahzen zorluğu %185 çok yüksek — Kerem\'in geri bildirimi sonrası %165 dene.', at:'19:52', done:false },
+      { id:2, text:'pcoins endpoint\'i site tarafı hazır olunca aç.', at:'18:30', done:false },
+      { id:3, text:'Alev kılıcı hasarı 8.5 → dengelendi.', at:'17:10', done:true }
+    ]
+  };
+
+  saveNotes(notes) {
+    this.setState({ notes });
+    try { localStorage.setItem('aethel-panel-notes', JSON.stringify(notes)); } catch (e) {}
+  }
+
+  // Plugin baglantisi: /api/* uclari varsa canli veri, yoksa gomulu ornek veri.
+  // Java tarafi plugin-patch/ altinda (PanelSchema, YamlStore, PanelApi).
+  async pull(section) {
+    try {
+      const r = await fetch('/api/records?section=' + section, { credentials:'same-origin' });
+      if (!r.ok) return;
+      const rows = await r.json();
+      if (Array.isArray(rows) && rows.length) {
+        this.setState(s => ({ drafts:{ ...s.drafts, [section]: rows }, live:true }));
+      }
+    } catch (e) {}
+  }
+
+  async push(section, record) {
+    try {
+      const r = await fetch('/api/records?section=' + section, {
+        method:'POST', credentials:'same-origin',
+        headers:{ 'Content-Type':'application/json' }, body:JSON.stringify(record)
+      });
+      return r.ok;
+    } catch (e) { return false; }
+  }
+
+  componentDidMount() {
+    fetch('/api/status', { credentials:'same-origin' })
+      .then(r => r.ok ? r.json() : null)
+      .then(s => { if (s) this.setState({ live:true, status:s }); })
+      .catch(() => {});
+    try {
+      const raw = localStorage.getItem('aethel-panel-notes');
+      if (raw) this.setState({ notes: JSON.parse(raw) });
+    } catch (e) {}
+    this.timer = setInterval(() => this.setState(s => ({ left: Math.max(0, s.left - 1) })), 1000);
+    this.keys = e => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); this.setState({ palette:true, pq:'' }); }
+      if (e.key === 'Escape') this.setState({ palette:false });
+    };
+    window.addEventListener('keydown', this.keys);
+  }
+  componentWillUnmount() { clearInterval(this.timer); window.removeEventListener('keydown', this.keys); }
+
+  schema() { return SCHEMAS[this.state.section]; }
+  recordsOf(id) {
+    const s = SCHEMAS[id]; if (!s || !s.records) return [];
+    return (this.state.drafts[id] || s.records);
+  }
+  selIndex() {
+    const n = this.recordsOf(this.state.section).length;
+    return Math.max(0, Math.min(this.state.sel[this.state.section] ?? 0, n - 1));
+  }
+  current() { return this.recordsOf(this.state.section)[this.selIndex()]; }
+
+  go(section) {
+    this.setState({ section, query:'', tab:'form', palette:false, checked:{} });
+    if (SCHEMAS[section] && SCHEMAS[section].records) this.pull(section);
+  }
+
+  setField(key, value) {
+    const id = this.state.section, i = this.selIndex();
+    const list = this.recordsOf(id).map((r, idx) => idx === i ? { ...r, [key]: value } : r);
+    this.setState(s => ({ drafts:{ ...s.drafts, [id]: list }, dirty:true }));
+  }
+
+  rowTitle(id, r) {
+    if (id === 'players') return r.name;
+    if (id === 'permissions') return r.name;
+    if (id === 'assets') return r.name;
+    if (id === 'placeholder') return r.key;
+    if (id === 'evidence') return r.item;
+    return r.id;
+  }
+  rowMeta(id, r) {
+    switch (id) {
+      case 'items': return r.material + ' · ' + r.rarity + ' · ' + (r.tags || []).join(', ');
+      case 'skills': return r.trigger + ' · ' + r.cooldown + 'sn · ' + r['mana-cost'] + ' mana';
+      case 'mobs': return r.type + ' · ' + r.health + ' can · kademe ' + r.tier;
+      case 'loot': return r['min-rolls'] + '-' + r['max-rolls'] + ' çekim · ağırlık ' + r['entry.weight'];
+      case 'regions': return r.world + ' · ' + r.shape + ' · öncelik ' + r.priority;
+      case 'difficulties': return '%' + r.percent + (r.hardcore ? ' · hardcore' : '');
+      case 'quests': return r['objective.type'] + ' ×' + r['objective.amount'] + ' · sv ' + r.requiredLevel;
+      case 'dialogs': return r.speaker + ' · ' + (r.choices || []).length + ' seçenek';
+      case 'players': return r.world + ' · sv ' + r['rpg:level'] + ' · ' + r.balance + '◎';
+      case 'permissions': return 'ağırlık ' + r.weight + ' · ' + (r.permissions || []).length + ' izin';
+      case 'modules': return (r.depends || []).join(', ') || 'bağımsız';
+      case 'evidence': return r.target + ' ← ' + r.actor + ' · ' + r.at;
+      case 'npc': return r.world + ' · ' + r.dialog;
+      case 'waypoints': return r.world + ' ' + r.x + '/' + r.y + '/' + r.z;
+      case 'hud': return 'öncelik ' + r.priority + ' · ' + r.updateTicks + ' tick';
+      case 'fonts': return r.texture + ' · h' + r.height;
+      case 'menus': return r.rows + ' satır';
+      case 'assets': return r.type + ' · ' + r.size + ' KB';
+      case 'placeholder': return r.module + ' → ' + r.example;
+      default: return '';
+    }
+  }
+  rowTag(id, r) {
+    if (id === 'items') return r.rarity;
+    if (id === 'modules') return r.state;
+    if (id === 'players') return r.online ? 'çevrimiçi' : 'çevrimdışı';
+    if (id === 'difficulties') return '%' + r.percent;
+    if (id === 'mobs') return 'T' + r.tier;
+    return '';
+  }
+
+  yamlOf(rec, schema) {
+    if (!rec) return '';
+    const q = v => typeof v === 'string' && /[:#<>&*'"{}\[\]|%@`]/.test(v) ? '"' + v.replace(/"/g, '\\"') + '"' : v;
+    const tree = {};
+    Object.keys(rec).forEach(k => {
+      if (k === 'id') return;
+      const parts = k.split('.');
+      let node = tree;
+      parts.slice(0, -1).forEach(p => { node[p] = node[p] || {}; node = node[p]; });
+      node[parts[parts.length - 1]] = rec[k];
+    });
+    const emit = (obj, ind) => Object.entries(obj).map(([k, v]) => {
+      const pad = ' '.repeat(ind);
+      if (v && typeof v === 'object' && !Array.isArray(v)) return pad + k + ':\n' + emit(v, ind + 2);
+      if (Array.isArray(v)) return v.length ? pad + k + ':\n' + v.map(x => pad + '  - ' + q(x)).join('\n') : pad + k + ': []';
+      if (typeof v === 'string' && v.includes('\n')) return pad + k + ':\n' + v.split('\n').map(l => pad + '  - ' + q(l)).join('\n');
+      return pad + k + ': ' + q(v);
+    }).join('\n');
+    const head = rec.id ? rec.id + ':\n' : '';
+    return '# ' + (schema.file || '') + '\n' + head + emit(tree, head ? 2 : 0);
+  }
+
+  renderVals() {
+    const st = this.state, id = st.section, sc = SCHEMAS[id];
+    const isDash = id === 'dashboard', isConsole = id === 'console';
+    const isToggles = id === 'features', isAudit = id === 'audit';
+    const readOnly = !!(sc && sc.readOnly);
+    const settingsOnly = !!(sc && sc.kind === 'settings');
+    const showList = !isDash && !isConsole;
+
+    const navGroup = NAV.find(g => g.items.some(i => i[0] === id));
+    const label = navGroup ? navGroup.items.find(i => i[0] === id)[1] : 'Panel';
+
+    const nav = NAV.map(g => ({
+      label: g.label,
+      items: g.items.map(([key, txt, icon]) => ({
+        label: txt, icon, open: () => this.go(key),
+        style: 'display:flex; align-items:center; gap:9px; width:100%; text-align:left; border:0; cursor:pointer; padding:7px 10px; border-radius:8px; font-size:12.5px; margin-bottom:1px;'
+          + (key === id
+            ? 'background:var(--color-accent-900); color:var(--color-accent-100); box-shadow:inset 2px 0 0 var(--color-accent);'
+            : 'background:transparent; color:var(--color-neutral-300);'),
+        iconStyle: 'width:20px; height:20px; border-radius:6px; display:inline-grid; place-items:center; font-size:11px; '
+          + (key === id
+            ? 'background:var(--color-accent-800); color:var(--color-accent-100); box-shadow:0 0 10px -3px var(--color-accent-600);'
+            : 'background:var(--color-neutral-800); color:var(--color-neutral-400);'),
+        badge: key === 'modules' ? '27/28'
+          : key === 'features' ? String(SCHEMAS.features.records.filter(f => f.enabled).length)
+          : key === 'dashboard' ? '' : '',
+        badgeStyle: 'font-size:10px; padding:1px 6px; border-radius:99px; '
+          + (key === id ? 'color:var(--color-accent-200); background:var(--color-accent-900);' : 'color:var(--color-neutral-500);')
+      }))
+    }));
+
+    // liste satirlari
+    const records = this.recordsOf(id);
+    const q = st.query.toLowerCase();
+    const filtered = records.filter(r => !q || JSON.stringify(r).toLowerCase().includes(q));
+    const selIdx = this.selIndex();
+
+    const rows = filtered.map((r, i) => {
+      const realIndex = records.indexOf(r);
+      const on = isToggles ? r.enabled : null;
+      return {
+        title: isToggles ? r.id : isAudit ? r.action : this.rowTitle(id, r),
+        meta: isToggles ? r.description : isAudit ? r.actor + ' · ' + r.details : this.rowMeta(id, r),
+        tag: isToggles ? (on ? 'açık' : 'kapalı') : isAudit ? r.at : this.rowTag(id, r),
+        tagStyle: 'font-size:10px; padding:1px 7px; border-radius:99px; white-space:nowrap;'
+          + (isToggles
+            ? (on ? 'background:var(--color-accent-900); color:var(--color-accent-200); border:1px solid var(--color-accent-800);' : 'background:var(--color-neutral-800); color:var(--color-neutral-400);')
+            : 'background:var(--color-neutral-800); color:var(--color-neutral-300);'),
+        checked: !!st.checked[realIndex],
+        check: e => { e.stopPropagation(); this.setState(s => ({ checked:{ ...s.checked, [realIndex]: !s.checked[realIndex] } })); },
+        select: () => this.setState(s => ({ sel:{ ...s.sel, [id]: realIndex }, tab:'form' })),
+        style: 'display:flex; gap:9px; padding:9px 10px; border-radius:8px; cursor:pointer; margin-bottom:1px;'
+          + (realIndex === selIdx ? 'background:var(--color-neutral-800);' : 'background:transparent;')
+      };
+    });
+
+    // editor alanlari
+    const rec = this.recordsOf(id)[selIdx];
+    const checkedCount = Object.values(st.checked).filter(Boolean).length;
+    const bulk = checkedCount > 1;
+
+    const fieldView = (key) => {
+      const def = (sc.fields || {})[key];
+      if (!def || !rec) return null;
+      const v = rec[key];
+      const isBool = def.t === T.bool, isList = def.t === T.list;
+      return {
+        key, label:def.label, hint:def.hint || '', options:def.options || [],
+        value: isList ? '' : (v === undefined || v === null ? '' : String(v)),
+        isText: def.t === T.text, isNumber: def.t === T.num, isArea: def.t === T.area,
+        isSelect: def.t === T.sel, isBool, isColor: def.t === T.color, isList,
+        chips: isList ? (v || []).map((c, i) => ({ label:c, remove: () => this.setField(key, (v || []).filter((_, j) => j !== i)) })) : [],
+        draft: '',
+        onInput: e => this.setField(key, def.t === T.num ? Number(e.target.value) : e.target.value),
+        onAdd: e => { if (e.key === 'Enter' && e.target.value.trim()) { this.setField(key, [...(v || []), e.target.value.trim()]); e.target.value = ''; } },
+        onToggle: () => this.setField(key, !v),
+        boolLabel: v ? 'açık' : 'kapalı',
+        switchStyle: 'display:inline-flex; align-items:center; gap:9px; cursor:pointer; border-radius:99px; padding:4px 12px 4px 5px; font-size:12px; border:1px solid '
+          + (v ? 'var(--color-accent-700); background:var(--color-accent-900); color:var(--color-accent-100);' : 'var(--color-neutral-800); background:var(--color-neutral-900); color:var(--color-neutral-400);'),
+        knobStyle: 'width:9px; height:9px; border-radius:99px; background:' + (v ? 'var(--color-accent)' : 'var(--color-neutral-600)') + ';'
+          + (v ? 'box-shadow:0 0 8px var(--color-accent-600);' : ''),
+        switchLabelStyle: 'letter-spacing:.02em;',
+        swatchStyle: 'width:22px; height:22px; border-radius:6px; border:1px solid var(--color-neutral-700); background:' + (v || 'transparent') + ';'
+      };
+    };
+
+    const groupsOfFields = (sc && sc.groups && rec)
+      ? sc.groups.map(g => ({ label:g.label, fields:g.keys.map(fieldView).filter(Boolean) })).filter(g => g.fields.length)
+      : [];
+
+    const bulkFields = bulk && sc && sc.groups
+      ? sc.groups[0].keys.slice(0, 3).map(k => {
+          const def = (sc.fields || {})[k] || { label:k };
+          return { label:def.label, value:'', placeholder:'değiştirme', onInput:() => this.setState({ dirty:true }) };
+        })
+      : [];
+
+    const tabStyle = active => 'background:transparent; border:0; cursor:pointer; padding:8px 14px; font-size:12px; margin-bottom:-1px;'
+      + (active ? 'color:var(--color-accent-200); border-bottom:2px solid var(--color-accent);' : 'color:var(--color-neutral-400); border-bottom:2px solid transparent;');
+
+    const paletteItems = NAV.flatMap(g => g.items.map(([key, txt, icon]) => ({ key, label:txt, icon, group:g.label })));
+    const pq = st.pq.toLowerCase();
+
+    const mm = Math.floor(st.left / 60), ss = String(st.left % 60).padStart(2, '0');
+
+    return {
+      nav, rows, lang:st.lang, query:st.query, command:st.command,
+      groupLabel: navGroup ? navGroup.label : 'Genel',
+      sectionLabel: isDash ? 'Sunucu durumu' : label,
+      sessionLeft: mm + ':' + ss,
+      countLabel: records.length + ' kayıt',
+      listColStyle: showList
+        ? 'width:340px; border-right:1px solid var(--color-neutral-800); display:flex; flex-direction:column; min-height:0; background:var(--color-bg);'
+        : 'display:none;',
+      footerStyle: readOnly ? 'display:none;'
+        : 'border-top:1px solid var(--color-neutral-800); padding:11px 22px; display:flex; align-items:center; gap:10px; background:var(--color-neutral-900);',
+      readOnlyBadgeStyle: readOnly
+        ? 'align-self:center; font-size:10px; color:var(--color-neutral-400); border:1px solid var(--color-neutral-800); border-radius:99px; padding:2px 9px;'
+        : 'display:none;',
+      selectedCountLabel: checkedCount ? checkedCount + ' seçili' : 'seçim yok',
+      sourceFile: sc ? sc.file : 'config.yml',
+      isSettingsOnly: settingsOnly,
+      showDashboard: isDash, showConsole: isConsole, showEditor: !isDash && !isConsole,
+      formMode: st.tab === 'form' && !bulk, yamlMode: st.tab === 'yaml' && !bulk,
+      historyMode: st.tab === 'history' && !bulk, bulkMode: bulk,
+      bulkCount: checkedCount, bulkFields,
+      groupsOfFields, dirty: st.dirty, saveNote: st.note,
+      editorTitle: isToggles ? (rec ? rec.id : 'Özellikler')
+        : isAudit ? (rec ? rec.action : 'Denetim kaydı')
+        : rec ? (this.rowTitle(id, rec) || label) : label,
+      editorSubtitle: isToggles
+        ? 'features.yml · kapalı özellik oyunda hiç yokmuş gibi davranır'
+        : isAudit ? 'web_audit tablosu · kayıtlar kalıcıdır, panelden değiştirilemez'
+        : settingsOnly ? sc.file : (sc ? sc.file + ' · ' + records.length + ' kayıt' : ''),
+      tabFormStyle: tabStyle(st.tab === 'form'),
+      tabYamlStyle: readOnly ? 'display:none;' : tabStyle(st.tab === 'yaml'),
+      tabHistoryStyle: readOnly ? 'display:none;' : tabStyle(st.tab === 'history'),
+      tabForm: () => this.setState({ tab:'form' }), tabYaml: () => this.setState({ tab:'yaml' }),
+      tabHistory: () => this.setState({ tab:'history' }),
+      yaml: rec && sc ? this.yamlOf(rec, sc) : '# kayıt seçilmedi',
+      history: [
+        { summary:'percent 140 → 185', actor:'YasirDev', at:'19:47', revert:() => this.setState({ note:'geri alındı · 19:47' }) },
+        { summary:'attributes.damage 7.0 → 8.5', actor:'YasirDev', at:'18:22', revert:() => this.setState({ note:'geri alındı · 18:22' }) },
+        { summary:'rarity UNCOMMON → RARE', actor:'Moderator', at:'17:05', revert:() => this.setState({ note:'geri alındı · 17:05' }) },
+        { summary:'kayıt oluşturuldu', actor:'YasirDev', at:'12:40', revert:() => this.setState({ note:'ilk sürüme dönüldü' }) }
+      ],
+      stats: (() => {
+        const s = st.status;
+        if (!s) return [
+          { label:'TPS', value:'19.8', note:'tick bütçesi 1.5 ms' },
+          { label:'Oyuncu', value:'3 / 60', note:'1 dungeon örneğinde' },
+          { label:'Çalışma süresi', value:'6s 12dk', note:'son yeniden başlatma 14:02' },
+          { label:'Bellek', value:'2.1 / 6 GB', note:'Java 21 · G1' },
+          { label:'Modül', value:'27 / 28', note:'pcoins devre dışı' },
+          { label:'Veritabanı', value:'SQLITE', note:'data.db · 8.4 MB' }
+        ];
+        const h = Math.floor((s.uptimeSeconds || 0) / 3600);
+        const on = (s.modules || []).filter(m => m.enabled).length;
+        return [
+          { label:'TPS', value:String(s.tps), note:'canlı' },
+          { label:'Oyuncu', value:s.players + ' / ' + s.maxPlayers, note:'canlı' },
+          { label:'Çalışma süresi', value:h + 's', note:'sunucu açık' },
+          { label:'Bellek', value:(s.memoryUsedMb / 1024).toFixed(1) + ' / ' + Math.round(s.memoryMaxMb / 1024) + ' GB', note:'JVM' },
+          { label:'Modül', value:on + ' / ' + (s.modules || []).length, note:'etkin' },
+          { label:'Veritabanı', value:String(s.storage || '—'), note:'depolama' }
+        ];
+      })(),
+      moduleHealth: SCHEMAS.modules.records.map(m => ({
+        name:m.id, deps:(m.depends || []).join(', ') || '—', state:m.state,
+        dotStyle: 'width:7px; height:7px; border-radius:99px; background:' + (m.enabled ? 'var(--color-accent)' : 'var(--color-neutral-600)') + ';'
+          + (m.enabled ? 'box-shadow:0 0 8px var(--color-accent-600); animation:pulse 3.5s ease-in-out infinite;' : ''),
+        stateStyle: 'font-size:10px; padding:1px 7px; border-radius:99px;'
+          + (m.enabled ? 'background:var(--color-accent-900); color:var(--color-accent-200);' : 'background:var(--color-neutral-800); color:var(--color-neutral-400);')
+      })),
+      audit: AUDIT,
+      liveLabel: st.live ? 'canlı veri' : 'örnek veri — /api bağlı değil',
+      liveBadgeStyle: 'font-size:10px; padding:2px 9px; border-radius:99px; border:1px solid '
+        + (st.live ? 'var(--color-accent-700); background:var(--color-accent-900); color:var(--color-accent-200);'
+                   : 'var(--color-neutral-800); background:var(--color-neutral-900); color:var(--color-neutral-400);'),
+      actions: [
+        { label:'Paketi yeniden üret', note:'contents/ ve blueprints/ taranır', run:() => this.setState({ note:'generated.zip yeniden üretiliyor…' }) },
+        { label:'Yapılandırmayı yeniden yükle', note:'/core reload', run:() => this.setState({ note:'config.yml + modules.yml yeniden okundu' }) },
+        { label:'Profilleri diske yaz', note:'kirli profiller flush edilir', run:() => this.setState({ note:'3 profil flush edildi' }) },
+        { label:'Denetimi dışa aktar', note:'son 100 kayıt · CSV', run:() => this.setState({ note:'denetim kaydı dışa aktarıldı' }) },
+        { label:'Boş dungeon örneklerini kapat', note:'zaman aşımını beklemez', run:() => this.setState({ note:'2 boş örnek kapatıldı' }) },
+        { label:'Dilleri yeniden yükle', note:'lang/ klasörü taranır', run:() => this.setState({ note:'16 dil yeniden yüklendi' }) }
+      ],
+      noteDraft: st.noteDraft,
+      noteCount: st.notes.filter(n => !n.done).length + ' açık',
+      notesEmptyStyle: st.notes.length ? 'display:none;'
+        : 'padding:14px 10px; font-size:11.5px; color:var(--color-neutral-500); line-height:1.7;',
+      notes: st.notes.map(n => ({
+        text:n.text, at:n.at, mark:n.done ? '✓' : '',
+        textStyle: 'font-size:12px; line-height:1.6; ' + (n.done
+          ? 'color:var(--color-neutral-500); text-decoration:line-through;' : 'color:var(--color-neutral-100);'),
+        boxStyle: 'width:15px; height:15px; margin-top:2px; border-radius:5px; cursor:pointer; display:inline-grid; place-items:center; font-size:10px; border:1px solid '
+          + (n.done ? 'var(--color-accent-700); background:var(--color-accent-900); color:var(--color-accent-200);'
+                    : 'var(--color-neutral-700); background:transparent; color:transparent;'),
+        toggle: () => this.saveNotes(st.notes.map(x => x.id === n.id ? { ...x, done: !x.done } : x)),
+        remove: () => this.saveNotes(st.notes.filter(x => x.id !== n.id))
+      })),
+      setNoteDraft: e => this.setState({ noteDraft:e.target.value }),
+      addNote: () => {
+        const t = st.noteDraft.trim(); if (!t) return;
+        this.saveNotes([{ id:Date.now(), text:t, at:new Date().toLocaleTimeString('tr-TR').slice(0, 5), done:false }, ...st.notes]);
+        this.setState({ noteDraft:'' });
+      },
+      noteKey: e => {
+        if (e.key !== 'Enter') return;
+        const t = e.target.value.trim(); if (!t) return;
+        this.saveNotes([{ id:Date.now(), text:t, at:new Date().toLocaleTimeString('tr-TR').slice(0, 5), done:false }, ...st.notes]);
+        this.setState({ noteDraft:'' }); e.target.value = '';
+      },
+      logs: LOGS.map(([t, lvl, msg]) => ({
+        t, lvl, msg,
+        lvlStyle: 'width:38px; color:' + (lvl === 'WARN' ? '#ffb168' : 'var(--color-accent-300)') + ';'
+      })),
+      setQuery: e => this.setState({ query:e.target.value }),
+      setLang: e => this.setState({ lang:e.target.value }),
+      setCommand: e => this.setState({ command:e.target.value }),
+      runCommand: () => this.setState({ command:'', note:'komut kuyruğa alındı' }),
+      newRecord: () => {
+        if (!sc || !sc.fields) return;
+        const blank = {};
+        Object.entries(sc.fields).forEach(([k, def]) => {
+          blank[k] = def.t === T.num ? 0 : def.t === T.bool ? false : def.t === T.list ? []
+            : def.t === T.sel ? (def.options || [''])[0] : '';
+        });
+        if ('id' in blank) blank.id = 'yeni_kayit';
+        if ('name' in blank) blank.name = 'yeni_kayit';
+        const list = [...this.recordsOf(id), blank];
+        this.setState(s => ({ drafts:{ ...s.drafts, [id]: list }, sel:{ ...s.sel, [id]: list.length - 1 },
+          tab:'form', dirty:true, checked:{}, query:'', note:'yeni taslak — kaydedilmedi' }));
+      },
+      toggleAll: () => this.setState(s => {
+        const all = this.recordsOf(id).length;
+        const on = Object.values(s.checked).filter(Boolean).length < all;
+        return { checked: on ? Object.fromEntries(Array.from({ length: all }, (_, i) => [i, true])) : {} };
+      }),
+      clearSelection: () => this.setState({ checked:{} }),
+      save: () => {
+        if (rec) this.push(id, rec).then(ok => { if (ok) this.setState({ note:'diske yazıldı · denetime kaydedildi' }); });
+        return this.setState({ dirty:false, note:'kaydedildi · ' + new Date().toLocaleTimeString('tr-TR').slice(0, 5) + ' · denetime yazıldı' });
+      },
+      reset: () => this.setState(s => ({ drafts:{ ...s.drafts, [id]: undefined }, dirty:false, note:'diskteki sürüme dönüldü' })),
+      deleteRecord: () => {
+        const list = this.recordsOf(id).filter((_, i) => i !== selIdx);
+        this.setState(s => ({ drafts:{ ...s.drafts, [id]: list },
+          sel:{ ...s.sel, [id]: Math.max(0, Math.min(selIdx, list.length - 1)) },
+          dirty:true, note:'kayıt silindi — Kaydet ile diske yazılır' }));
+      },
+      paletteOpen: st.palette, paletteQuery: st.pq,
+      openPalette: () => this.setState({ palette:true, pq:'' }),
+      closePalette: () => this.setState({ palette:false }),
+      setPaletteQuery: e => this.setState({ pq:e.target.value }),
+      paletteResults: paletteItems.filter(i => !pq || i.label.toLowerCase().includes(pq) || i.key.includes(pq))
+        .slice(0, 12).map(i => ({ ...i, open: () => this.go(i.key) }))
+    };
+  }
+}
+</script>
+</body>
+</html>
