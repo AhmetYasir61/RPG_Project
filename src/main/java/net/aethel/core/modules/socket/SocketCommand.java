@@ -58,7 +58,7 @@ public final class SocketCommand {
 
     /** Elindeki silaha tas takar. */
     @Command("tak")
-    public void insert(CommandSender sender, @Arg(value = "tas", suggests = "stone") String stoneId) {
+    public void insert(CommandSender sender, @Arg(value = "tas", suggests = "stone", identifier = true) String stoneId) {
         Player player = (Player) sender;
         ItemStack held = player.getInventory().getItemInMainHand();
         String fullId = stoneId.contains(":") ? stoneId : "aethel:" + stoneId;
@@ -106,7 +106,7 @@ public final class SocketCommand {
 
     /** Tasin kendisini item olarak verir (vitrinde gorunmeyen tur). */
     @Command(value = "ver", permission = "aethel.admin.items")
-    public void give(CommandSender sender, @Arg(value = "tas", suggests = "stone") String stoneId) {
+    public void give(CommandSender sender, @Arg(value = "tas", suggests = "stone", identifier = true) String stoneId) {
         Player player = (Player) sender;
         String fullId = stoneId.contains(":") ? stoneId : "aethel:" + stoneId;
 

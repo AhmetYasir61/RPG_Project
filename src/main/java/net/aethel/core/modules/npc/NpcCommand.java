@@ -42,7 +42,7 @@ public final class NpcCommand {
 
     /** Durdugun yere, baktigin yone bakan bir NPC koyar. */
     @Command("koy")
-    public void place(CommandSender sender, @Arg(value = "id", suggests = "npc") String id,
+    public void place(CommandSender sender, @Arg(value = "id", suggests = "npc", identifier = true) String id,
                       @Arg(value = "ad", optional = true, greedy = true) String displayName) {
         Player player = (Player) sender;
         if (npcs.npc(id).isPresent()) {
@@ -60,7 +60,7 @@ public final class NpcCommand {
 
     /** NPC'yi kaldirir. Tanim panelde kalir; yalnizca dunyadaki ornek silinir. */
     @Command("sil")
-    public void remove(CommandSender sender, @Arg(value = "id", suggests = "npc") String id) {
+    public void remove(CommandSender sender, @Arg(value = "id", suggests = "npc", identifier = true) String id) {
         Player player = (Player) sender;
         if (npcs.npc(id).isEmpty()) {
             ctx.lang().send(player, "npc.missing", LangService.of("id", id));
@@ -72,7 +72,7 @@ public final class NpcCommand {
 
     /** Var olan NPC'yi durdugun yere tasir; silip yeniden kurmak gerekmez. */
     @Command("tasi")
-    public void move(CommandSender sender, @Arg(value = "id", suggests = "npc") String id) {
+    public void move(CommandSender sender, @Arg(value = "id", suggests = "npc", identifier = true) String id) {
         Player player = (Player) sender;
         var existing = npcs.npc(id);
         if (existing.isEmpty()) {

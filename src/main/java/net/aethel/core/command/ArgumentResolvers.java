@@ -31,9 +31,7 @@ public final class ArgumentResolvers {
     }
 
     private static final Map<Class<?>, Resolver> RESOLVERS = Map.of(
-            // word() DEGIL: word() iki nokta kabul etmez ve namespace'li
-            // kimlikler ("aethel:alev_dalgasi") hic yazilamaz.
-            String.class, new Resolver(IdentifierArgumentType.identifier(),
+            String.class, new Resolver(StringArgumentType.word(),
                     (ctx, name) -> StringArgumentType.getString(ctx, name)),
             int.class, new Resolver(IntegerArgumentType.integer(),
                     (ctx, name) -> IntegerArgumentType.getInteger(ctx, name)),
@@ -51,6 +49,16 @@ public final class ArgumentResolvers {
     );
 
     private ArgumentResolvers() {}
+
+    /**
+     * Namespace'li kimlik argumani: iki nokta kabul eden Paper sarmalayicisi.
+     * Ayri bir yol olmasi sart -- kimlik tipi degeri kucuk harfe cevirir ve
+     * oyuncu adlari icin kullanilamaz.
+     */
+    public static Resolver identifier() {
+        return new Resolver(IdentifierArgumentType.identifier(),
+                (ctx, name) -> ctx.getArgument(name, String.class));
+    }
 
     public static Resolver forType(Class<?> type, boolean greedy) {
         if (type == String.class && greedy) {

@@ -6,7 +6,12 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Dokunun GRI bolgesini bir renge boyar ve asamaya gore parlakligini artirir.
+ * Soket bolgesinden baslayip asama ilerledikce DISARI YAYILAN renk boyamasi.
+ *
+ * Ilk asamada yalnizca soket yuvasi renklenir; asama yukseldikce renk bicagin
+ * geri kalanina dogru yayilir ve son asamada silahin tamami tasin rengini alir.
+ * "Basta az parliyor, gide gide her yani aleve donuyor" istegi tam olarak budur:
+ * ayri bir isik efekti degil, dokunun kendisinin asama asama devralinmasi.
  *
  * Isaretleme icin ayri bir maske dosyasi istenmez: gri piksel zaten
  * "boyanabilir" demektir (R, G ve B birbirine yakinsa renksizdir). Sanatci
@@ -68,6 +73,10 @@ final class TextureTinter {
                 || maskImage.getHeight() != image.getHeight())) {
             throw new IOException("Maske olculeri dokuyla uyusmuyor: " + mask.getName());
         }
+        // Cekirdek: rengin YAYILMAYA BASLADIGI pikseller (soket yuvasi).
+        boolean[][] core = coreOf(image, maskImage);
+        double[][] distance = distanceFrom(core, image.getWidth(), image.getHeight());
+        double reach = reachOf(stage, lastStage, image.getWidth(), image.getHeight());
 
         double strength = strengthOf(stage, lastStage);
         BufferedImage out = new BufferedImage(
@@ -87,19 +96,26 @@ final class TextureTinter {
                 int g = (argb >> 8) & 0xFF;
                 int b = argb & 0xFF;
 
-                if (tintable(maskImage, x, y, r, g, b)) {
+                // Dis hat asla boyanmaz: saf siyah da teknik olarak "gri"dir ve
+                // sinir olmasaydi kilicin hatti dagilirdi.
+                int tone255 = (r + g + b) / 3;
+                double weight = tone255 < MIN_TONE ? 0.0D
+                        : weightOf(core[y][x], distance[y][x], reach);
+
+                if (weight > 0.0D) {
+                    double strengthHere = strength * weight;
                     // Gri deger tonu belirler, renk onu carpar: dokunun kendi
                     // golge/isik detayi korunur, uzerine yalnizca renk gelir.
                     // Ton 0.45 tabanina cekilir, yoksa koyu griler renksiz kalir
                     // ve alev yalnizca en acik piksellerde gorunur.
-                    double tone = 0.45D + 0.55D * (((r + g + b) / 3.0D) / 255.0D);
-                    r = blend(r, tint(tone, tintR), strength);
-                    g = blend(g, tint(tone, tintG), strength);
-                    b = blend(b, tint(tone, tintB), strength);
+                    double tone = 0.45D + 0.55D * (tone255 / 255.0D);
+                    r = blend(r, tint(tone, tintR), strengthHere);
+                    g = blend(g, tint(tone, tintG), strengthHere);
+                    b = blend(b, tint(tone, tintB), strengthHere);
 
-                    // Ust asamalarda bolge ayrica AYDINLANIR: "parilti gitgide
-                    // artiyor" hissini veren sey bu, ayri bir efekt degil.
-                    double lift = strength * strength * 0.45D;
+                    // Cekirdege yakin yerler ayrica AYDINLANIR: parilti merkezde
+                    // toplanir, uclara dogru soner.
+                    double lift = strengthHere * strengthHere * 0.45D;
                     r = clamp(r + (int) ((255 - r) * lift));
                     g = clamp(g + (int) ((255 - g) * lift * 0.55D));
                     b = clamp(b + (int) ((255 - b) * lift * 0.25D));
@@ -116,6 +132,77 @@ final class TextureTinter {
         if (lastStage <= 0) return MAX_STRENGTH;
         double t = Math.min(1.0D, stage / (double) lastStage);
         return BASE_STRENGTH + (MAX_STRENGTH - BASE_STRENGTH) * t;
+    }
+
+    /**
+     * Rengin yayilmaya BASLADIGI pikseller: maske varsa maskenin beyaz bolgesi,
+     * yoksa parlaklik araligindaki gri pikseller (soket yuvasi).
+     */
+    private static boolean[][] coreOf(BufferedImage image, BufferedImage mask) {
+        boolean[][] core = new boolean[image.getHeight()][image.getWidth()];
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int argb = image.getRGB(x, y);
+                if (((argb >>> 24) & 0xFF) == 0) continue;
+                core[y][x] = tintable(mask, x, y,
+                        (argb >> 16) & 0xFF, (argb >> 8) & 0xFF, argb & 0xFF);
+            }
+        }
+        return core;
+    }
+
+    /**
+     * Her pikselin cekirdege uzakligi (Chebyshev, cok gecisli yayilma).
+     * Doku 16x16 civari oldugu icin basit bir dalga yeterli; ayri bir kutuphane
+     * ya da oncelik kuyrugu gerektirmez.
+     */
+    private static double[][] distanceFrom(boolean[][] core, int width, int height) {
+        double[][] distance = new double[height][width];
+        for (double[] row : distance) java.util.Arrays.fill(row, Double.MAX_VALUE);
+
+        java.util.ArrayDeque<int[]> queue = new java.util.ArrayDeque<>();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (core[y][x]) {
+                    distance[y][x] = 0;
+                    queue.add(new int[] {x, y});
+                }
+            }
+        }
+        while (!queue.isEmpty()) {
+            int[] point = queue.poll();
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dx = -1; dx <= 1; dx++) {
+                    int nx = point[0] + dx;
+                    int ny = point[1] + dy;
+                    if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+                    if (distance[ny][nx] > distance[point[1]][point[0]] + 1) {
+                        distance[ny][nx] = distance[point[1]][point[0]] + 1;
+                        queue.add(new int[] {nx, ny});
+                    }
+                }
+            }
+        }
+        return distance;
+    }
+
+    /**
+     * Rengin cekirdekten ne kadar uzaga tastigi. Ilk asamada neredeyse hic
+     * tasmaz, son asamada dokunun tamamini kapsar.
+     */
+    private static double reachOf(int stage, int lastStage, int width, int height) {
+        double full = Math.max(width, height);
+        if (lastStage <= 0) return full;
+        double t = Math.min(1.0D, stage / (double) lastStage);
+        return full * t * t;              // basta yavas, sonda hizli yayilir
+    }
+
+    /** Cekirdek 1.0; disari dogru uzaklikla soner, menzil disi 0. */
+    private static double weightOf(boolean core, double distance, double reach) {
+        if (core) return 1.0D;
+        if (reach <= 0 || distance > reach) return 0.0D;
+        double falloff = 1.0D - (distance / reach);
+        return falloff * falloff;         // kenarda yumusak biter
     }
 
     /** Maske varsa o karar verir; yoksa parlaklik araligindaki gri pikseller. */

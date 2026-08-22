@@ -81,8 +81,8 @@ public final class RegionCommand {
      * boyle bir bolge her testte "icinde degilsin" der ve nedeni gorunmez.
      */
     @Command("olustur")
-    public void create(CommandSender sender, @Arg(value = "id", suggests = "region") String id,
-                       @Arg(value = "zorluk", optional = true, suggests = "difficulty") String difficultyId) {
+    public void create(CommandSender sender, @Arg(value = "id", suggests = "region", identifier = true) String id,
+                       @Arg(value = "zorluk", optional = true, suggests = "difficulty", identifier = true) String difficultyId) {
         Player player = (Player) sender;
         Selection selection = selections.get(player.getUniqueId());
         if (selection == null || selection.first() == null || selection.second() == null) {
@@ -119,7 +119,7 @@ public final class RegionCommand {
     }
 
     @Command("sil")
-    public void delete(CommandSender sender, @Arg(value = "id", suggests = "region") String id) {
+    public void delete(CommandSender sender, @Arg(value = "id", suggests = "region", identifier = true) String id) {
         Player player = (Player) sender;
         if (regions.region(id).isEmpty()) {
             ctx.lang().send(player, "region.missing", LangService.of("id", id));
@@ -150,7 +150,7 @@ public final class RegionCommand {
 
     /** Zorluk tanimlar ya da yuzdesini gunceller. */
     @Command("zorluk")
-    public void difficulty(CommandSender sender, @Arg(value = "id", suggests = "difficulty") String id,
+    public void difficulty(CommandSender sender, @Arg(value = "id", suggests = "difficulty", identifier = true) String id,
                            @Arg("yuzde") int percent,
                            @Arg(value = "ad", optional = true, greedy = true) String displayName) {
         Player player = (Player) sender;

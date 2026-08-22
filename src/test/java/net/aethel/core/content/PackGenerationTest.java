@@ -249,7 +249,7 @@ class PackGenerationTest {
     void socketVariantsAreGeneratedForEveryStageButZero(@TempDir Path dataFolder) throws Exception {
         Path textures = dataFolder.resolve("contents/aethel/textures/item");
         Files.createDirectories(textures);
-        writeSquare(textures.resolve("bakir_kilic.png"));
+        writeStrip(textures.resolve("bakir_kilic.png"));
 
         PackPaths paths = new PackPaths(dataFolder.toFile());
         PackGenerator generator = new PackGenerator(paths, new PackIndex(paths.index()),
@@ -277,45 +277,64 @@ class PackGenerationTest {
     }
 
     /**
-     * Boyama yalnizca GRI bolgeye dokunmali.
+     * Boyamanin iki degismez kurali:
      *
-     * Dis hat saf siyahtir ve saf siyah da "gri"dir: parlaklik alt siniri
-     * olmasaydi kilicin dis hatti da turuncuya boyanir, item dagilmis
-     * gorunurdu. Renkli pikseller (bakir govde) de hic degismemelidir.
+     * 1. DIS HAT hicbir asamada boyanmaz. Saf siyah da teknik olarak "gri"dir;
+     *    parlaklik alt siniri olmasaydi kilicin hatti da renge boyanir ve item
+     *    dagilmis gorunurdu.
+     * 2. Renk soket cekirdeginden YAYILIR: ilk asamada uzaktaki pikseller
+     *    degismez, son asamada bicagin tamami rengi alir. "Basta az parliyor,
+     *    gide gide her yani aleve donuyor" davranisi budur.
      */
     @Test
-    void tintingLeavesOutlineAndColouredPixelsAlone(@TempDir Path dataFolder) throws Exception {
+    void tintSpreadsFromTheSocketAndNeverTouchesTheOutline(@TempDir Path dataFolder)
+            throws Exception {
         Path textures = dataFolder.resolve("contents/aethel/textures/item");
         Files.createDirectories(textures);
-        writeSquare(textures.resolve("bakir_kilic.png"));
+        writeStrip(textures.resolve("bakir_kilic.png"));
 
+        var early = variant(dataFolder, 4, 1);   // 4 asamali itemin 1. asamasi
+        var last = variant(dataFolder, 4, 3);    // son asama
+
+        // 1) Dis hat her iki asamada da dokunulmamis.
+        assertEquals(0xFF000000, early.getRGB(0, 0), "dis hat ilk asamada boyanmis");
+        assertEquals(0xFF000000, last.getRGB(0, 0), "dis hat son asamada boyanmis");
+
+        // 2) Cekirdek (gri) ilk asamada bile renklenmis.
+        int core = early.getRGB(4, 0);
+        assertTrue(((core >> 16) & 0xFF) > (core & 0xFF) + 30,
+                "soket cekirdegi ilk asamada renklenmemis: " + Integer.toHexString(core));
+
+        // 3) Uzaktaki bakir ilk asamada DEGISMEMIS, son asamada renk almis.
+        assertEquals(0xFFC87C4A, early.getRGB(7, 0),
+                "renk ilk asamada cok uzaga tasmis");
+        assertTrue(last.getRGB(7, 0) != 0xFFC87C4A,
+                "renk son asamada bicagin ucuna hic ulasmamis");
+    }
+
+    /** Verilen asama icin varyanti uretip okur. */
+    private static java.awt.image.BufferedImage variant(Path dataFolder, int stages, int stage)
+            throws IOException {
         PackPaths paths = new PackPaths(dataFolder.toFile());
         PackGenerator generator = new PackGenerator(paths, new PackIndex(paths.index()),
                 Logger.getLogger("test"));
         generator.stones(List.of(new net.aethel.core.api.SocketStone("ates_tasi", "aethel",
                 "Ates", List.of(), "FIREWORK_STAR", "item/ates_tasi.png", "#ff6a00",
                 Map.of(), "FLAME", List.of())));
-        generator.generate(List.of(socketed("bakir_kilic", "item/bakir_kilic.png", 2)));
+        generator.generate(List.of(socketed("bakir_kilic", "item/bakir_kilic.png", stages)));
 
-        var image = javax.imageio.ImageIO.read(new File(paths.assets(),
-                "aethel/textures/item/bakir_kilic_ates_tasi_1.png"));
-
-        assertEquals(0xFF000000, image.getRGB(0, 0), "dis hat (saf siyah) boyanmis");
-        assertEquals(0xFFC87C4A, image.getRGB(1, 0), "bakir (renkli) piksel degismis");
-
-        int grey = image.getRGB(2, 0);
-        assertTrue(((grey >> 16) & 0xFF) > ((grey) & 0xFF) + 30,
-                "gri bolge turuncuya boyanmamis: " + Integer.toHexString(grey));
+        return javax.imageio.ImageIO.read(new File(paths.assets(),
+                "aethel/textures/item/bakir_kilic_ates_tasi_" + stage + ".png"));
     }
 
-    /** 4x1: [saf siyah dis hat][bakir renkli][orta gri][acik gri] */
-    private static void writeSquare(Path target) throws IOException {
-        var image = new java.awt.image.BufferedImage(4, 1,
+    /** 9x1 serit: [dis hat][bakir x3][GRI cekirdek][bakir x3][dis hat] */
+    private static void writeStrip(Path target) throws IOException {
+        var image = new java.awt.image.BufferedImage(9, 1,
                 java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        for (int x = 0; x < 9; x++) image.setRGB(x, 0, 0xFFC87C4A);
         image.setRGB(0, 0, 0xFF000000);
-        image.setRGB(1, 0, 0xFFC87C4A);
-        image.setRGB(2, 0, 0xFF7A7A7E);
-        image.setRGB(3, 0, 0xFFB4B4B8);
+        image.setRGB(8, 0, 0xFF000000);
+        image.setRGB(4, 0, 0xFF7A7A7E);
         javax.imageio.ImageIO.write(image, "png", target.toFile());
     }
 

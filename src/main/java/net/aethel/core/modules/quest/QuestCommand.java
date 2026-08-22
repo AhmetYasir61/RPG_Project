@@ -43,7 +43,7 @@ public final class QuestCommand {
     }
 
     @Command("birak")
-    public void abandon(CommandSender sender, @Arg(value = "gorev", suggests = "quest") String questId) {
+    public void abandon(CommandSender sender, @Arg(value = "gorev", suggests = "quest", identifier = true) String questId) {
         Player player = (Player) sender;
         boolean ok = quests.abandon(player, questId);
         ctx.lang().send(player, ok ? "quest.abandoned" : "quest.not-active",

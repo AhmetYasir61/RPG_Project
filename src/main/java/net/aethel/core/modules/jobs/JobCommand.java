@@ -48,7 +48,7 @@ public final class JobCommand {
     }
 
     @Command("katil")
-    public void join(CommandSender sender, @Arg(value = "meslek", suggests = "job") String jobId) {
+    public void join(CommandSender sender, @Arg(value = "meslek", suggests = "job", identifier = true) String jobId) {
         Player player = (Player) sender;
         JobService.JoinResult result = jobs.join(player, jobId);
         ctx.lang().send(player, switch (result) {
@@ -62,7 +62,7 @@ public final class JobCommand {
     }
 
     @Command("birak")
-    public void leave(CommandSender sender, @Arg(value = "meslek", suggests = "job") String jobId) {
+    public void leave(CommandSender sender, @Arg(value = "meslek", suggests = "job", identifier = true) String jobId) {
         Player player = (Player) sender;
         boolean ok = jobs.leave(player, jobId);
         ctx.lang().send(player, ok ? "jobs.left" : "jobs.not-joined",

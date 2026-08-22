@@ -1,25 +1,33 @@
 package net.aethel.core.command;
 
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
+import org.bukkit.NamespacedKey;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Bosluga kadar her seyi okuyan metin argumani.
+ * "aethel:alev_kilici" gibi namespace'li kimlikler icin arguman tipi.
  *
- * Brigadier'in kendi {@code StringArgumentType.word()} tipi iki nokta kabul
- * ETMEZ: izin verilen karakterler harf, rakam, _ - . ve + ile sinirlidir. Bu
- * yuzden "aethel:alev_dalgasi" gibi namespace'li bir kimlik yazilamiyor,
- * istemci "Expected whitespace to end one argument" hatasi veriyordu -- yani
- * projedeki HER kimlik argumani kullanilamaz durumdaydi.
+ * Neden gerekli: Brigadier'in {@code StringArgumentType.word()} tipi IKI NOKTA
+ * kabul etmez (izinli karakterler harf, rakam, _ - . +). Bu yuzden namespace'li
+ * hicbir kimlik yazilamiyor, istemci "Expected whitespace to end one argument"
+ * diyordu.
  *
- * Tirnakli bicim de desteklenmez cunku kimliklerde bosluk yoktur; boslukta
- * durmak, sonraki argumanin dogru ayrismasini garanti eder.
+ * Neden HAM bir Brigadier tipi olmaz: Paper, tanimadigi bir arguman tipini
+ * reddeder ("Custom unknown argument type was passed, should be wrapped inside
+ * an CustomArgumentType") ve o komut HIC kaydedilmez. Bir kez oyle denendi ve
+ * 16 komut birden dustu; bu yuzden taban tip vanilla'nin kendi
+ * resource_location'i, sarmalayici da Paper'in kendi arayuzudur.
+ *
+ * Namespace yazilmazsa vanilla "minecraft" varsayar; bu durumda YALNIZCA ad
+ * kismi dondurulur ve varsayilan namespace'i komut kendi ekler. Projede
+ * minecraft namespace'inde kimlik bulunmadigi icin bu ayrim guvenlidir.
  */
-public final class IdentifierArgumentType implements ArgumentType<String> {
+public final class IdentifierArgumentType implements CustomArgumentType.Converted<String, NamespacedKey> {
 
     private static final IdentifierArgumentType INSTANCE = new IdentifierArgumentType();
 
@@ -29,21 +37,27 @@ public final class IdentifierArgumentType implements ArgumentType<String> {
         return INSTANCE;
     }
 
-    public static String get(CommandContext<?> context, String name) {
-        return context.getArgument(name, String.class);
+    @Override
+    public ArgumentType<NamespacedKey> getNativeType() {
+        return ArgumentTypes.namespacedKey();
     }
 
     @Override
-    public String parse(StringReader reader) throws CommandSyntaxException {
-        int start = reader.getCursor();
-        while (reader.canRead() && reader.peek() != ' ') {
-            reader.skip();
-        }
-        return reader.getString().substring(start, reader.getCursor());
+    public String convert(NamespacedKey key) throws CommandSyntaxException {
+        return resolve(key.getNamespace(), key.getKey());
+    }
+
+    /**
+     * Saf donusum; sunucu calisma zamani gerektirmedigi icin test edilebilir.
+     * Vanilla namespace yazilmayan girdiye "minecraft" koyar; o durumda yalnizca
+     * ad kismi doner ve varsayilan namespace'i komut kendi ekler.
+     */
+    static String resolve(String namespace, String key) {
+        return NamespacedKey.MINECRAFT.equals(namespace) ? key : namespace + ":" + key;
     }
 
     @Override
-    public java.util.Collection<String> getExamples() {
+    public Collection<String> getExamples() {
         return List.of("alev_kilici", "aethel:alev_kilici");
     }
 }

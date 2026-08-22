@@ -58,6 +58,10 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")                     // opsiyonel kopru
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")                // opsiyonel kopru
 
+    // Paper API testte de gerekli: arguman tiplerinin Paper tarafindan
+    // KABUL EDILEBILIR oldugunu dogrulayan test var. Bir kez ham bir Brigadier
+    // tipi kullanildi, derleme temizdi ve hata yalnizca gercek sunucuda cikti.
+    testImplementation("io.papermc.paper:paper-api:$paperApiVersion")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testImplementation("org.mockito:mockito-core:5.15.2")
     // Gradle 9 test calistiricisi launcher'i artik kendisi eklemiyor.

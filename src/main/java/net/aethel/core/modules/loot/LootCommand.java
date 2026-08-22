@@ -46,7 +46,7 @@ public final class LootCommand {
      * hangi blok oldugunu koordinatla dogru vermek hataya cok acik.
      */
     @Command("sandik")
-    public void place(CommandSender sender, @Arg(value = "id", suggests = "loot-chest") String id, @Arg(value = "tablo", suggests = "loot-table") String tableId,
+    public void place(CommandSender sender, @Arg(value = "id", suggests = "loot-chest", identifier = true) String id, @Arg(value = "tablo", suggests = "loot-table", identifier = true) String tableId,
                       @Arg(value = "yenilenme-sn", optional = true) int respawnSeconds) {
         Player player = (Player) sender;
         Block target = player.getTargetBlockExact(10);
@@ -64,7 +64,7 @@ public final class LootCommand {
     }
 
     @Command("sil")
-    public void remove(CommandSender sender, @Arg(value = "id", suggests = "loot-chest") String id) {
+    public void remove(CommandSender sender, @Arg(value = "id", suggests = "loot-chest", identifier = true) String id) {
         loot.removeChest(id);
         ctx.lang().send(sender, "loot.chest-removed", LangService.of("id", id));
     }
@@ -87,7 +87,7 @@ public final class LootCommand {
      * dunyaya hicbir sey birakmadan tablonun gercekte ne verdigini gosterir.
      */
     @Command("test")
-    public void roll(CommandSender sender, @Arg(value = "tablo", suggests = "loot-table") String tableId) {
+    public void roll(CommandSender sender, @Arg(value = "tablo", suggests = "loot-table", identifier = true) String tableId) {
         Player player = (Player) sender;
         var items = loot.roll(tableId, player.getLocation(), player);
         if (items.isEmpty()) {

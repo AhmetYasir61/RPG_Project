@@ -135,7 +135,10 @@ public final class CommandRegistrar {
             Arg arg = param.getAnnotation(Arg.class);
             boolean greedy = arg != null && arg.greedy();
             String name = arg == null || arg.value().isEmpty() ? param.getName() : arg.value();
-            var resolver = ArgumentResolvers.forType(param.getType(), greedy);
+            boolean identifier = arg != null && arg.identifier() && param.getType() == String.class;
+            var resolver = identifier
+                    ? ArgumentResolvers.identifier()
+                    : ArgumentResolvers.forType(param.getType(), greedy);
             bindings.add(new CommandInvoker.Binding(name, resolver.extractor(), param.getType()));
 
             var argument = RequiredArgumentBuilder

@@ -23,6 +23,13 @@ public @interface Arg {
     boolean greedy() default false;
 
     /**
+     * true ise arguman namespace'li bir KIMLIKTIR ("aethel:alev_kilici") ve iki
+     * nokta kabul eden tipi kullanir. Oyuncu adi gibi kimlik olmayan metinlerde
+     * KAPALI birakilmalidir: kimlik tipi degeri kucuk harfe cevirir.
+     */
+    boolean identifier() default false;
+
+    /**
      * Tab-complete kaynaginin adi (bkz. SuggestionRegistry). Bos ise arguman
      * icin oneri gosterilmez.
      */

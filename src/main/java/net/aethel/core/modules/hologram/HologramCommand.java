@@ -51,7 +51,7 @@ public final class HologramCommand {
 
     /** Durdugun yerin GOZ hizasinda bir hologram olusturur. */
     @Command("olustur")
-    public void create(CommandSender sender, @Arg(value = "id", suggests = "hologram") String id,
+    public void create(CommandSender sender, @Arg(value = "id", suggests = "hologram", identifier = true) String id,
                        @Arg(value = "metin", greedy = true) String line) {
         Player player = (Player) sender;
         if (holograms.get(id).isPresent()) {
@@ -66,7 +66,7 @@ public final class HologramCommand {
 
     /** Var olan hologramin altina bir satir daha ekler. */
     @Command("satir")
-    public void addLine(CommandSender sender, @Arg(value = "id", suggests = "hologram") String id,
+    public void addLine(CommandSender sender, @Arg(value = "id", suggests = "hologram", identifier = true) String id,
                         @Arg(value = "metin", greedy = true) String line) {
         Player player = (Player) sender;
         var hologram = holograms.get(id);
@@ -83,7 +83,7 @@ public final class HologramCommand {
 
     /** Son satiri geri alir; yanlis yazilan bir satiri silip bastan kurmaya gerek yok. */
     @Command("geri")
-    public void removeLine(CommandSender sender, @Arg(value = "id", suggests = "hologram") String id) {
+    public void removeLine(CommandSender sender, @Arg(value = "id", suggests = "hologram", identifier = true) String id) {
         Player player = (Player) sender;
         var hologram = holograms.get(id);
         List<String> lines = text.get(id);
@@ -98,7 +98,7 @@ public final class HologramCommand {
     }
 
     @Command("tasi")
-    public void move(CommandSender sender, @Arg(value = "id", suggests = "hologram") String id) {
+    public void move(CommandSender sender, @Arg(value = "id", suggests = "hologram", identifier = true) String id) {
         Player player = (Player) sender;
         var hologram = holograms.get(id);
         if (hologram.isEmpty()) {
@@ -110,7 +110,7 @@ public final class HologramCommand {
     }
 
     @Command("sil")
-    public void remove(CommandSender sender, @Arg(value = "id", suggests = "hologram") String id) {
+    public void remove(CommandSender sender, @Arg(value = "id", suggests = "hologram", identifier = true) String id) {
         Player player = (Player) sender;
         if (holograms.get(id).isEmpty()) {
             ctx.lang().send(player, "hologram.missing", LangService.of("id", id));

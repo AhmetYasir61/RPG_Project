@@ -80,6 +80,36 @@ class SuggestionRegistryTest {
                         + "(hic oneri gelmez, hata da vermez): " + missing);
     }
 
+    /**
+     * Kimlik argumanlari YALNIZCA kimlik kaynaklarina baglanmali.
+     *
+     * "player" ve "world" kaynaklari kimlik DEGILDIR: kimlik tipi degeri kucuk
+     * harfe cevirir ve oyuncu adlari buyuk/kucuk harf duyarlidir. Yanlis
+     * isaretlenmis bir oyuncu argumani, adi kucuk harfe cevirip "oyuncu
+     * bulunamadi" der -- calisiyor gorunen, sessiz bir hata.
+     */
+    @Test
+    void playerAndWorldArgumentsAreNotMarkedAsIdentifiers() throws IOException {
+        List<String> wrong = new ArrayList<>();
+        Pattern pattern = Pattern.compile("@Arg\\(([^)]*)\\)");
+
+        try (Stream<Path> walk = Files.walk(Path.of("src/main/java/net/aethel/core"))) {
+            for (Path file : walk.filter(p -> p.toString().endsWith(".java")).toList()) {
+                Matcher found = pattern.matcher(Files.readString(file));
+                while (found.find()) {
+                    String inner = found.group(1);
+                    if (!inner.contains("identifier = true")) continue;
+                    if (inner.contains("\"player\"") || inner.contains("\"world\"")) {
+                        wrong.add(file.getFileName() + " -> " + inner);
+                    }
+                }
+            }
+        }
+        assertTrue(wrong.isEmpty(),
+                "Oyuncu/dunya argumani kimlik olarak isaretlenmis; ad kucuk harfe "
+                        + "cevrilir ve eslesmez: " + wrong);
+    }
+
     private static void collect(String body, String pattern, Set<String> target) {
         Matcher matcher = Pattern.compile(pattern).matcher(body);
         while (matcher.find()) target.add(matcher.group(1));
