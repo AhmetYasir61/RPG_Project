@@ -1,0 +1,36 @@
+# Soket taslari. Silaha takilinca stat ekler ve dokunun GRI bolgesini kendi
+# rengine boyar. Boyama uretim aninda yapilir: her (silah x tas x asama) icin
+# pakete onceden boyanmis bir doku girer.
+#
+# tint  : gri bolgeye uygulanacak renk
+# particle: asama yukselirken ve vurusta kullanilan parcacik
+ates_tasi:
+  display: "<gold>Ates Tasi</gold>"
+  lore:
+    - "<gray>Bir silaha takildiginda</gray>"
+    - "<gray>agzini alevle kaplar.</gray>"
+  material: FIREWORK_STAR
+  texture: "item/ates_tasi.png"
+  tint: "#ff6a00"
+  particle: FLAME
+  attributes:
+    damage: 2.0
+    burn-seconds: 3.0
+  tags:
+    - "tas"
+    - "ates"
+
+buz_tasi:
+  display: "<aqua>Buz Tasi</aqua>"
+  lore:
+    - "<gray>Vuruslari yavaslatir.</gray>"
+  material: FIREWORK_STAR
+  texture: "item/buz_tasi.png"
+  tint: "#4fc3f7"
+  particle: SNOWFLAKE
+  attributes:
+    damage: 1.0
+    slow-seconds: 2.0
+  tags:
+    - "tas"
+    - "buz"

@@ -22,7 +22,36 @@ public record CustomItem(String id,
                          boolean glow,
                          FoodProperties food,
                          EquipProperties equip,
-                         List<String> tags) {
+                         List<String> tags,
+                         Socketing socketing) {
+
+    /**
+     * Soket ve evrim tanimi; null ise item soket almaz.
+     *
+     * thresholds: her asamanin gerektirdigi OLDURME sayisi, artan sirada. Ilk
+     * eleman daima 0'dir (takilan tasin ilk, en soluk hali). Son asamaya
+     * ulasildiginda item finalId'ye DONUSUR -- bakir kilic alev kilici olur.
+     */
+    public record Socketing(int slots, List<Integer> thresholds, String finalId) {
+
+        /** Verilen oldurme sayisinin denk geldigi asama indeksi. */
+        public int stageFor(int kills) {
+            int stage = 0;
+            for (int i = 0; i < thresholds.size(); i++) {
+                if (kills >= thresholds.get(i)) stage = i;
+            }
+            return stage;
+        }
+
+        public int lastStage() {
+            return Math.max(0, thresholds.size() - 1);
+        }
+
+        /** Son asamada donusecek bir item tanimliysa true. */
+        public boolean evolves() {
+            return finalId != null && !finalId.isBlank();
+        }
+    }
 
     /** Yiyecek bileseni; null ise item yenilemez. */
     public record FoodProperties(int nutrition, float saturation, boolean alwaysEdible,
@@ -52,6 +81,26 @@ public record CustomItem(String id,
     /** Tanimin gosterdigi model dosyasi: assets/<ns>/models/item/<id>.json */
     public String modelPath() {
         return namespace + ":item/" + id;
+    }
+
+    /** Soket alabiliyor mu. */
+    public boolean socketable() {
+        return socketing != null && socketing.slots() > 0;
+    }
+
+    /**
+     * Bir tas takiliyken ve belirli bir asamadayken kullanilacak item_model.
+     * Taban asamada (0) taban kimlik kullanilir: gereksiz doku uretilmez.
+     */
+    public String modelKey(String stoneId, int stage) {
+        if (stoneId == null || stoneId.isBlank() || stage <= 0) return modelKey();
+        return modelKey() + "_" + bare(stoneId) + "_" + stage;
+    }
+
+    /** "aethel:ates_tasi" -> "ates_tasi" */
+    public static String bare(String id) {
+        int colon = id.indexOf(':');
+        return colon < 0 ? id : id.substring(colon + 1);
     }
 
     /** Item'in PDC icinde saklanan kalici kimligi. */

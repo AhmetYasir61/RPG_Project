@@ -108,3 +108,39 @@ golge_patlamasi:
       duration: 30
       period: 2
       offset-y: 1.0
+
+# Kilic sallanisinin izini birakan yay bicimli kesik.
+# SLASH: bakis yonune dik bir duzlemde, merkezden disa acilan tek yay.
+# SLASH_STORM: ic ice uc yay -- art arda gelen kesikler.
+kanli_kesik:
+  display: "<dark_red>Kanli Kesik</dark_red>"
+  description:
+    - "<gray>Onunde genis bir yay cizerek</gray>"
+    - "<gray>tum dusmanlari bicer.</gray>"
+  trigger: MANUAL
+  cooldown: 6.0
+  mana-cost: 12.0
+  range: 4.5
+  targeting: AREA
+  values:
+    damage: 9.0
+  sounds:
+    - "ENTITY_PLAYER_ATTACK_SWEEP"
+  effects:
+    - shape: SLASH_STORM
+      motion: EXPAND
+      particle: DUST
+      color: "#8b0000"
+      count: 42
+      radius: 3.2
+      duration: 10
+      period: 1
+      offset-y: 1.0
+    - shape: BURST
+      motion: STATIC
+      particle: CRIT
+      count: 14
+      radius: 1.6
+      duration: 6
+      period: 2
+      offset-y: 1.0

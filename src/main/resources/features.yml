@@ -128,3 +128,6 @@ features:
     freeze: true
     # Ayni IP'den donen oyuncuyu otomatik dogrula.
     ip-session: true
+
+# Oldurdukce asama yukselten soket evrimi.
+socket.evolution: true

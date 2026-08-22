@@ -41,6 +41,8 @@ final class ParticleGeometry {
             case SPHERE -> sphere(base, radius, effect.count());
             case WAVE -> circle(base, radius, effect.count(), 0);
             case BURST -> burst(base, radius, effect.count());
+            case SLASH -> slash(base, target, radius, effect.count(), progress, 0);
+            case SLASH_STORM -> slashStorm(base, target, radius, effect.count(), progress);
         };
     }
 
@@ -97,6 +99,20 @@ final class ParticleGeometry {
         return points;
     }
 
+    /**
+     * Kesigin bakacagi yon. Hedef varsa ona dogru; yoksa origin'in kendi bakis
+     * yonu. Hedefsiz bir kesigin rastgele bir yone savrulmasi, yetenegi
+     * "calismiyor" gosterirdi.
+     */
+    private static Vector direction(Location origin, Location target) {
+        Vector forward = target == null
+                ? origin.getDirection()
+                : target.toVector().subtract(origin.toVector());
+        forward.setY(forward.getY() * 0.35D);          // kesik daha yatay okunur
+        if (forward.lengthSquared() < 1.0E-6) forward = new Vector(1, 0, 0);
+        return forward.normalize();
+    }
+
     /** Isin: iki nokta arasi esit araliklarla dizilir. */
     private static List<Location> beam(Location origin, Location target, int count) {
         if (target == null) return List.of(origin);
@@ -138,6 +154,56 @@ final class ParticleGeometry {
     }
 
     /** Verilen yone dik duzlemde cember; koni halkalari icin. */
+    /**
+     * Yay bicimli kesik. Kilic sallanisinin birakigi iz gibi: bakis yonune DIK
+     * bir duzlemde, merkezden disa acilan bir yay.
+     *
+     * Yay ilerledikce disari acilir (progress ile yaricap buyur) ve uclarina
+     * dogru seyrelir: yogunluk ortada toplanir, boylece hareket eden bir kesik
+     * izlenimi olusur, duran bir yarim daire degil.
+     */
+    private static List<Location> slash(Location origin, Location target, double radius,
+                                        int count, double progress, double offset) {
+        Vector forward = direction(origin, target);
+        Vector right = forward.clone().crossProduct(new Vector(0, 1, 0));
+        if (right.lengthSquared() < 1.0E-6) right = new Vector(1, 0, 0);
+        right.normalize();
+        Vector up = right.clone().crossProduct(forward).normalize();
+
+        // Yay 150 derece; tam yarim daire fazla "duran" gorunuyor.
+        double span = Math.toRadians(150);
+        double spread = radius * (0.55D + 0.45D * progress);
+
+        List<Location> points = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            double t = count == 1 ? 0.5D : i / (double) (count - 1);
+            double angle = (t - 0.5D) * span + offset;
+
+            // Uclarda yaricapi kisaltmak yayin sivri bitmesini saglar.
+            double taper = 0.65D + 0.35D * Math.cos((t - 0.5D) * Math.PI);
+            double r = spread * taper;
+
+            Vector point = forward.clone().multiply(r * Math.cos(angle))
+                    .add(right.clone().multiply(r * Math.sin(angle)))
+                    .add(up.clone().multiply(Math.sin(angle * 2) * radius * 0.12D));
+            points.add(origin.clone().add(point));
+        }
+        return points;
+    }
+
+    /** Ic ice uc yay; her biri biraz kaydirilmis ve farkli yaricapta. */
+    private static List<Location> slashStorm(Location origin, Location target, double radius,
+                                             int count, double progress) {
+        List<Location> points = new ArrayList<>(count);
+        int perArc = Math.max(3, count / 3);
+        for (int arc = 0; arc < 3; arc++) {
+            double offset = Math.toRadians(arc * 26 - 26);
+            double scale = 0.7D + arc * 0.2D;
+            points.addAll(slash(origin, target, radius * scale, perArc, progress, offset));
+        }
+        return points;
+    }
+
     private static List<Location> perpendicularCircle(Location center, Vector normal,
                                                       double radius, int count) {
         Vector axis = Math.abs(normal.getY()) < 0.99

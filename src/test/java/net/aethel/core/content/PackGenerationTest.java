@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -34,7 +35,7 @@ class PackGenerationTest {
     private static CustomItem item(String id, String texture) {
         return new CustomItem(id, "aethel", "<white>" + id, List.of(), "IRON_SWORD",
                 texture, "COMMON", 0, Map.of(), Map.of(), null, false, false,
-                null, null, List.of());
+                null, null, List.of(), null);
     }
 
     @Test
@@ -109,6 +110,16 @@ class PackGenerationTest {
                 item("kilic", "item/kilic.png"),
                 item("kalkan", "item/kilic.png"))).sha1();
         assertTrue(!first.equals(withExtra), "yeni item eklendiginde hash degismeli");
+    }
+
+    /** Soket alabilen bir item; varyant uretimi testleri icin. */
+    private static CustomItem socketed(String id, String texture, int stages) {
+        List<Integer> thresholds = new java.util.ArrayList<>();
+        for (int i = 0; i < stages; i++) thresholds.add(i * 25);
+        return new CustomItem(id, "aethel", "<white>" + id, List.of(), "IRON_SWORD",
+                texture, "COMMON", 0, Map.of(), Map.of(), null, false, false,
+                null, null, List.of(),
+                new CustomItem.Socketing(1, List.copyOf(thresholds), "alev_kilici"));
     }
 
     /**
@@ -227,6 +238,85 @@ class PackGenerationTest {
             String texturePath = "assets/aethel/textures/" + definition.texture();
             assertTrue(entries.contains(texturePath), "doku yok: " + texturePath);
         }
+    }
+
+    /**
+     * Soket varyantlari: her (tas x asama) icin boyanmis doku, model ve
+     * item_model tanimi uretilmeli; asama 0 icin UYRETILMEMELI (taban gorunum
+     * zaten var olan dokudur).
+     */
+    @Test
+    void socketVariantsAreGeneratedForEveryStageButZero(@TempDir Path dataFolder) throws Exception {
+        Path textures = dataFolder.resolve("contents/aethel/textures/item");
+        Files.createDirectories(textures);
+        writeSquare(textures.resolve("bakir_kilic.png"));
+
+        PackPaths paths = new PackPaths(dataFolder.toFile());
+        PackGenerator generator = new PackGenerator(paths, new PackIndex(paths.index()),
+                Logger.getLogger("test"));
+        generator.stones(List.of(new net.aethel.core.api.SocketStone("ates_tasi", "aethel",
+                "Ates", List.of(), "FIREWORK_STAR", "item/ates_tasi.png", "#ff6a00",
+                Map.of(), "FLAME", List.of())));
+
+        // 4 asama: 0,1,2,3 -> yalnizca 1..3 icin varyant beklenir.
+        generator.generate(List.of(socketed("bakir_kilic", "item/bakir_kilic.png", 4)));
+
+        Set<String> entries = new HashSet<>();
+        try (ZipFile zip = new ZipFile(paths.generatedZip())) {
+            zip.stream().forEach(entry -> entries.add(entry.getName()));
+        }
+        for (int stage = 1; stage <= 3; stage++) {
+            String variant = "bakir_kilic_ates_tasi_" + stage;
+            assertTrue(entries.contains("assets/aethel/textures/item/" + variant + ".png"),
+                    "varyant dokusu yok: " + variant);
+            assertTrue(entries.contains("assets/aethel/items/" + variant + ".json"),
+                    "varyant item_model tanimi yok: " + variant);
+        }
+        assertTrue(!entries.contains("assets/aethel/items/bakir_kilic_ates_tasi_0.json"),
+                "asama 0 icin gereksiz varyant uretilmis");
+    }
+
+    /**
+     * Boyama yalnizca GRI bolgeye dokunmali.
+     *
+     * Dis hat saf siyahtir ve saf siyah da "gri"dir: parlaklik alt siniri
+     * olmasaydi kilicin dis hatti da turuncuya boyanir, item dagilmis
+     * gorunurdu. Renkli pikseller (bakir govde) de hic degismemelidir.
+     */
+    @Test
+    void tintingLeavesOutlineAndColouredPixelsAlone(@TempDir Path dataFolder) throws Exception {
+        Path textures = dataFolder.resolve("contents/aethel/textures/item");
+        Files.createDirectories(textures);
+        writeSquare(textures.resolve("bakir_kilic.png"));
+
+        PackPaths paths = new PackPaths(dataFolder.toFile());
+        PackGenerator generator = new PackGenerator(paths, new PackIndex(paths.index()),
+                Logger.getLogger("test"));
+        generator.stones(List.of(new net.aethel.core.api.SocketStone("ates_tasi", "aethel",
+                "Ates", List.of(), "FIREWORK_STAR", "item/ates_tasi.png", "#ff6a00",
+                Map.of(), "FLAME", List.of())));
+        generator.generate(List.of(socketed("bakir_kilic", "item/bakir_kilic.png", 2)));
+
+        var image = javax.imageio.ImageIO.read(new File(paths.assets(),
+                "aethel/textures/item/bakir_kilic_ates_tasi_1.png"));
+
+        assertEquals(0xFF000000, image.getRGB(0, 0), "dis hat (saf siyah) boyanmis");
+        assertEquals(0xFFC87C4A, image.getRGB(1, 0), "bakir (renkli) piksel degismis");
+
+        int grey = image.getRGB(2, 0);
+        assertTrue(((grey >> 16) & 0xFF) > ((grey) & 0xFF) + 30,
+                "gri bolge turuncuya boyanmamis: " + Integer.toHexString(grey));
+    }
+
+    /** 4x1: [saf siyah dis hat][bakir renkli][orta gri][acik gri] */
+    private static void writeSquare(Path target) throws IOException {
+        var image = new java.awt.image.BufferedImage(4, 1,
+                java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        image.setRGB(0, 0, 0xFF000000);
+        image.setRGB(1, 0, 0xFFC87C4A);
+        image.setRGB(2, 0, 0xFF7A7A7E);
+        image.setRGB(3, 0, 0xFFB4B4B8);
+        javax.imageio.ImageIO.write(image, "png", target.toFile());
     }
 
     /** 1x1 saydam PNG. */

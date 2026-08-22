@@ -137,6 +137,18 @@ public final class LangService {
     }
 
     /** Kisayol: LangService.of("player", name) -> <player> etiketi. */
+    /**
+     * Anahtarin HAM MiniMessage metni (varsayilan dilde). Lore gibi Component
+     * listesi kurup saklayan yerlerde gerekir: orada render edilmis bir Component
+     * degil, kendi placeholder'lariyla birlestirilecek ham metin lazimdir.
+     * Anahtar yoksa anahtarin kendisi doner -- eksiklik gorunur kalir.
+     */
+    public String raw(String key) {
+        YamlConfiguration yaml = languages.get(defaultLanguage);
+        String value = yaml == null ? null : yaml.getString(key);
+        return value == null ? key : value;
+    }
+
     public static TagResolver of(String name, String value) {
         return Placeholder.unparsed(name, value);
     }

@@ -73,6 +73,8 @@ public final class ContentModule implements Module, ItemService {
     public void onEnable(CoreContext ctx) {
         ctx.commands().suggest("item", () -> items.keySet());
         generator.packFormat(settings.format);
+        generator.stones(ctx.services().optional(net.aethel.core.api.SocketService.class)
+                .map(net.aethel.core.api.SocketService::stones).orElse(java.util.List.of()));
         reload();
         ctx.listener(delivery);
         ctx.commands().register("pack", new PackCommand(ctx, this));
@@ -130,6 +132,12 @@ public final class ContentModule implements Module, ItemService {
         ctx.scheduler().io(() -> {
             try {
                 int count = reload();
+                // Varyant uretimi icin taslar; soket modulu kapaliysa bos gecer
+                // ve yalnizca taban dokular uretilir.
+                generator.stones(ctx.services()
+                        .optional(net.aethel.core.api.SocketService.class)
+                        .map(net.aethel.core.api.SocketService::stones)
+                        .orElse(java.util.List.of()));
                 PackGenerator.Result result = generator.generate(items.values());
                 result.warnings().forEach(warning -> ctx.logger().warning("Pack: " + warning));
 

@@ -1,5 +1,31 @@
 # Custom item tanimlari. Gorunum 2D texture + item_model bileseni ile saglanir.
 # Texture yolu: contents/aethel/textures/<texture>
+#
+# sockets:
+#   slots        : kac tas takilabilir
+#   stages       : her asamanin gerektirdigi OLDURME sayisi (artan)
+#   evolves-into : son asamada donusecegi item
+bakir_kilic:
+  display: "<#c87f4a>Bakir Kilic</#c87f4a>"
+  lore:
+    - "<dark_gray>« Yaygin »</dark_gray>"
+    - ""
+    - "<gray>Hasar</gray> <white>+4.0</white>"
+  material: IRON_SWORD
+  texture: "item/bakir_kilic.png"
+  rarity: COMMON
+  durability: 320
+  attributes:
+    damage: 4.0
+    attack-speed: -2.4
+  sockets:
+    slots: 1
+    stages: [0, 25, 100, 300]
+    evolves-into: "alev_kilici"
+  tags:
+    - "silah"
+    - "kilic"
+
 alev_kilici:
   display: "<gradient:#ff6a00:#ffcc00><bold>Alev Kilici</bold></gradient>"
   lore:

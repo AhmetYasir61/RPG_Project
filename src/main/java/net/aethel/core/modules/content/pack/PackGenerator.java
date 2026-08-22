@@ -61,6 +61,13 @@ public final class PackGenerator {
      * Tam uretim. Once eski agac temizlenir: artik dosyalarin pack'te kalmasi,
      * silinmis bir icerigin oyuncularda gorunmeye devam etmesine yol acar.
      */
+    /** Soket taslari; varyant uretimi icin uretim oncesi verilir. */
+    private Collection<net.aethel.core.api.SocketStone> stones = java.util.List.of();
+
+    public void stones(Collection<net.aethel.core.api.SocketStone> stones) {
+        this.stones = stones == null ? java.util.List.of() : stones;
+    }
+
     public Result generate(Collection<CustomItem> items) {
         long start = System.currentTimeMillis();
         List<String> warnings = new ArrayList<>();
@@ -70,6 +77,7 @@ public final class PackGenerator {
 
             int files = 0;
             files += writeItems(items, warnings);
+            files += writeSocketVariants(items, warnings);
             files += copyTextures(warnings);
             files += convertBlueprints(warnings);
             files += writeFonts(warnings);
@@ -120,6 +128,65 @@ public final class PackGenerator {
             count++;
         }
         return count;
+    }
+
+    /**
+     * Her (soket alabilen item x tas x asama) icin boyanmis bir doku, model ve
+     * item_model tanimi uretir.
+     *
+     * Asama 0 ATLANIR: taban gorunum zaten var olan dokudur, kopyasini uretmek
+     * pack'i buyutur ve iki ayni dosyayi bakima birakir.
+     */
+    private int writeSocketVariants(Collection<CustomItem> items, List<String> warnings)
+            throws IOException {
+        if (stones.isEmpty()) return 0;
+        int count = 0;
+
+        for (CustomItem item : items) {
+            if (!item.socketable()) continue;
+            File source = new File(paths.contents(),
+                    item.namespace() + "/textures/" + item.texture());
+            if (!source.isFile()) continue;   // eksik doku zaten ayri uyariliyor
+
+            int lastStage = item.socketing().lastStage();
+            for (net.aethel.core.api.SocketStone stone : stones) {
+                for (int stage = 1; stage <= lastStage; stage++) {
+                    String variant = CustomItem.bare(item.id()) + "_"
+                            + CustomItem.bare(stone.id()) + "_" + stage;
+                    try {
+                        TextureTinter.write(source, new File(paths.assets(),
+                                        item.namespace() + "/textures/item/" + variant + ".png"),
+                                stone.tintRgb(), stage, lastStage);
+                        count++;
+                    } catch (IOException e) {
+                        warnings.add("Varyant uretilemedi (" + variant + "): " + e.getMessage());
+                        continue;
+                    }
+                    count += writeVariantModel(item, variant);
+                }
+            }
+        }
+        return count;
+    }
+
+    /** Varyantin model dosyasi ve item_model tanimi. */
+    private int writeVariantModel(CustomItem item, String variant) throws IOException {
+        JsonObject model = new JsonObject();
+        model.addProperty("parent", "minecraft:item/generated");
+        JsonObject textures = new JsonObject();
+        textures.addProperty("layer0", item.namespace() + ":item/" + variant);
+        model.add("textures", textures);
+        writer.json(new File(paths.assets(),
+                item.namespace() + "/models/item/" + variant + ".json"), model);
+
+        JsonObject definition = new JsonObject();
+        JsonObject modelRef = new JsonObject();
+        modelRef.addProperty("type", "minecraft:model");
+        modelRef.addProperty("model", item.namespace() + ":item/" + variant);
+        definition.add("model", modelRef);
+        writer.json(new File(paths.assets(),
+                item.namespace() + "/items/" + variant + ".json"), definition);
+        return 2;
     }
 
     /** "aethel:item/alev_kilici" — dosya yolunun birebir karsiligi. */

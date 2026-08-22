@@ -31,7 +31,9 @@ public final class ArgumentResolvers {
     }
 
     private static final Map<Class<?>, Resolver> RESOLVERS = Map.of(
-            String.class, new Resolver(StringArgumentType.word(),
+            // word() DEGIL: word() iki nokta kabul etmez ve namespace'li
+            // kimlikler ("aethel:alev_dalgasi") hic yazilamaz.
+            String.class, new Resolver(IdentifierArgumentType.identifier(),
                     (ctx, name) -> StringArgumentType.getString(ctx, name)),
             int.class, new Resolver(IntegerArgumentType.integer(),
                     (ctx, name) -> IntegerArgumentType.getInteger(ctx, name)),

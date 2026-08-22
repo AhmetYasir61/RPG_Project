@@ -42,7 +42,18 @@ public record ParticleEffect(Shape shape,
         /** Yayilan dalga halkasi. */
         WAVE,
         /** Merkezden disari saçilma. */
-        BURST
+        BURST,
+        /**
+         * Onde savrulan yay bicimli kesik. Kilic sallanisinin izini birakir:
+         * bakis yonune dik bir duzlemde, merkezden disa dogru kalinlasan bir
+         * yay cizilir. SWEEP_ATTACK ya da DUST ile en iyi sonucu verir.
+         */
+        SLASH,
+        /**
+         * Ic ice bircok yay: art arda gelen kesikler. SLASH'in agir hali,
+         * bitis vuruslari icin.
+         */
+        SLASH_STORM
     }
 
     /** Seklin zaman icindeki davranisi. */

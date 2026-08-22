@@ -12,6 +12,7 @@ modules:
   content:      { enabled: true,  resource-pack: { generate: true, serve: true, port: 8085, required: true } }
   mob:          { enabled: true }
   skill:        { enabled: true }
+  socket:       { enabled: true }
   rpg:          { enabled: true }
   menu:         { enabled: true }
   quest:        { enabled: true }

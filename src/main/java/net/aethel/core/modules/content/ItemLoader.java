@@ -30,11 +30,16 @@ final class ItemLoader {
         if (namespaces == null) return result;
 
         for (File namespace : namespaces) {
-            File items = new File(namespace, "items");
-            File[] files = items.listFiles(file -> file.getName().endsWith(".yml"));
-            if (files == null) continue;
-            for (File file : files) {
-                loadFile(namespace.getName(), file, result);
+            // Soket taslari da birer item'dir: envanterde durur, dokusu pakete
+            // girer ve vitrinde gorunur. Ayri bir "tas item'i" turu tutmak
+            // ikinci bir uretim hatti gerektirirdi.
+            for (String folder : new String[] {"items", "stones"}) {
+                File[] files = new File(namespace, folder)
+                        .listFiles(file -> file.getName().endsWith(".yml"));
+                if (files == null) continue;
+                for (File file : files) {
+                    loadFile(namespace.getName(), file, result);
+                }
             }
         }
         return result;
@@ -73,7 +78,30 @@ final class ItemLoader {
                 section.getBoolean("glow", false),
                 readFood(section.getConfigurationSection("food")),
                 readEquip(section.getConfigurationSection("equippable")),
-                section.getStringList("tags"));
+                section.getStringList("tags"),
+                readSocketing(section.getConfigurationSection("sockets")));
+    }
+
+    /**
+     * sockets:
+     *   slots: 1
+     *   stages: [0, 25, 100, 300]
+     *   evolves-into: "alev_kilici"
+     *
+     * Esikler artan siraya ZORLANIR ve basa 0 eklenir: sirasiz bir liste,
+     * oyuncunun oldurme sayisi arttikca asamanin geri gitmesine yol acardi.
+     */
+    private CustomItem.Socketing readSocketing(ConfigurationSection section) {
+        if (section == null) return null;
+        List<Integer> stages = new ArrayList<>(section.getIntegerList("stages"));
+        if (stages.isEmpty()) stages.add(0);
+        java.util.Collections.sort(stages);
+        if (stages.get(0) != 0) stages.add(0, 0);
+
+        return new CustomItem.Socketing(
+                Math.max(0, section.getInt("slots", 1)),
+                List.copyOf(stages),
+                section.getString("evolves-into"));
     }
 
     private Map<String, Double> readDoubles(ConfigurationSection section) {
