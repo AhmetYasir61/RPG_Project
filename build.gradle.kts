@@ -81,6 +81,13 @@ tasks {
         )
         inputs.properties(props)
         filesMatching("plugin.yml") { expand(props) }
+
+        // Tasarim kaynagi (.dc.html) depoda kalir ama JAR'a girmez: Panel.html ile
+        // ayni dosyanin ikinci kopyasi, sunucuda hicbir ise yaramadan ~100 KB yer kaplar.
+        exclude("web/*.dc.html")
+        // readme ve lint kurallari tasarim sistemi belgesidir; calisma zamaninda okunmaz.
+        exclude("web/_ds/**/readme.md")
+        exclude("web/_ds/**/_adherence.oxlintrc.json")
     }
 
     // Duz jar ile shaded jar ayni dosya adini paylasamaz; duz ciktiyi isaretliyoruz.

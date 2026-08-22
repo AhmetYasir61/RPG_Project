@@ -362,3 +362,43 @@ Paket katmani yine desteklemezse beklenen cikti:
 [AethelCore] Aktif modul: 18/21
 ```
 Sunucu bu durumda da normal calisir.
+
+## 21. Web paneli bembeyaz aciliyor, hicbir sey cizilmiyor
+
+**Belirti:** `/panel` 200 donuyor, HTML geliyor ama sayfa tamamen bos.
+Tarayici konsolunda: `[dc] failed to load React or boot`.
+
+**Kok neden:** `Panel.html` bir tasarim tuvali (design canvas) ciktisidir. `support.js`
+sayfayi React ile calisma aninda derler ve React'i unpkg.com'dan ceker. Tarayici
+unpkg'e ulasamiyorsa (kurum agi, reklam engelleyici, internete kapali makine)
+React hic yuklenmez ve `<x-dc>` govdesi bos kalir. Sunucu tarafinda hicbir hata
+gorunmez, cunku hata tarayicida olur.
+
+**Cozum:** React ve ReactDOM JAR icine alindi (`web/vendor/`) ve `/vendor/*`
+adresinden sunuluyor. `Panel.html` icinde `support.js`'ten ONCE calisan kucuk bir
+blok `window.__resources` haritasini kuruyor; `support.js` bu haritaya bakip
+unpkg yerine yerel yolu kullaniyor. Panel artik internet olmadan da aciliyor.
+
+**Dikkat:** Panel.html tasarim tuvalinden yeniden disa aktarilirsa bu blok kaybolur
+ve panel yine beyaz acilir. Yeni disa aktarimda blogun geri eklenmesi gerekir;
+dosyanin icinde bunu soyleyen bir yorum var.
+
+Inter yazi tipi hala Google Fonts'tan cekiliyor ama zorunlu degil: `system-ui`
+yedegi devrede, duzen bozulmaz.
+
+## 22. Panel acildi ama butun bolumler ornek veri gosteriyor
+
+**Belirti:** Panelde kayitlar var ama sunucudaki gercek kayitlar degil; ust seritte
+"canli veri" rozeti gorunmuyor.
+
+**Kok neden:** `Panel.html`, `/api/records?section=<id>` cagrisi basarisiz olursa
+(404, 401 ya da ag hatasi) sessizce kendi gomulu ornek verisine duser --
+`catch (e) {}`. Bu bilincli bir tasarim: panel API olmadan da acilir. Ama teshis
+koymayi zorlastirir, cunku ekranda hicbir hata gorunmez.
+
+**Kontrol sirasi:**
+1. Tarayici ag sekmesinde `/api/records?section=items` cagrisinin durum kodu.
+2. **401** ise oturum yok: `/adminmenu` ile yeni baglanti al ve PIN gir.
+3. **403** ise oturum var ama `aethel.admin.panel` izni yok.
+4. **404** ise bolum kimligi `PanelSchema` icinde tanimli degil. Panel.html'deki
+   `SCHEMAS` anahtarlari ile `PanelSchema` bolum kimlikleri BIREBIR ayni olmalidir.

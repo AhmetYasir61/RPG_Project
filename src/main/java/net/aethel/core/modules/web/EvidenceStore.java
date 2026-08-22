@@ -57,6 +57,21 @@ final class EvidenceStore {
                         rs.getLong("created_at")));
     }
 
+    /** Panelin kanit listesi icin: en yeni kayitlar basta. */
+    CompletableFuture<List<Evidence>> recent(int limit) {
+        return database.query(
+                "SELECT * FROM core_evidence ORDER BY created_at DESC LIMIT "
+                        + Math.max(1, Math.min(500, limit)),
+                Database.StatementBinder.NONE,
+                rs -> new Evidence(rs.getLong("id"),
+                        UUID.fromString(rs.getString("owner")),
+                        UUID.fromString(rs.getString("actor")),
+                        decode(rs.getString("item_data")).orElse(null),
+                        rs.getString("reason"),
+                        rs.getInt("returned") == 1,
+                        rs.getLong("created_at")));
+    }
+
     CompletableFuture<Integer> markReturned(long id) {
         return database.update("UPDATE core_evidence SET returned = 1 WHERE id = ?",
                 stmt -> stmt.setLong(1, id));

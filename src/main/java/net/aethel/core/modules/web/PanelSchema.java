@@ -116,7 +116,7 @@ public final class PanelSchema {
         add(new Section("loot", "Loot Tablolari", "Icerik", "loot/tables", Kind.FILE, false, List.of(
                 group("Tablo", "id|Tablo kimligi|text", "min-rolls|Min cekim|num", "max-rolls|Maks cekim|num"))));
 
-        add(new Section("pack", "Kaynak Paketi", "Icerik", "resource-pack", Kind.CONFIG, false, List.of(
+        add(new Section("pack", "Kaynak Paketi", "Icerik", "config.yml#resource-pack", Kind.CONFIG, false, List.of(
                 group("Uretim", "generate|Uret|bool", "generate-on-start|Acilista uret|bool",
                         "force|Zorunlu gonder|bool"),
                 group("Sunum", "serve|Sun|bool", "bind|Dinlenen adres|text", "port|Port|num",
@@ -130,7 +130,7 @@ public final class PanelSchema {
                 group("Zorluk", "id|Kimlik|text", "displayName|Gorunen ad|text",
                         "percent|Yuzde|num||100 = vanilla dengesi.", "icon|Font ikonu|text",
                         "hardcore|Hardcore|bool"))));
-        add(new Section("dungeon", "Dungeonlar", "Dunya", "dungeon", Kind.CONFIG, false, List.of(
+        add(new Section("dungeon", "Dungeonlar", "Dunya", "modules/dungeon.yml#dungeon", Kind.CONFIG, false, List.of(
                 group("Yasam suresi", "collapse-seconds|Cokme suresi (sn)|num",
                         "empty-timeout-seconds|Bos ornek zaman asimi|num", "max-instances|Azami ornek|num"),
                 group("Tasarim dunyasi", "design-world|Tasarim dunyasi|text", "room-min-y|Oda min Y|num",
@@ -155,14 +155,14 @@ public final class PanelSchema {
                         "rpg:stat:vitality|Dayaniklilik|num", "rpg:stat:luck|Sans|num"),
                 group("Ekonomi", "balance|Bakiye|num", "groups|Gruplar|list"),
                 group("Envanter", "inventory|Envanter|list||El konulan esya silinmez, kanit deposuna tasinir."))));
-        add(new Section("rpg", "RPG", "Oyuncu", "rpg", Kind.CONFIG, false, List.of(
+        add(new Section("rpg", "RPG", "Oyuncu", "modules/rpg.yml#rpg", Kind.CONFIG, false, List.of(
                 group("Seviye", "max-level|Seviye tavani|num", "points-per-level|Seviye basina puan|num",
                         "xp-per-mob-level|Mob basina XP|num"),
                 group("Mana", "base-mana|Temel mana|num", "mana-per-intelligence|Zeka basina mana|num",
                         "mana-regen|Mana yenilenme /sn|num"),
                 group("Stat etkileri", "damage-per-strength|Guc basina hasar|num",
                         "health-per-vitality|Dayaniklilik basina can|num"))));
-        add(new Section("jobs", "Meslekler", "Oyuncu", "jobs", Kind.CONFIG, false, List.of(
+        add(new Section("jobs", "Meslekler", "Oyuncu", "modules/jobs.yml#jobs", Kind.CONFIG, false, List.of(
                 group("Sinir", "max-active|Ayni anda meslek|num",
                         "leave-cooldown-hours|Birakma sogumasi (saat)|num",
                         "progress-kept-on-leave|Korunan ilerleme|num"),
@@ -171,27 +171,24 @@ public final class PanelSchema {
                 group("Grup", "name|Grup adi|text", "displayName|Gorunen ad|text", "weight|Agirlik|num"),
                 group("Sohbet", "prefix|On ek|text", "suffix|Son ek|text"),
                 group("Kalitim", "parents|Ust gruplar|list", "permissions|Izinler|list"))));
-        add(new Section("economy", "Ekonomi", "Oyuncu", "economy", Kind.CONFIG, false, List.of(
+        add(new Section("economy", "Ekonomi", "Oyuncu", "modules/economy.yml#economy", Kind.CONFIG, false, List.of(
                 group("Para birimi", "currency-symbol|Simge|text", "currency-name|Ad|text",
                         "decimals|Ondalik|num"),
                 group("Bakiyeler", "starting-balance|Baslangic bakiyesi|num", "max-balance|Azami bakiye|num"),
                 group("Entegrasyon", "register-vault|Vault saglayicisi|bool",
                         "keep-transaction-log|Islem gecmisi|bool"))));
-        add(new Section("pcoins", "PCoins", "Oyuncu", "pcoins", Kind.CONFIG, false, List.of(
-                group("Baglanti", "enabled|Etkin|bool", "endpoint|Uc nokta|text", "api-key|API anahtari|text"),
+        add(new Section("pcoins", "PCoins", "Oyuncu", "modules/pcoins.yml#pcoins", Kind.CONFIG, false, List.of(
+                group("Baglanti", "enabled|Etkin|bool", "endpoint|Uc nokta|text",
+                        "api-key-file|API anahtar dosyasi|text||Anahtarin KENDISI config'e yazilmaz."),
                 group("Davranis", "claim-purchases|Satin alma teslimi|bool", "spending|Oyun ici harcama|bool"))));
-        add(new Section("party", "Parti", "Oyuncu", "party", Kind.CONFIG, false, List.of(
-                group("Sinir", "max-members|Azami uye|num", "invite-timeout-seconds|Davet zaman asimi|num"),
-                group("Paylasim", "shared-xp|Ortak XP|bool", "shared-loot|Ortak loot|bool",
-                        "tracking|Uye takibi|bool"))));
-        add(new Section("travel", "Seyahat", "Oyuncu", "travel", Kind.CONFIG, false, List.of(
+        add(new Section("travel", "Seyahat", "Oyuncu", "modules/travel.yml#travel", Kind.CONFIG, false, List.of(
                 group("Cast sureleri", "scroll-cast-seconds|Parsomen cast (sn)|num",
                         "hearthstone-cast-seconds|Ocak tasi cast (sn)|num",
                         "hearthstone-cooldown-minutes|Ocak tasi soguma (dk)|num"),
                 group("Kisitlar", "combat-lock-seconds|Savas kilidi (sn)|num",
                         "require-discovery|Kesif zorunlu|bool", "discovery-radius|Kesif yaricapi|num"),
                 group("Item", "scroll-item|Parsomen item|text"))));
-        add(new Section("auth", "Kimlik", "Oyuncu", "auth", Kind.CONFIG, false, List.of(
+        add(new Section("auth", "Kimlik", "Oyuncu", "config.yml#auth", Kind.CONFIG, false, List.of(
                 group("Sir", "mode|Mod|sel|PIN,PASSWORD", "min-length|Min uzunluk|num",
                         "max-length|Maks uzunluk|num"),
                 group("Oturum", "max-attempts|Maks deneme|num", "timeout-seconds|Zaman asimi (sn)|num",
@@ -212,18 +209,18 @@ public final class PanelSchema {
                         "updateTicks|Guncelleme (tick)|num"),
                 group("Katman", "layers.0.text|Katman metni|text", "layers.0.offsetX|X kaymasi (px)|num",
                         "layers.0.showWhen|Gosterim kosulu|text"))));
-        add(new Section("scoreboard", "Scoreboard", "Arayuz", "scoreboard", Kind.CONFIG, false, List.of(
+        add(new Section("scoreboard", "Scoreboard", "Arayuz", "modules/scoreboard.yml#scoreboard", Kind.CONFIG, false, List.of(
                 group("Yenileme", "update-ticks|Guncelleme (tick)|num"),
                 group("Gorunurluk", "sidebar-enabled|Yan tablo|bool", "tab-enabled|Tab listesi|bool",
                         "tab-prefix|Tab on eki|bool"))));
-        add(new Section("motd", "MOTD", "Arayuz", "motd", Kind.CONFIG, false, List.of(
+        add(new Section("motd", "MOTD", "Arayuz", "modules/motd.yml#motd", Kind.CONFIG, false, List.of(
                 group("Metin", "random|Rastgele MOTD|bool", "icon-file|Sunucu ikonu|text"),
                 group("Oyuncu sayisi", "custom-player-count|Ozel oyuncu sayisi|bool",
                         "fake-max-players|Sahte azami|num", "hover-enabled|Hover listesi|bool"))));
-        add(new Section("chat", "Sohbet", "Arayuz", "chat", Kind.CONFIG, false, List.of(
-                group("Bicim", "format|Format|text", "local-radius|Yerel yaricap|num"),
-                group("Denetim", "mentions|Bahsetme sesi|bool", "filter|Kelime filtresi|bool",
-                        "filter-words|Filtre listesi|list"))));
+        add(new Section("chat", "Sohbet", "Arayuz", "chat.yml#", Kind.CONFIG, false, List.of(
+                group("Bicim", "format|Format|text"),
+                group("Denetim", "mention-sound|Bahsetme sesi|text",
+                        "blocked-words|Engelli kelimeler|list"))));
     }
 
     public static Map<String, Section> sections() {

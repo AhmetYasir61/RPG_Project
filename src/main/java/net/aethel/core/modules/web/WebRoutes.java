@@ -21,6 +21,7 @@ import java.util.UUID;
 final class WebRoutes {
 
     private static final String SESSION_COOKIE = "aethel_session";
+    private static final String JSON = "application/json; charset=utf-8";
 
     private final CoreContext ctx;
     private final WebSettings settings;
@@ -28,15 +29,17 @@ final class WebRoutes {
     private final AuditLog audit;
     private final EvidenceStore evidence;
     private final PanelApi panelApi;
+    private final LogBuffer logs;
 
     WebRoutes(CoreContext ctx, WebSettings settings, Map<String, WebSession> sessions,
-              AuditLog audit, EvidenceStore evidence) {
+              AuditLog audit, EvidenceStore evidence, LogBuffer logs) {
         this.ctx = ctx;
         this.settings = settings;
         this.sessions = sessions;
         this.audit = audit;
         this.evidence = evidence;
-        this.panelApi = new PanelApi(ctx, audit);
+        this.panelApi = new PanelApi(ctx, audit, evidence);
+        this.logs = logs;
     }
 
     void register(Javalin server) {
@@ -47,20 +50,35 @@ final class WebRoutes {
         server.post("/login", context -> submitCredentials(context, false));
         server.post("/register", context -> submitCredentials(context, true));
         server.get("/panel", this::panel);
+
+        // Panelin kendi varliklari. Tasarim dosyalari (Panel.html, support.js,
+        // _ds/) JAR icinde oldugu gibi durur ve buradan sunulur; panelin gorunum
+        // katmanina Java tarafindan hic dokunulmaz.
+        server.get("/support.js", context ->
+                asset(context, "support.js", "application/javascript"));
         server.get("/assets/styles.css", context -> asset(context, "styles.css", "text/css"));
         server.get("/assets/panel.js", context ->
                 asset(context, "panel.js", "application/javascript"));
+        server.get("/vendor/<path>", context ->
+                asset(context, "vendor/" + context.pathParam("path"), "application/javascript"));
+        server.get("/_ds/<path>", context -> {
+            String path = context.pathParam("path");
+            asset(context, "_ds/" + path, contentType(path));
+        });
 
-        // Semadan uretilen bolum uclari. Tek bir ucta tum moduller duzenlenir;
-        // yeni bir alan icin buraya degil PanelSchema'ya satir eklenir.
-        server.get("/api/schema", context -> withAdmin(context, session ->
-                context.contentType("application/json").result(panelApi.schemaJson())));
-        server.get("/api/section/{id}", context -> withAdmin(context, session ->
+        // Panel.html'in cagirdigi uclar. Bolum kimlikleri PanelSchema'dan gelir.
+        server.get("/api/records", context -> withAdmin(context, session ->
                 sectionRead(context)));
-        server.post("/api/section/{id}/save", context -> withAdmin(context, session ->
+        server.post("/api/records", context -> withAdmin(context, session ->
                 sectionWrite(context, session, false)));
-        server.post("/api/section/{id}/delete", context -> withAdmin(context, session ->
+        server.post("/api/delete", context -> withAdmin(context, session ->
                 sectionWrite(context, session, true)));
+        server.get("/api/status", context -> withAdmin(context, session ->
+                context.contentType(JSON).result(PanelApi.json(panelApi.status()))));
+        server.get("/api/logs", context -> withAdmin(context, session ->
+                context.contentType(JSON).result(PanelApi.json(logs.tail(200)))));
+        server.get("/api/schema", context -> withAdmin(context, session ->
+                context.contentType(JSON).result(panelApi.schemaJson())));
 
         server.get("/api/me", context -> withSession(context, session -> {
             JsonObject json = new JsonObject();
@@ -92,6 +110,11 @@ final class WebRoutes {
      * kendi portundan servis edilir, boylece internete kapali bir makinede de calisir.
      */
     private void asset(Context context, String name, String type) {
+        // Yol gezinmesine kapali: JAR icinde ".." ile disari cikilamaz.
+        if (name.contains("..")) {
+            context.status(400).result("bad-path");
+            return;
+        }
         try (var stream = getClass().getClassLoader().getResourceAsStream("web/" + name)) {
             if (stream == null) {
                 context.status(404).result("missing");
@@ -104,15 +127,22 @@ final class WebRoutes {
         }
     }
 
+    /** Dosya uzantisindan icerik turu; _ds klasoru css, js ve json tasiyor. */
+    private static String contentType(String path) {
+        if (path.endsWith(".css")) return "text/css";
+        if (path.endsWith(".js")) return "application/javascript";
+        if (path.endsWith(".json")) return JSON;
+        return "text/plain; charset=utf-8";
+    }
+
     /** Bolumun kayitlarini dondurur; bilinmeyen bolum kimligi 404'tur. */
     private void sectionRead(Context context) {
-        PanelSchema.Section section = PanelSchema.section(context.pathParam("id"));
+        PanelSchema.Section section = PanelSchema.section(context.queryParam("section"));
         if (section == null) {
             context.status(404).result("unknown-section");
             return;
         }
-        context.contentType("application/json")
-                .result(new com.google.gson.Gson().toJson(panelApi.records(section)));
+        context.contentType(JSON).result(panelApi.recordsJson(section));
     }
 
     /**
@@ -120,7 +150,7 @@ final class WebRoutes {
      * yapilan bir ayar degisikligi de en az envanter mudahalesi kadar izlenebilir olmali.
      */
     private void sectionWrite(Context context, WebSession session, boolean delete) {
-        PanelSchema.Section section = PanelSchema.section(context.pathParam("id"));
+        PanelSchema.Section section = PanelSchema.section(context.queryParam("section"));
         if (section == null) {
             context.status(404).result("unknown-section");
             return;
@@ -141,7 +171,7 @@ final class WebRoutes {
         audit.record(session.player(), session.playerName(), null,
                 delete ? "PANEL_DELETE" : "PANEL_SAVE",
                 section.id() + ":" + record.get("id"));
-        context.contentType("application/json").result("{\"ok\":true}");
+        context.contentType(JSON).result("{\"ok\":true}");
     }
 
     /**
@@ -277,7 +307,9 @@ final class WebRoutes {
             context.redirect("/login");
             return;
         }
-        context.html(WebPages.panel(session.get()));
+        // Panel arayuzu JAR icindeki Panel.html'dir (tasarim dosyasi, elle
+        // duzenlenir). Java tarafi yalnizca sunar; icerigine dokunmaz.
+        asset(context, "Panel.html", "text/html; charset=utf-8");
     }
 
     private Optional<WebSession> session(Context context) {

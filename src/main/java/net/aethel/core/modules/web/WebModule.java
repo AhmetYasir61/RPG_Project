@@ -22,6 +22,7 @@ public final class WebModule implements Module {
     private final Map<String, WebSession> sessions = new ConcurrentHashMap<>();
     private Javalin server;
     private AuditLog audit;
+    private LogBuffer logs;
     private EvidenceStore evidence;
     private CoreContext ctx;
 
@@ -43,6 +44,8 @@ public final class WebModule implements Module {
         ctx.schema().migrate("web", WebSchema.MIGRATIONS);
         this.audit = new AuditLog(ctx.database(), settings.auditLog);
         this.evidence = new EvidenceStore(ctx.database());
+        // Panelin gunluk penceresi cekirdek logger'ini dinler; disk okunmaz.
+        this.logs = new LogBuffer(ctx.logger());
 
         startServer();
         // Suresi dolan oturumlar temizlenir; sizan bir cerez sonsuza kadar gecerli olmaz.
@@ -57,6 +60,10 @@ public final class WebModule implements Module {
             server = null;
         }
         sessions.clear();
+        if (logs != null) {
+            logs.close();
+            logs = null;
+        }
     }
 
     /**
@@ -73,7 +80,7 @@ public final class WebModule implements Module {
             // WebPages icinde gomulu, harici varlik gerekmiyor.
         });
 
-        WebRoutes routes = new WebRoutes(ctx, settings, sessions, audit, evidence);
+        WebRoutes routes = new WebRoutes(ctx, settings, sessions, audit, evidence, logs);
         routes.register(server);
 
         server.start(settings.bind, settings.port);
