@@ -831,3 +831,63 @@ olmalidir. Salt okunur bolumler (denetim kaydi, kanit deposu) yazma isteklerini
 **PCoins API anahtari** panelde gorunmez: sema yalnizca `api-key-file` alanini
 tasir, anahtarin kendisi ayri dosyada kalir ve hicbir zaman config'e ya da
 panele yazilmaz.
+
+## 28. Item'lari almak, gormek ve resource pack
+
+**Item'i uzerine alma.** Yonetim komutu yok; ItemsAdder'daki `/iagive` karsiligi
+bir MENUDUR. Oyun ici: `/menu` -> **Item Vitrini**, ya da dogrudan `/menu itemler`.
+Vitrin `ItemService.all()` uzerinden tanimli her item'i gosterir:
+
+- **Sol tik** -> 1 adet, **Shift+sol tik** -> bir yigin envantere girer.
+- Yalnizca `aethel.admin.items` yetkisi olan alir. Yetkisi olmayan oyuncu vitrini
+  yine acar ve gorur -- bir katalog gibi -- ama tiklama hicbir sey yapmaz.
+  Kontrol tiklama isleyicisinin ICINDE, gorunumde degil: menu HTML'i gibi
+  istemciden gelen bir seye guvenilmez.
+- Envanter doluysa artan yere DUSURULUR, sessizce yok edilmez.
+
+Vitrindeki ikon, item'in kendi `ItemService.create()` ciktisidir. Yani menude
+gordugun sey, alacaginin birebir aynisidir; ayri bir "onizleme" gorunumu tutmak
+gerekmez ve ikisi birbirinden ayrisamaz.
+
+**Menuye item koyma.** Menu YAML'inde `material:` yerine `item:` yazilabilir:
+
+```yaml
+itemler:
+  slot: 12
+  item: "aethel:alev_kilici"    # material yerine custom item tanimi
+  name: "<gold>Item Vitrini</gold>"
+  actions:
+    - "[items]"                 # vitrini acar; "[items] silah" etiketle filtreler
+```
+
+Tanim bulunamazsa `material:` degerine dusulur ve gunluge uyari yazilir --
+menu bozulmaz, ama hata gorunur kalir.
+
+**Resource pack.** Item'in gorunumu 2D texture + `item_model` bileseni ile gelir;
+3D model gerekmez. Zincir sudur:
+
+```
+contents/<ns>/items/*.yml     texture: "item/alev_kilici.png"
+contents/<ns>/textures/item/alev_kilici.png        <- HAM DOKU BURADA OLMALI
+        |
+        v  PackGenerator
+assets/<ns>/textures/item/alev_kilici.png          kopyalanir
+assets/<ns>/models/item/alev_kilici.json           parent: item/generated
+assets/<ns>/items/alev_kilici.json                 item_model tanimi (1.21.2+)
+        |
+        v  ItemFactory
+ItemStack.setItemModel("aethel:item/alev_kilici")
+```
+
+`item_model` tercih edilir cunku model dogrudan KIMLIKLE baglanir:
+custom-model-data numaralarinin carpismasi diye bir sorun kalmaz. CMD yine de
+yaziliyor ki eski istemciler ve harici araclar geride kalmasin.
+
+Pack `resource-pack.serve: true` ile kendi portundan (varsayilan 8085) sunulur,
+`force: true` ile zorunlu gonderilir; reddeden oyuncu sunucudan atilir.
+
+**Sessiz basarisizlik ve korumasi.** Item tanimindaki `texture:` yolu
+`contents/<ns>/textures/` altinda YOKSA pack yine de uretilir, sunucu gunlugune
+hicbir sey yazilmaz ve oyuncu oyunda mor-siyah kare gorur. Bu hata bir kez yasandi
+(ornek itemlarin dokulari hic yoktu). `PackGenerationTest` artik dokunun pack zip'ine
+gercekten girdigini dogruluyor; doku eksik olursa **derleme kirmizi doner**.

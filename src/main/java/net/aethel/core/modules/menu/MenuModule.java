@@ -23,11 +23,13 @@ public final class MenuModule implements Module, MenuService {
 
     private CoreContext ctx;
     private YamlMenuLoader loader;
+    private ItemCatalog catalog;
 
     @Override
     public void onLoad(CoreContext ctx) {
         this.ctx = ctx;
         this.loader = new YamlMenuLoader(ctx, this);
+        this.catalog = new ItemCatalog(ctx, this);
         ctx.services().register(MenuService.class, this, "menu");
     }
 
@@ -35,11 +37,22 @@ public final class MenuModule implements Module, MenuService {
     public void onEnable(CoreContext ctx) {
         ctx.listener(new MenuListener());
         loader.reload();
+        ctx.commands().register("menu", new MenuCommand(ctx, this));
     }
 
     @Override
     public void onReload(CoreContext ctx) {
         loader.reload();
+    }
+
+    /** Item vitrinini acar; icerik modulu yoksa false doner. */
+    public boolean openCatalog(Player player, String filterTag) {
+        return catalog.open(player, filterTag);
+    }
+
+    /** YAML menulerinin custom item ikonu cozmesi icin. */
+    ItemCatalog catalog() {
+        return catalog;
     }
 
     @Override

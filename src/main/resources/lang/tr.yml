@@ -39,6 +39,13 @@ auth:
 
 menu:
   invalid-number: "<red>Gecerli bir sayi degil:</red> <white><value></white>"
+  command-description: "Menuleri ve item vitrinini acar."
+  not-found: "<red>Boyle bir menu yok:</red> <white><id></white>"
+  catalog-title: "<dark_gray>Item Vitrini"
+  catalog-title-admin: "<dark_gray>Item Vitrini <gray>(yetkili)"
+  catalog-give-hint: "<yellow>Tikla: 1 adet · Shift+Tikla: yigin</yellow>"
+  catalog-given: "<green><amount>x <white><item></white> envanterine eklendi.</green>"
+  catalog-unavailable: "<red>Icerik modulu kapali oldugu icin vitrin acilamiyor.</red>"
 
 pack:
   declined: "<red>Sunucuya girmek icin kaynak paketini kabul etmelisin.</red>"

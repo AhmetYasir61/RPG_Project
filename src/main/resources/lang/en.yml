@@ -39,6 +39,13 @@ auth:
 
 menu:
   invalid-number: "<red>Not a valid number:</red> <white><value></white>"
+  command-description: "Opens menus and the item showcase."
+  not-found: "<red>No such menu:</red> <white><id></white>"
+  catalog-title: "<dark_gray>Item Showcase"
+  catalog-title-admin: "<dark_gray>Item Showcase <gray>(staff)"
+  catalog-give-hint: "<yellow>Click: 1 · Shift-click: a stack</yellow>"
+  catalog-given: "<green>Added <amount>x <white><item></white> to your inventory.</green>"
+  catalog-unavailable: "<red>The content module is disabled, so the showcase is unavailable.</red>"
 
 pack:
   declined: "<red>You must accept the resource pack to play here.</red>"

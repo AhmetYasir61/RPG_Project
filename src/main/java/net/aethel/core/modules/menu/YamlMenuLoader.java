@@ -72,14 +72,27 @@ final class YamlMenuLoader {
     }
 
     private void applyItem(Menu menu, ConfigurationSection entry, Player player) {
-        Material material = Material.matchMaterial(
-                entry.getString("material", "STONE").toUpperCase(Locale.ROOT));
-        if (material == null) material = Material.STONE;
+        int amount = Math.max(1, entry.getInt("amount", 1));
 
-        ItemStack item = new ItemStack(material, Math.max(1, entry.getInt("amount", 1)));
+        // "item: aethel:alev_kilici" verilmisse ikon custom item tanimindan uretilir;
+        // menude gorunen sey oyuncunun alacagi seyle birebir ayni olur. Tanim
+        // bulunamazsa material'e dusulur, menu bozulmaz.
+        String customId = entry.getString("item");
+        ItemStack item = customId == null ? null
+                : module.catalog().resolve(customId, amount).orElse(null);
+        if (item == null) {
+            if (customId != null) {
+                ctx.logger().warning("Menu ikonu icin bilinmeyen item: " + customId);
+            }
+            Material material = Material.matchMaterial(
+                    entry.getString("material", "STONE").toUpperCase(Locale.ROOT));
+            if (material == null) material = Material.STONE;
+            item = new ItemStack(material, amount);
+        }
         String name = entry.getString("name");
         List<String> lore = entry.getStringList("lore");
-        item.editMeta(meta -> {
+        ItemStack styled = item;
+        styled.editMeta(meta -> {
             if (name != null) meta.displayName(mini.deserialize(name));
             if (!lore.isEmpty()) {
                 List<Component> rendered = new ArrayList<>(lore.size());
@@ -89,12 +102,13 @@ final class YamlMenuLoader {
         });
 
         List<String> actions = entry.getStringList("actions");
-        menu.set(entry.getInt("slot"), item, click -> actions.forEach(
+        ItemStack icon = item;
+        menu.set(entry.getInt("slot"), icon, click -> actions.forEach(
                 action -> runAction(click.player(), action)));
     }
 
     /**
-     * Action DSL: [command], [console], [sound], [menu], [close], [message].
+     * Action DSL: [command], [console], [sound], [menu], [items], [close], [message].
      * Menu yazarinin Java'ya inmesine gerek kalmadan yaygin islemleri kapsar.
      */
     private void runAction(Player player, String action) {
@@ -110,6 +124,7 @@ final class YamlMenuLoader {
             case "message" -> player.sendMessage(mini.deserialize(value));
             case "menu" -> open(player, value);
             case "close" -> player.closeInventory();
+            case "items" -> module.openCatalog(player, value.isBlank() ? null : value);
             case "sound" -> playSound(player, value);
             default -> ctx.logger().warning("Bilinmeyen menu eylemi: " + type);
         }

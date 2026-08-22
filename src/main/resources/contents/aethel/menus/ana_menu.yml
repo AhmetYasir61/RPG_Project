@@ -2,7 +2,7 @@ title: "<white>Ana Menu"
 rows: 3
 items:
   profil:
-    slot: 11
+    slot: 10
     material: PLAYER_HEAD
     name: "<yellow>Profilin</yellow>"
     lore:
@@ -11,13 +11,23 @@ items:
       - "[command] profil"
       - "[sound] UI_BUTTON_CLICK 1 1"
   parti:
-    slot: 13
+    slot: 14
     material: LIGHT_BLUE_BANNER
     name: "<aqua>Parti</aqua>"
     lore:
       - "<gray>Arkadaslarini takip et.</gray>"
     actions:
       - "[command] parti"
+  itemler:
+    slot: 12
+    # "item:" verilince ikon custom item tanimindan uretilir; menude gordugun
+    # sey, vitrinde alacaginla birebir ayni gorunur.
+    item: "aethel:alev_kilici"
+    name: "<gold>Item Vitrini</gold>"
+    lore:
+      - "<gray>Sunucudaki tum ozel itemlar.</gray>"
+    actions:
+      - "[items]"
   kapat:
     slot: 15
     material: BARRIER
