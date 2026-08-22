@@ -86,6 +86,31 @@ class PackGenerationTest {
                 "modelin gosterdigi doku pack agacinda yok");
     }
 
+    /**
+     * Yeniden uretimin "degisti mi" cevabi SHA-1 karsilastirmasina dayanir.
+     * Ayni icerik ayni hash'i, degisen icerik farkli hash'i vermezse panel ve
+     * komut "degisti" / "degismedi" derken yalan soyler.
+     */
+    @Test
+    void hashTracksContentChanges(@TempDir Path dataFolder) throws Exception {
+        Path textures = dataFolder.resolve("contents/aethel/textures/item");
+        Files.createDirectories(textures);
+        Files.write(textures.resolve("kilic.png"), pngBytes());
+
+        PackPaths paths = new PackPaths(dataFolder.toFile());
+        PackGenerator generator = new PackGenerator(paths, new PackIndex(paths.index()),
+                Logger.getLogger("test"));
+
+        String first = generator.generate(List.of(item("kilic", "item/kilic.png"))).sha1();
+        String again = generator.generate(List.of(item("kilic", "item/kilic.png"))).sha1();
+        assertEquals(first, again, "icerik ayniyken hash degismemeli");
+
+        String withExtra = generator.generate(List.of(
+                item("kilic", "item/kilic.png"),
+                item("kalkan", "item/kilic.png"))).sha1();
+        assertTrue(!first.equals(withExtra), "yeni item eklendiginde hash degismeli");
+    }
+
     /** 1x1 saydam PNG. */
     private static byte[] pngBytes() {
         return java.util.Base64.getDecoder().decode(

@@ -50,6 +50,16 @@ menu:
 pack:
   declined: "<red>Sunucuya girmek icin kaynak paketini kabul etmelisin.</red>"
   failed: "<red>Kaynak paketi indirilemedi. Baglantini kontrol edip tekrar dene.</red>"
+  command-description: "Kaynak paketini yeniden uretir ve gonderir."
+  status: "<gray>Paket:</gray> <white><hash></white> <dark_gray>·</dark_gray> <white><size> MB</white> <dark_gray>·</dark_gray> <white><items></white> <gray>item</gray>"
+  regenerating: "<gray>Paket yeniden uretiliyor...</gray>"
+  busy: "<yellow>Zaten bir uretim suruyor, bitmesini bekle.</yellow>"
+  done: "<green>Paket uretildi:</green> <white><items></white> <gray>item,</gray> <white><files></white> <gray>dosya,</gray> <white><ms> ms</white><gray>. <players> oyuncuya gonderildi.</gray>"
+  unchanged: "<yellow>Paket uretildi ama icerik ayni</yellow> <gray>(<items> item, <ms> ms). Istemciler yeniden indirmez.</gray>"
+  failed-generate: "<red>Paket uretilemedi:</red> <white><error></white>"
+  warning: "<yellow>Uyari:</yellow> <gray><text></gray>"
+  resent: "<green>Paket <white><player></white> oyuncusuna yeniden gonderildi.</green>"
+  player-offline: "<red>Oyuncu cevrimici degil:</red> <white><player></white>"
 
 economy:
   balance: "<gray>Bakiyen:</gray> <gold><amount></gold>"

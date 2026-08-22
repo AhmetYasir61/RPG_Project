@@ -165,9 +165,31 @@ final class PanelGui {
                 click -> {
                     ctx.lang().send(click.player(), "panel.pack-regenerating");
                     click.player().closeInventory();
-                    ctx.plugin().getServer().dispatchCommand(
-                            ctx.plugin().getServer().getConsoleSender(), "core reload");
+                    // "core reload" tanimlari bellege yeniden okur ama zip'i URETMEZ:
+                    // dugme calisiyor gorunup pakete hicbir sey tasimiyordu.
+                    regeneratePack(click.player());
                 });
+    }
+
+    /** Icerik modulunu bulup yeniden uretimi baslatir; sonuc oyuncuya yazilir. */
+    private void regeneratePack(Player player) {
+        var module = ctx.services().optional(net.aethel.core.api.ItemService.class)
+                .filter(net.aethel.core.modules.content.ContentModule.class::isInstance)
+                .map(net.aethel.core.modules.content.ContentModule.class::cast);
+        if (module.isEmpty()) {
+            ctx.lang().send(player, "pack.failed-generate",
+                    net.aethel.core.i18n.LangService.of("error", "content-disabled"));
+            return;
+        }
+        module.get().regenerateAndPublish(result -> ctx.lang().send(player,
+                !result.ok() ? "pack.failed-generate"
+                        : result.changed() ? "pack.done" : "pack.unchanged",
+                net.aethel.core.i18n.LangService.of("error", String.valueOf(result.error())),
+                net.aethel.core.i18n.LangService.of("items", result.items()),
+                net.aethel.core.i18n.LangService.of("files", result.files()),
+                net.aethel.core.i18n.LangService.of("ms", result.millis()),
+                net.aethel.core.i18n.LangService.of("players",
+                        ctx.plugin().getServer().getOnlinePlayers().size())));
     }
 
     private void giveItem(Player player, String itemId) {

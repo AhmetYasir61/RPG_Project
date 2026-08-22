@@ -78,6 +78,7 @@ final class WebRoutes {
         server.get("/api/logs", context -> withAdmin(context, session ->
                 context.contentType(JSON).result(PanelApi.json(logs.tail(200)))));
         server.post("/api/give", this::giveItem);
+        server.post("/api/pack/regenerate", this::regeneratePack);
         server.get("/api/schema", context -> withAdmin(context, session ->
                 context.contentType(JSON).result(panelApi.schemaJson())));
 
@@ -149,6 +150,49 @@ final class WebRoutes {
             audit.record(session.player(), session.playerName(), session.player(),
                     "PANEL_GIVE", itemId + " x" + result.amount());
             context.contentType(JSON).result("{\"ok\":true,\"amount\":" + result.amount() + "}");
+        });
+    }
+
+    /**
+     * Paketi sunucu acikken bastan uretir ve cevrimici herkese yeniden gonderir.
+     *
+     * Uretim saniyeler surebilir; HTTP burada BEKLEMEZ, "basladi" der. Sonucu
+     * yoneticinin oyun ici sohbetine ve sunucu gunlugune yaziyoruz. Tarayiciyi
+     * dakikalarca acik tutan bir istek, ters vekil zaman asimlarinda "hata"
+     * gorunup aslinda basarili biten bir uretimle karistirilirdi.
+     */
+    private void regeneratePack(Context context) {
+        withAdmin(context, session -> {
+            var content = ctx.services().optional(net.aethel.core.api.ItemService.class)
+                    .filter(net.aethel.core.modules.content.ContentModule.class::isInstance)
+                    .map(net.aethel.core.modules.content.ContentModule.class::cast);
+            if (content.isEmpty()) {
+                context.status(409).contentType(JSON)
+                        .result("{\"ok\":false,\"reason\":\"content-disabled\"}");
+                return;
+            }
+            content.get().regenerateAndPublish(result -> {
+                ctx.logger().info("Panelden pack yenileme (" + session.playerName() + "): "
+                        + (result.ok() ? result.items() + " item, " + result.files()
+                                + " dosya, " + result.millis() + " ms, degisti="
+                                + result.changed()
+                        : "BASARISIZ " + result.error()));
+
+                var player = ctx.plugin().getServer().getPlayer(session.player());
+                if (player != null) {
+                    ctx.lang().send(player, !result.ok() ? "pack.failed-generate"
+                                    : result.changed() ? "pack.done" : "pack.unchanged",
+                            net.aethel.core.i18n.LangService.of("error", String.valueOf(result.error())),
+                            net.aethel.core.i18n.LangService.of("items", result.items()),
+                            net.aethel.core.i18n.LangService.of("files", result.files()),
+                            net.aethel.core.i18n.LangService.of("ms", result.millis()),
+                            net.aethel.core.i18n.LangService.of("players",
+                                    ctx.plugin().getServer().getOnlinePlayers().size()));
+                }
+            });
+            audit.record(session.player(), session.playerName(), null,
+                    "PANEL_PACK_REGENERATE", "panelden baslatildi");
+            context.contentType(JSON).result("{\"ok\":true,\"started\":true}");
         });
     }
 

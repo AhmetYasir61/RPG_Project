@@ -39,6 +39,13 @@ public final class ContentModule implements Module, ItemService {
     private PackDelivery delivery;
     private CoreContext ctx;
 
+    /**
+     * Ayni anda iki uretim calisamaz. Iki is ayni generated.zip dosyasina yazarsa
+     * ortaya yarim bir zip cikar ve butun oyuncular paketi indiremeyip atilir.
+     */
+    private final java.util.concurrent.atomic.AtomicBoolean generating =
+            new java.util.concurrent.atomic.AtomicBoolean();
+
     @Override
     public void onLoad(CoreContext ctx) {
         this.ctx = ctx;
@@ -66,6 +73,7 @@ public final class ContentModule implements Module, ItemService {
     public void onEnable(CoreContext ctx) {
         reload();
         ctx.listener(delivery);
+        ctx.commands().register("pack", new PackCommand(ctx, this));
 
         if (settings.generate && settings.generateOnStart && ctx.feature("content.pack-generation")) {
             regenerate();
@@ -90,12 +98,92 @@ public final class ContentModule implements Module, ItemService {
      * saniyeler surebilir ve ana thread'de yapilirsa sunucu donar.
      */
     public void regenerate() {
+        regenerateAndPublish(result -> {});
+    }
+
+    /** Calisan bir uretimin sonucu. */
+    public record RegenerateResult(boolean ok, int items, int files, String hash,
+                                   boolean changed, java.util.List<String> warnings,
+                                   long millis, String error) {}
+
+    /**
+     * SUNUCU ACIKKEN paketi bastan uretir ve cevrimici herkese yeniden gonderir.
+     *
+     * Sira onemlidir: once tanimlar DISKTEN yeniden okunur, sonra zip uretilir.
+     * Yalnizca zip'i uretmek, YAML'de yapilan bir degisikligi pakete tasimaz --
+     * bellekteki eski tanimlar yeniden paketlenir ve "yeniledim ama degismedi"
+     * denir. Onceki panel dugmesi tam bunu yapiyordu.
+     *
+     * Sonuc callback'i ANA THREAD'de calisir; cagiran taraf oyuncuya dogrudan
+     * mesaj yazabilir.
+     */
+    public void regenerateAndPublish(java.util.function.Consumer<RegenerateResult> callback) {
+        if (!generating.compareAndSet(false, true)) {
+            ctx.scheduler().sync("content", () -> callback.accept(new RegenerateResult(
+                    false, 0, 0, null, false, java.util.List.of(), 0, "busy")));
+            return;
+        }
+        String previous = readHash();
+
         ctx.scheduler().io(() -> {
-            PackGenerator.Result result = generator.generate(items.values());
-            if (result.sha1() == null) return;
-            result.warnings().forEach(warning -> ctx.logger().warning("Pack: " + warning));
-            ctx.scheduler().sync("content", () -> publish(result.sha1()));
+            try {
+                int count = reload();
+                PackGenerator.Result result = generator.generate(items.values());
+                result.warnings().forEach(warning -> ctx.logger().warning("Pack: " + warning));
+
+                if (result.sha1() == null) {
+                    finish(callback, new RegenerateResult(false, count, 0, null, false,
+                            result.warnings(), result.millis(), "generate-failed"));
+                    return;
+                }
+                boolean changed = !result.sha1().equals(previous);
+                ctx.scheduler().sync("content", () -> {
+                    publish(result.sha1());
+                    generating.set(false);
+                    callback.accept(new RegenerateResult(true, count, result.fileCount(),
+                            result.sha1(), changed, result.warnings(), result.millis(), null));
+                });
+            } catch (RuntimeException e) {
+                ctx.logger().log(java.util.logging.Level.SEVERE, "Pack yeniden uretimi patladi", e);
+                finish(callback, new RegenerateResult(false, 0, 0, null, false,
+                        java.util.List.of(), 0, String.valueOf(e.getMessage())));
+            }
         });
+    }
+
+    /** Basarisizlikta da kilidi birakir; yoksa bir hata butun yenilemeleri kilitler. */
+    private void finish(java.util.function.Consumer<RegenerateResult> callback,
+                        RegenerateResult result) {
+        ctx.scheduler().sync("content", () -> {
+            generating.set(false);
+            callback.accept(result);
+        });
+    }
+
+    /** Diskteki son uretimin hash'i; yoksa bos. */
+    private String readHash() {
+        try {
+            return paths.hashFile().exists()
+                    ? Files.readString(paths.hashFile().toPath(), StandardCharsets.UTF_8).trim()
+                    : "";
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    /** Paketi tek bir oyuncuya yeniden gonderir (panel/komut icin). */
+    public void resend(org.bukkit.entity.Player player) {
+        delivery.send(player);
+    }
+
+    /** Su an sunulan paketin hash'i. */
+    public String currentHash() {
+        return readHash();
+    }
+
+    /** Uretilen zip'in boyutu (bayt); yoksa 0. */
+    public long packSize() {
+        return paths.generatedZip().exists() ? paths.generatedZip().length() : 0L;
     }
 
     /** Onceki uretimden kalan zip ve hash varsa dogrudan sunar. */

@@ -50,6 +50,16 @@ menu:
 pack:
   declined: "<red>You must accept the resource pack to play here.</red>"
   failed: "<red>Resource pack download failed. Check your connection and retry.</red>"
+  command-description: "Rebuilds and re-sends the resource pack."
+  status: "<gray>Pack:</gray> <white><hash></white> <dark_gray>·</dark_gray> <white><size> MB</white> <dark_gray>·</dark_gray> <white><items></white> <gray>items</gray>"
+  regenerating: "<gray>Rebuilding the pack...</gray>"
+  busy: "<yellow>A build is already running, wait for it to finish.</yellow>"
+  done: "<green>Pack built:</green> <white><items></white> <gray>items,</gray> <white><files></white> <gray>files,</gray> <white><ms> ms</white><gray>. Sent to <players> players.</gray>"
+  unchanged: "<yellow>Pack built but the contents are identical</yellow> <gray>(<items> items, <ms> ms). Clients will not re-download.</gray>"
+  failed-generate: "<red>Pack build failed:</red> <white><error></white>"
+  warning: "<yellow>Warning:</yellow> <gray><text></gray>"
+  resent: "<green>Pack re-sent to <white><player></white>.</green>"
+  player-offline: "<red>Player is not online:</red> <white><player></white>"
 
 economy:
   balance: "<gray>Balance:</gray> <gold><amount></gold>"

@@ -403,6 +403,9 @@
           <sc-if value="{{ canGive }}" hint-placeholder-val="{{ false }}">
             <button onClick="{{ give }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-300); border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px;" style-hover="border-color:var(--color-accent-700)">Üzerime al</button>
           </sc-if>
+          <sc-if value="{{ canRepack }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ repack }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-300); border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px;" style-hover="border-color:var(--color-accent-700)">Paketi yeniden üret</button>
+          </sc-if>
           <div style="flex:1"></div>
           <span style="font-size:11px; color:var(--color-neutral-500);">{{ saveNote }}</span>
           <button onClick="{{ deleteRecord }}" style="background:transparent; border:1px solid var(--color-neutral-800); color:var(--color-neutral-400); border-radius:8px; padding:8px 14px; cursor:pointer; font-size:12px;" style-hover="border-color:#7a3b3b; color:#e0a0a0">Sil</button>
@@ -979,6 +982,16 @@ class Component extends DCLogic {
     } catch (e) { return { ok:false, reason:'baglanti' }; }
   }
 
+  // Paketi sunucu acikken bastan urettirir. Sunucu "basladi" der ve isi arka
+  // planda surdurur; sonuc oyun ici sohbete ve sunucu gunluguene yazilir.
+  async repackNow() {
+    try {
+      const r = await fetch('/api/pack/regenerate', { method:'POST', credentials:'same-origin' });
+      const body = await r.json().catch(() => ({}));
+      return r.ok ? { ok:true } : { ok:false, reason:body.reason || r.status };
+    } catch (e) { return { ok:false, reason:'baglanti' }; }
+  }
+
   async push(section, record) {
     try {
       const r = await fetch('/api/records?section=' + section, {
@@ -1338,6 +1351,13 @@ class Component extends DCLogic {
       },
       reset: () => this.setState(s => ({ drafts:{ ...s.drafts, [id]: undefined }, dirty:false, note:'diskteki sürüme dönüldü' })),
       canGive: id === 'items' && !!rec && !!rec.id,
+      canRepack: id === 'pack',
+      repack: () => {
+        this.setState({ note:'üretim başlatıldı — sonucu oyun içi sohbette göreceksin' });
+        this.repackNow().then(res => { if (!res.ok) this.setState({ note:
+          res.reason === 'content-disabled' ? 'içerik modülü kapalı'
+          : 'başlatılamadı · ' + res.reason }); });
+      },
       give: () => {
         const itemId = rec.id.includes(':') ? rec.id : 'aethel:' + rec.id;
         this.setState({ note:'isteniyor…' });
