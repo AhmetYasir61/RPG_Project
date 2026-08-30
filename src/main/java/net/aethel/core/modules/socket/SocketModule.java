@@ -52,6 +52,7 @@ public final class SocketModule implements Module, SocketService {
     public void onEnable(CoreContext ctx) {
         reload();
         ctx.listener("socket.evolution", new EvolutionListener(ctx, this, data));
+        ctx.listener(new StoneEffectListener(ctx, this, data));
         ctx.commands().register("socket", new SocketCommand(ctx, this));
         ctx.commands().suggest("stone", stones::keySet);
     }
@@ -143,7 +144,43 @@ public final class SocketModule implements Module, SocketService {
             meta.setEnchantmentGlintOverride(
                     stone.isPresent() && stage >= item.socketing().lastStage());
             meta.lore(buildLore(item, stone.orElse(null), stage));
+
+            // Nitelikler bastan kurulur: itemin kendi degerleri + tasin
+            // asamaya gore olceklenmis katkisi. Temizlemeden eklemek, her
+            // yenilemede silahin kalici olarak guclenmesi demek olurdu.
+            meta.setAttributeModifiers(null);
+            applyAttributes(meta, item.attributes(), null);
+            stone.ifPresent(value ->
+                    applyAttributes(meta, scaled(value.attributes(), item, stage), "socket"));
         });
+    }
+
+    /**
+     * Tasin katkisi asamaya gore olceklenir: ilk asamada yarim, son asamada tam.
+     * Ilerlemenin GORUNUR degil GERCEK bir karsiligi olmali; yoksa asama
+     * yukseltmek yalnizca renk degistirmekten ibaret kalirdi.
+     *
+     * Sure cinsinden degerler (burn-seconds gibi) nitelik degildir, vurusta
+     * uygulanir; burada atlanirlar.
+     */
+    private java.util.Map<String, Double> scaled(java.util.Map<String, Double> source,
+                                                 CustomItem item, int stage) {
+        int last = Math.max(1, item.socketing().lastStage());
+        double factor = 0.5D + 0.5D * (Math.min(stage, last) / (double) last);
+
+        java.util.Map<String, Double> result = new java.util.LinkedHashMap<>();
+        source.forEach((key, value) -> {
+            if (key.endsWith("-seconds")) return;
+            result.put(key, value * factor);
+        });
+        return result;
+    }
+
+    /** Icerik modulunun nitelik katmanini kullanir; eslesme tek yerde durur. */
+    private void applyAttributes(org.bukkit.inventory.meta.ItemMeta meta,
+                                 java.util.Map<String, Double> attributes, String suffix) {
+        net.aethel.core.modules.content.ItemAttributeBridge.apply(
+                ctx.plugin(), meta, attributes, suffix);
     }
 
     /** Taban lore + soket satiri + ilerleme. Her yenilemede bastan kurulur. */

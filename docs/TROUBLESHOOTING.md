@@ -479,3 +479,36 @@ artik font dokularini da denetliyor.
 **Envanterdeki eski itemler duzelmez.** `item_model` degeri itemin NBT'sine
 YAZILIR; uretim duzelse bile onceden verilmis itemler eski degeri tasir.
 `/pack dogrula` bunlari sayip soyluyor: at ve `/menu itemler` ile yeniden al.
+
+## 26. Itemin hasari YAML'de yazandan farkli
+
+**Belirti:** Tanimda `damage: 8.5` yaziyor ama tooltip'te "6 Attack Damage"
+goruyorsun -- yani taban materyalin (IRON_SWORD) kendi degeri.
+
+**Kok neden:** `ItemFactory` nitelikleri HIC uygulamiyordu. `attributes:` bolumu
+okunuyor, `CustomItem` icinde tasiniyor, lore'a yaziliyor ama gercek bir
+`AttributeModifier`'a donusturulmuyordu. Item vanilla degerleriyle vuruyordu ve
+sunucu gunluguene hicbir sey dusmuyordu.
+
+Ayni sey soket taslari icin de gecerliydi: lore "+2 hasar" diyor, tas hicbir sey
+yapmiyordu.
+
+**Cozum:** `ItemAttributes` YAML adini Bukkit niteligine cevirip gercek modifier
+yaziyor. Tas katkisi da ayni katmandan geciyor (`ItemAttributeBridge`) --
+eslemenin ikinci bir kopyasi olsaydi iki liste zamanla ayrisirdi.
+
+**Iki incelik:**
+
+1. **Taban deger cikarilir.** `damage: 8.5` "oyuncu 8.5 vursun" demektir,
+   "+8.5 daha" degil. Vanilla oyuncunun elle vurus tabani (1.0) cikarilmasaydi
+   kilic 8.5 degil 9.5 verirdi.
+2. **Once temizlenir, sonra eklenir.** Item her yenilendiginde (soket takma,
+   asama yukselme) modifier'lar bastan kurulur. Temizlemeden eklemek, her
+   yenilemede silahin KALICI olarak guclenmesi demekti.
+
+`ItemAttributeTest` uretim yolunun nitelik katmanini gercekten cagirdigini
+dogrular; cagri kaybolursa derleme kirmizi doner (bilerek kaldirilarak denendi).
+
+**Sure cinsinden degerler nitelik degildir.** `burn-seconds`, `slow-seconds`
+gibi anahtarlar vurus aninda uygulanir (`StoneEffectListener`), itemin uzerinde
+durmaz. Ikisi ayri yerde cunku farkli hayat dongulerine sahipler.

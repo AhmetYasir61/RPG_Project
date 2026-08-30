@@ -24,9 +24,11 @@ final class ItemFactory {
 
     private final NamespacedKey idKey;
     private final MiniMessage mini = MiniMessage.miniMessage();
+    private final ItemAttributes attributes;
 
     ItemFactory(Plugin plugin) {
         this.idKey = new NamespacedKey(plugin, "item_id");
+        this.attributes = new ItemAttributes(plugin);
     }
 
     ItemStack create(CustomItem definition, int amount) {
@@ -53,6 +55,12 @@ final class ItemFactory {
             if (definition.customModelData() > 0) {
                 meta.setCustomModelData(definition.customModelData());
             }
+            // Nitelikler GERCEKTEN uygulanir. Once temizlenir: item yeniden
+            // kurulunca eski modifier'larin uzerine eklenmesi, her yenilemede
+            // silahin guclenmesi demek olurdu.
+            attributes.clear(meta);
+            attributes.apply(meta, definition.attributes(), null);
+
             meta.setUnbreakable(definition.unbreakable());
             definition.enchantments().forEach((key, level) -> {
                 Enchantment enchantment = Enchantment.getByKey(
